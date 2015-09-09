@@ -21,15 +21,18 @@
         "128": "img/icon128.png"
     },
 
+/*
    "background": {
        "persistent": true,
        "scripts": [
           "js/jquery-2.0.3.min.js",
           "js/bootstrap.min.js",
-          "js/dwl-bookmarker.js"
+          "js/angular.min.js",
+          "js/dwl-bookmarker.js",
+          "js/dwl-controller.js"
        ]
    },
-
+*/
     // extension icon outside omnibox
     "browser_action": {
         "default_icon": {
@@ -52,7 +55,8 @@
 
     // Optional
     "author": "david asquiedge - davaskweblimited.com",
-    "content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'",
+    // "content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'",
+    "content_security_policy": "default-src 'self'; style-src 'self' 'unsafe-inline';" ,
 
     "offline_enabled": true,
 

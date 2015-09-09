@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html xmlns:ng="http://angularjs.org">
     <head>
 
         <meta charset="utf-8">
@@ -14,84 +14,57 @@
 
     </head>
 
-    <body>
+    <body ng-controller="dwlCtrl">
 
-        <nav class="navbar navbar-default" role="navigation">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="#">Brand</a>
+        <section class="container">
+            <div  class="row">
+                <div class="col-xs-12">
+                    <!-- Search: <input ng-model="query"> -->
+                </div>
+                <div class="col-xs-12">
+                    How Many: <input ng-model="quantity">
+                </div>
+                <div class="col-xs-12">
+                    <select ng-model="orderProp">
+                        <option value="title">Alphabetical</option>
+                        <option value="id">Id</option>
+                        <option value="dateAdded">Newest</option>
+                    </select>
+                </div>
             </div>
-            <div class="collapse navbar-collapse navbar-ex1-collapse">
-                <ul class="nav navbar-nav">
-                    <li class="active">
-                        <a href="#">Link</a>
-                    </li>
-                    <li>
-                        <a href="#">Link</a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <i class="glyphicon glyphicon-thumbs-up"></i>
-                        </a>
-                    </li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <a href="#">Action</a>
-                            </li>
-                            <li>
-                                <a href="#">Another action</a>
-                            </li>
-                            <li>
-                                <a href="#">Something else here</a>
-                            </li>
-                            <li>
-                                <a href="#">Separated link</a>
-                            </li>
-                            <li>
-                                <a href="#">One more separated link</a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
+        </section>
+        <section class="container">
+            {{typeOfdwl.bookmarks_unique}}
+            <div  ng-repeat="bookmark in dwl.bookmarks_unique | limitTo:quantity">
+                <div  class="row">
+                    <div class="col-xs-12">
+                        {{bookmark.id}} - <a href="{{bookmark.url}}" target="_blank"><strong>{{bookmark.title}}</strong></a>
+                    </div>
+                </div>
+                <div  class="row">
+                    <div class="col-xs-12">
+                        <small>{{bookmark.url}}</small>
+                    </div>
+                </div>
+                <div  class="row">
+                    <div class="col-xs-6">
+                        <small>index : {{bookmark.index}}</small><br/>
+                        <small>parentId : {{bookmark.parentId}}</small><br/>
+                        <small>children {{bookmark.children.length}}</small>
+                    </div>
+                    <div class="col-xs-6">
+                        <small>added : {{bookmark.dateAdded}}</small><br/>
+                        <small>group modified : {{bookmark.dateGroupModified}}</small>
+                    </div>
+                </div>
             </div>
-        </nav>
-
-        <section>
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Username</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Jacob</td>
-                        <td>Thornton</td>
-                        <td>@fat</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td colspan="2">Larry the Bird</td>
-                        <td>@twitter</td>
-                    </tr>
-                </tbody>
-            </table>
         </section>
 
         <!-- Scripts -->
         <script src="js/jquery-2.0.3.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
+        <script src="js/angular.min.js"></script>
+        <script src="js/dwl-controller.js"></script>
         <script src="js/dwl-bookmarker.js"></script>
 
     </body>
