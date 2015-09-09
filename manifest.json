@@ -1,25 +1,69 @@
 {
-	"manifest_version": 2,
-	"name": "Chrome Extension Template with Twitter Bootstrap 3.0",
-	"description": "A basic template for a Chrome Extension using Twitter Bootstrap 3",
-	"version": "1.0",
-	"permissions": [
-		"storage"
-	],
-	"icons": { 
-		"16": "img/icon16.png",
-		"48": "img/icon48.png",
-		"128": "img/icon128.png" 
-	},
-	"browser_action": {
-		"default_icon": {                    
-			"19": "img/icon48.png",          
-			"38": "img/icon48.png"          
-		},
-		"default_popup": "popup.html"
-	},
-	"content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'",
-	"web_accessible_resources": [
-		"img/icon128.png"
-	]
+    // Required
+    "manifest_version": 2,
+    "minimum_chrome_version": "42",
+
+    "name": "davask web limited - chrome bookmarker",
+    "short_name": "bookmarker",
+
+    "version": "1.0",
+    "version_name": "1.0 dev",
+
+    // Recommended
+    "default_locale": "en",
+    "current_locale": "en",
+
+    "description": "another bookmark manager",
+
+    "icons": {
+        "16": "img/icon16.png",
+        "48": "img/icon48.png",
+        "128": "img/icon128.png"
+    },
+
+   "background": {
+       "persistent": true,
+       "scripts": [
+          "js/jquery-2.0.3.min.js",
+          "js/bootstrap.min.js",
+          "js/dwl-bookmarker.js"
+       ]
+   },
+
+    // extension icon outside omnibox
+    "browser_action": {
+        "default_icon": {
+            "19": "img/icon48.png",
+            "38": "img/icon48.png"
+        },
+        "default_title": "BookMarker",
+        "default_popup": "popup.html"
+    },
+
+    // extension icon inside omnibox
+    // "page_action": {
+    //     "default_icon": {
+    //         "19": "img/icon48.png",
+    //         "38": "img/icon48.png"
+    //     },
+    //     "default_title": "BookMarker",
+    //     "default_popup": "popup.html"
+    // },
+
+    // Optional
+    "author": "david asquiedge - davaskweblimited.com",
+    "content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'",
+
+    "offline_enabled": true,
+
+    "permissions": [
+        "chrome://favicon/",
+        "bookmarks",
+        "storage",
+        "tabs"
+    ],
+
+    "web_accessible_resources": [
+        "img/icon128.png"
+    ]
 }
