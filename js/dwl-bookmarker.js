@@ -16,102 +16,146 @@
 
 // Author
 
-var dwl = {};
+var dwlBookmarker = {
 
-dwl["bookmarks_unique_count"] = 0;
-dwl["bookmarks_unique_urls"] = [];
-dwl["bookmarks_folders"] = {};
-dwl["bookmarks_unique"] = {};
-dwl["bookmarks_duplicate"] = {};
+    storage : {
 
+        bookmarks_unique_count : 0,
 
-var refreshBookmarksStorage = function () {
+        bookmarks_unique_urls : [],
 
-    chrome.browserAction.setBadgeText({text:"Load"});
+        bookmarks_folders : {},
+        bookmarks_unique : {},
+        bookmarks_duplicate : {}
 
-    var r = $.Deferred();
+    },
 
-    dwl["bookmarks_unique_count"] = 0;
-    dwl["bookmarks_unique_urls"] = [];
-    dwl["bookmarks_folders"] = {};
-    dwl["bookmarks_unique"] = {};
-    dwl["bookmarks_duplicate"] = {};
+    badge : {
+        title : function() {
 
-    chrome.bookmarks.getTree(function(itemTree){
-        itemTree.forEach(function(item){
-            processNode(item);
+            var _this = this;
+
+            return _this.text + " bookmarks";
+        },
+        text : "*",
+    },
+
+    init : function() {
+
+        var _this = this;
+
+        chrome.browserAction.setBadgeText({text:_this.badge.text});
+        _this.setBadgeDisplay();
+
+    },
+
+    refreshBookmarksStorage : function () {
+
+        var _this = this;
+        var d = $.Deferred();
+
+        chrome.browserAction.setBadgeText({text:"Load"});
+
+        _this.storage.bookmarks_unique_count = 0;
+        _this.storage.bookmarks_unique_urls = [];
+        _this.storage.bookmarks_folders = {};
+        _this.storage.bookmarks_unique = {};
+        _this.storage.bookmarks_duplicate = {};
+
+        chrome.bookmarks.getTree(function(bookmarksTree){
+            bookmarksTree.forEach(function(bookmark){
+                _this.processBookmark(bookmark);
+            });
+            d.resolve();
         });
-        r.resolve();
-    });
 
-    return r;
+        return d;
 
-};
+    },
 
+    processBookmark : function (bookmark) {
 
-var processNode = function (node) {
+        var _this = this;
 
-    // recursively process child nodes
-    if(node.children && node.children.length > 0) {
-        node.children.forEach(function(child) {
-            processNode(child);
+        // recursively process child bookmarks
+        if(bookmark.children && bookmark.children.length > 0) {
+            bookmark.children.forEach(function(child) {
+                _this.processBookmark(child);
+            });
+        }
+
+        _this.dispatchbookmarkInStorage(bookmark);
+
+    },
+
+    dispatchbookmarkInStorage : function (bookmark) {
+
+        var _this = this;
+
+        if (typeof (bookmark.url) == "undefined") {
+
+            var bookmarkId = bookmark.id+"_"+bookmark.title;
+
+            if (typeof (bookmark.children) != "undefined") {
+                delete bookmark.children;
+            }
+
+            if (typeof (_this.storage.bookmarks_folders[bookmarkId]) == "undefined"){
+                _this.storage.bookmarks_folders[bookmarkId] = [];
+            }
+
+            _this.storage.bookmarks_folders[bookmarkId][_this.storage.bookmarks_folders[bookmarkId].length] = bookmark;
+
+        } else if (_this.storage.bookmarks_unique_urls.indexOf(bookmark.url) == -1) {
+
+            var uniqueId = _this.storage.bookmarks_unique_urls.length;
+            _this.storage.bookmarks_unique_count = uniqueId+1;
+            _this.storage.bookmarks_unique_urls[uniqueId] = bookmark.url;
+            _this.storage.bookmarks_unique[uniqueId] = bookmark;
+
+        } else {
+
+            if (typeof (_this.storage.bookmarks_duplicate[bookmark.url]) == "undefined"){
+                _this.storage.bookmarks_duplicate[bookmark.url] = [];
+            }
+            _this.storage.bookmarks_duplicate[bookmark.url][_this.storage.bookmarks_duplicate[bookmark.url].length] = bookmark;
+
+        }
+    },
+
+    setBadgeDisplay : function () {
+
+        var _this = this;
+        var d = $.Deferred();
+
+        _this.refreshBookmarksStorage().done(function() {
+
+            _this.badge.text = ""+_this.storage.bookmarks_unique_count;
+            if (_this.storage.bookmarks_unique_count > 9999) {
+                _this.badge.text = _this.storage.bookmarks_unique_count(0,2)+"k"+_this.storage.bookmarks_unique_count.substring(2,3);
+            }
+
+            chrome.browserAction.setBadgeText({text:""+_this.badge.text});
+            chrome.browserAction.setTitle({title:_this.badge.title() });
+
+            d.resolve();
+            return d;
+
         });
-    }
-
-    if (typeof (node.url) == "undefined") {
-
-        var nodeId = node.id+"_"+node.title;
-
-        if (typeof (node.children) != "undefined") {
-            delete node.children;
-        }
-
-        if (typeof (dwl.bookmarks_folders[nodeId]) == "undefined"){
-            dwl.bookmarks_folders[nodeId] = [];
-        }
-
-        dwl.bookmarks_folders[nodeId][dwl.bookmarks_folders[nodeId].length] = node;
-
-    } else if (dwl.bookmarks_unique_urls.indexOf(node.url) == -1) {
-
-        var uniqueId = dwl.bookmarks_unique_urls.length;
-        dwl.bookmarks_unique_count = uniqueId+1;
-        dwl.bookmarks_unique_urls[uniqueId] = node.url;
-        dwl.bookmarks_unique[uniqueId] = node;
-
-    } else {
-
-        if (typeof (dwl.bookmarks_duplicate[node.url]) == "undefined"){
-            dwl.bookmarks_duplicate[node.url] = [];
-        }
-        dwl.bookmarks_duplicate[node.url][dwl.bookmarks_duplicate[node.url].length] = node;
 
     }
 
-};
+}
 
-var setBadgeDisplay = function () {
+// chrome.browserAction.onClicked.addListener();
 
-    var r = $.Deferred();
-
-    txt_count = "...";
-    chrome.browserAction.setBadgeText({text:""+txt_count});
-
-    txt_count = dwl.bookmarks_unique_count;
-    if (txt_count > 9999) {
-        txt_count = txt_count(0,2)+"k"+txt_count.substring(2,3);
-    }
-
-    chrome.browserAction.setBadgeText({text:""+txt_count});
-    chrome.browserAction.setTitle({title:"" + txt_count + " bookmarks (click to refresh)"});
-
-    r.resolve();
-    return r;
-
-};
-
-chrome.browserAction.onClicked.addListener(refreshBookmarksStorage);
-// refreshBookmarksStorage().done(setBadgeDisplay);
-refreshBookmarksStorage().done(function() {
-    setBadgeDisplay().done(initApp);
+/* OMNIBOX */
+chrome.omnibox.onInputChanged.addListener(function(text, suggest) {
+    suggest([
+      // {content: text + " one", description: "the first one"},
+      // {content: text + " number two", description: "the second entry"}
+    ]);
+});
+chrome.omnibox.onInputEntered.addListener(function(text) {
+    // alert('You just typed "' + text + '"');
 });
