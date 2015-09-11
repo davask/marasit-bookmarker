@@ -19,7 +19,7 @@
         <section class="container">
             <div  class="row">
                 <div class="col-xs-12">
-                    <!-- Search: <input ng-model="query"> -->
+                    Search: <input ng-model="query">
                 </div>
                 <div class="col-xs-12">
                     How Many: <input ng-model="quantity">
@@ -33,9 +33,9 @@
                 </div>
             </div>
         </section>
+
         <section class="container">
-            {{typeOfdwl.bookmarks_unique}}
-            <div  ng-repeat="bookmark in dwl.bookmarks_unique | limitTo:quantity">
+            <div  ng-repeat="bookmark in bookmarks | filter:query | orderBy:orderProp | limitTo:quantity">
                 <div  class="row">
                     <div class="col-xs-12">
                         {{bookmark.id}} - <a href="{{bookmark.url}}" target="_blank"><strong>{{bookmark.title}}</strong></a>
@@ -64,6 +64,7 @@
         <script src="../js/jquery-2.0.3.min.js"></script>
         <script src="../js/bootstrap.min.js"></script>
         <script src="../js/angular.min.js"></script>
+        <script src="../js/dwl-bookmarker.js"></script>
         <script src="../js/dwl-controller.js"></script>
         <script src="../js/popup.js"></script>
 

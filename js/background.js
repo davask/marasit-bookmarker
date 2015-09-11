@@ -1,1 +1,2 @@
-var dwlBk = dwlBookmarker.init();
+var dwlBk = dwlBookmarker;
+dwlBk.init();

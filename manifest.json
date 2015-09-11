@@ -26,7 +26,7 @@
     },
 
    "background": {
-       "persistent": false,
+       "persistent": true,
        "scripts": [
           "js/jquery-2.0.3.min.js",
           "js/dwl-bookmarker.js",
