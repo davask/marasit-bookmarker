@@ -1,16 +1,38 @@
 var dwlApp = angular.module('dwlApp', []);
 
-dwlApp.factory("bookMark", ['$window',  function($window) {
+dwlApp.factory("bookMark", ['$q','$window',  function($q, $window) {
 
     $window['dwlBk'] = new chromeBookmarker({init:true});
 
     return {
+        items : [],
+        getPartial : function() {
+
+            var deferred = $q.defer();
+
+            $window.dwlBk.getPagedBookmarksFromChromeBookmarks(0).done(function(){
+                deferred.resolve($window.dwlBk.allBookmarks);
+            });
+
+            return deferred.promise;
+        },
+        getAll : function() {
+
+            var deferred = $q.defer();
+
+            $window.dwlBk.getAllUniqueBookmarksFromChromeBookmarks().done(function(){
+                deferred.resolve($window.dwlBk.allBookmarks);
+            });
+
+            return deferred.promise;
+        },
         get: function(offset, limit) {
-          return $window.dwlBk.bookmarks.unique_urls_id.slice(offset, offset+limit);
+          return this.items.slice(offset, offset+limit);
         },
         total: function() {
             return $window.dwlBk.bookmarks.unique_count
         }
+
     };
 
 }]).controller("dwlCtrl", ['$scope','$window', 'bookMark', function ($scope, $window, bookMark) {
@@ -18,6 +40,7 @@ dwlApp.factory("bookMark", ['$window',  function($window) {
     $scope.bookmarkPerPage = $window.dwlBk.settings.limit;
     $scope.currentPage = $window.dwlBk.settings.page;
     $scope.orderProp = 'title';
+    $scope.bookmarks = [];
 
     $scope.range = function() {
         var rangeSize = 5;
@@ -41,34 +64,35 @@ dwlApp.factory("bookMark", ['$window',  function($window) {
         }
     };
 
-      $scope.prevPageDisabled = function() {
+    $scope.prevPageDisabled = function() {
         return $scope.currentPage === 0 ? "disabled" : "";
-      };
+    };
 
-      $scope.nextPage = function() {
+    $scope.nextPage = function() {
         if ($scope.currentPage < $scope.pageCount() - 1) {
           $scope.currentPage++;
         }
-      };
+    };
 
-      $scope.nextPageDisabled = function() {
+    $scope.nextPageDisabled = function() {
         return $scope.currentPage === $scope.pageCount() - 1 ? "disabled" : "";
-      };
+    };
 
-      $scope.pageCount = function() {
+    $scope.pageCount = function() {
         return Math.ceil($scope.total/$scope.bookmarkPerPage);
-      };
+    };
 
-      $scope.$watch("currentPage", function(newValue, oldValue) {
-        console.log(bookMark.get(newValue, $scope.bookmarkPerPage));
-        $window.dwlBk.getPagedBookmarksFromChromeBookmarks(newValue).done(function(){
-            $scope.apply(function(){
-                console.log($window.dwlBk.allBookmarks);
-                $scope.bookmarks = $window.dwlBk.allBookmarks;
-            });
+    bookMark.getPartial(0).then(function(result) {
+        bookMark.items = result;
+        console.log('partial',bookMark.items.length);
+
+        $scope.$watch("currentPage", function(newValue, oldValue) {
+            $scope.bookmarks = bookMark.get(newValue, $scope.bookmarkPerPage);
             $scope.total = bookMark.total();
         });
-      });
+    });
+
+
 
 }]);
 

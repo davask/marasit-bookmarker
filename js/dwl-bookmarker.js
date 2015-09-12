@@ -293,6 +293,7 @@ class chromeBookmarker extends storageBookmarker {
         var b = _this.bookmarks;
         var d = $.Deferred();
 
+        _this.allBookmarks = [];
         for (var i = 0; i < b.unique_urls_id.length; i++) {
 
             chrome.bookmarks.get(b.unique_urls_id[i], function (result) {
@@ -320,15 +321,16 @@ class chromeBookmarker extends storageBookmarker {
         var bookmarkStart = (_this.settings.page) * _this.settings.limit;
         var bookmarkStop = bookmarkStart + (_this.settings.limit - 1);
 
-        if (bookmarkStop > b.unique_urls_id.length) {
-            bookmarkStop = b.unique_urls_id.length;
+        if (bookmarkStop > b.unique_count.length) {
+            bookmarkStop = b.unique_count.length;
         }
 
+        _this.allBookmarks = [];
         for (var i = bookmarkStart; i < bookmarkStop; i++) {
 
             chrome.bookmarks.get(b.unique_urls_id[i], function (result) {
                 _this.allBookmarks.push(result[0]);
-                if ( b.unique_urls_id[bookmarkStop] == result[0].id) {
+                if ( b.unique_urls_id[bookmarkStop-1] == result[0].id) {
                     d.resolve();
                 }
             });
