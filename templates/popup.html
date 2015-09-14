@@ -49,24 +49,30 @@
                         <option value="dateAdded">Newest</option>
                     </select>
                 </div>
-                <div class="col-xs-12 pagination">
-                    <ul class="list-inline">
-                        <li ng-class="prevPageDisabled()">
-                            <a href ng-click="prevPage()">« Prev</a>
-                        </li>
-                        <li ng-repeat="n in range()" ng-class="{active: n == currentPage}" ng-click="setPage(n)">
-                            <a href="#">{{n+1}}</a>
-                        </li>
-                        <li ng-class="nextPageDisabled()">
-                            <a href ng-click="nextPage()">Next »</a>
-                        </li>
-                    </ul>
+                <div class="col-xs-12 pagination" ng-controller="dwlPagination">
+                    <h4>Default</h4>
+                    <pagination total-items="totalItems" ng-model="currentPage" ng-change="pageChanged()"></pagination>
+                    <pagination boundary-links="true" total-items="totalItems" ng-model="currentPage" class="pagination-sm" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></pagination>
+                    <pagination direction-links="false" boundary-links="true" total-items="totalItems" ng-model="currentPage"></pagination>
+                    <pagination direction-links="false" total-items="totalItems" ng-model="currentPage" num-pages="smallnumPages"></pagination>
+                    <pre>The selected page no: {{currentPage}}</pre>
+                    <button type="button" class="btn btn-info" ng-click="setPage(3)">Set current page to: 3</button>
+
+                    <hr />
+                    <h4>Pager</h4>
+                    <pager total-items="totalItems" ng-model="currentPage"></pager>
+
+                    <hr />
+                    <h4>Limit the maximum visible buttons</h4>
+                    <pagination total-items="bigTotalItems" ng-model="bigCurrentPage" max-size="maxSize" class="pagination-sm" boundary-links="true"></pagination>
+                    <pagination total-items="bigTotalItems" ng-model="bigCurrentPage" max-size="maxSize" class="pagination-sm" boundary-links="true" rotate="false" num-pages="numPages"></pagination>
+                    <pre>Page: {{bigCurrentPage}} / {{numPages}}</pre>
                 </div>
             </div>
         </section>
 
         <section class="container">
-            <div  ng-repeat="bookmark in bookmarks">
+            <div ng-cloak ng-repeat="bookmark in bookmarks" repeat-complete="initBookmark()" >
                 <div  class="row">
                     <div class="col-xs-12">
                         {{bookmark.id}} - <a href="{{bookmark.url}}" target="_blank"><strong>{{bookmark.title}}</strong></a>
@@ -90,11 +96,13 @@
                 </div>
             </div>
         </section>
+        <img src="../img/spinner.gif" alt="loading" class="dwlLoading"/>
 
         <!-- Scripts -->
         <script src="../js/jquery-2.0.3.min.js"></script>
         <script src="../js/bootstrap.min.js"></script>
         <script src="../js/angular.min.js"></script>
+        <script src="../js/ui-bootstrap-tpls-0.13.4.min.js"></script>
         <script src="../js/dwl-bookmarker.js"></script>
         <script src="../js/dwl-controller.js"></script>
         <script src="../js/popup.js"></script>

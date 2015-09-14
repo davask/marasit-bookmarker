@@ -27,3 +27,12 @@ body {         /* Change width and height to own preferences */
  * Author CSS
  *
  */
+
+ .dwlLoading {
+     position: absolute;
+    top: 0;
+    left: 50%;
+    width: 50%;
+    margin-left: -25%;
+    margin-top: 100px;
+ }

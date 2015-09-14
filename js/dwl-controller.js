@@ -1,98 +1,77 @@
 var dwlApp = angular.module('dwlApp', []);
 
-dwlApp.factory("bookMark", ['$q','$window',  function($q, $window) {
+dwlApp.controller('dwlPagination', function ($scope, $log) {
+  $scope.totalItems = 64;
+  $scope.currentPage = 4;
 
-    $window['dwlBk'] = new chromeBookmarker({init:true});
+  $scope.setPage = function (pageNo) {
+    $scope.currentPage = pageNo;
+  };
 
-    return {
-        items : [],
-        getPartial : function() {
+  $scope.pageChanged = function() {
+    $log.log('Page changed to: ' + $scope.currentPage);
+  };
 
-            var deferred = $q.defer();
+  $scope.maxSize = 5;
+  $scope.bigTotalItems = 175;
+  $scope.bigCurrentPage = 1;
+}).factory("bookMarker", [function() {
 
-            $window.dwlBk.getPagedBookmarksFromChromeBookmarks(0).done(function(){
-                deferred.resolve($window.dwlBk.allBookmarks);
-            });
+    return new chromeBookmarker({init:true});
 
-            return deferred.promise;
-        },
-        getAll : function() {
-
-            var deferred = $q.defer();
-
-            $window.dwlBk.getAllUniqueBookmarksFromChromeBookmarks().done(function(){
-                deferred.resolve($window.dwlBk.allBookmarks);
-            });
-
-            return deferred.promise;
-        },
-        get: function(offset, limit) {
-          return this.items.slice(offset, offset+limit);
-        },
-        total: function() {
-            return $window.dwlBk.bookmarks.unique_count
-        }
-
-    };
-
-}]).controller("dwlCtrl", ['$scope','$window', 'bookMark', function ($scope, $window, bookMark) {
-
-    $scope.bookmarkPerPage = $window.dwlBk.settings.limit;
-    $scope.currentPage = $window.dwlBk.settings.page;
-    $scope.orderProp = 'title';
-    $scope.bookmarks = [];
-
-    $scope.range = function() {
-        var rangeSize = 5;
-        var ret = [];
-        var start;
-
-        start = $scope.currentPage;
-        if ( start > $scope.pageCount()-rangeSize ) {
-        start = $scope.pageCount()-rangeSize;
-        }
-
-        for (var i=start; i<start+rangeSize; i++) {
-        ret.push(i);
-        }
-        return ret;
-        };
-
-        $scope.prevPage = function() {
-        if ($scope.currentPage > 0) {
-        $scope.currentPage--;
-        }
-    };
-
-    $scope.prevPageDisabled = function() {
-        return $scope.currentPage === 0 ? "disabled" : "";
-    };
-
-    $scope.nextPage = function() {
-        if ($scope.currentPage < $scope.pageCount() - 1) {
-          $scope.currentPage++;
-        }
-    };
-
-    $scope.nextPageDisabled = function() {
-        return $scope.currentPage === $scope.pageCount() - 1 ? "disabled" : "";
-    };
-
-    $scope.pageCount = function() {
-        return Math.ceil($scope.total/$scope.bookmarkPerPage);
-    };
-
-    bookMark.getPartial(0).then(function(result) {
-        bookMark.items = result;
-        console.log('partial',bookMark.items.length);
-
-        $scope.$watch("currentPage", function(newValue, oldValue) {
-            $scope.bookmarks = bookMark.get(newValue, $scope.bookmarkPerPage);
-            $scope.total = bookMark.total();
+}]).directive("repeatComplete",function( $rootScope ) {
+    // source : http://www.bennadel.com/blog/2592-hooking-into-the-complete-event-of-an-ngrepeat-loop-in-angularjs.htm
+    var uuid = 0;
+    function compile( tElement, tAttributes ) {
+        var id = ++uuid;
+        tElement.attr( "repeat-complete-id", id );
+        tElement.removeAttr( "repeat-complete" );
+        var completeExpression = tAttributes.repeatComplete;
+        var parent = tElement.parent();
+        var parentScope = ( parent.scope() || $rootScope );
+        var unbindWatcher = parentScope.$watch(function() {
+            console.info( "Digest running." );
+            var lastItem = parent.children( "*[ repeat-complete-id = '" + id + "' ]:last" );
+            if ( ! lastItem.length ) {
+                return;
+            }
+            var itemScope = lastItem.scope();
+            if ( itemScope.$last ) {
+                unbindWatcher();
+                itemScope.$eval( completeExpression );
+            }
         });
+    }
+    return({
+        compile: compile,
+        priority: 1001,
+        restrict: "A"
     });
+}).controller("dwlCtrl", ['$scope', 'bookMarker', function ($scope, bookMarker) {
 
+    var b = bookMarker.bookmarks;
 
+    // $scope.orderProp = 'title';
+    $scope.bookmarks = [{}];
+
+    $scope.initBookmark = function(){
+
+        console.log('initBookmark',b.unique_urls_id);
+
+        for (var i = 0; i < b.unique_urls_id.length; i++) {
+
+            $scope.bookmarks.push({id:b.unique_urls_id[i]});
+            // chrome.bookmarks.get(b.unique_urls_id[i], function (result) {
+            //     $scope.$watch(function(){
+            //         $scope.bookmarks.push(result[0]);
+            //     });
+            // });
+            // if (((i+1) % 100) == 0) {
+            //     $scope.$apply();
+            // }
+        }
+
+    };
 
 }]);
 

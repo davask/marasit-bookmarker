@@ -287,58 +287,58 @@ class chromeBookmarker extends storageBookmarker {
         return d;
     }
 
-    getAllUniqueBookmarksFromChromeBookmarks () {
+    // getAllUniqueBookmarksFromChromeBookmarks () {
 
-        var _this = this;
-        var b = _this.bookmarks;
-        var d = $.Deferred();
+    //     var _this = this;
+    //     var b = _this.bookmarks;
+    //     var d = $.Deferred();
 
-        _this.allBookmarks = [];
-        for (var i = 0; i < b.unique_urls_id.length; i++) {
+    //     _this.allBookmarks = [];
+    //     for (var i = 0; i < b.unique_urls_id.length; i++) {
 
-            chrome.bookmarks.get(b.unique_urls_id[i], function (result) {
-                _this.allBookmarks.push(result[0]);
-                if ( b.unique_urls_id[b.unique_urls_id.length-1] == result[0].id) {
-                    d.resolve();
-                }
-            });
+    //         chrome.bookmarks.get(b.unique_urls_id[i], function (result) {
+    //             _this.allBookmarks.push(result[0]);
+    //             if ( b.unique_urls_id[b.unique_urls_id.length-1] == result[0].id) {
+    //                 d.resolve();
+    //             }
+    //         });
 
-        }
+    //     }
 
-        return d;
-    }
+    //     return d;
+    // }
 
-    getPagedBookmarksFromChromeBookmarks (page) {
+    // getPagedBookmarksFromChromeBookmarks (page) {
 
-        var _this = this;
-        var b = _this.bookmarks;
-        var d = $.Deferred();
+    //     var _this = this;
+    //     var b = _this.bookmarks;
+    //     var d = $.Deferred();
 
-        if (typeof(page) != "undefined" && page >= 0 && page < _this.settings.pages) {
-            _this.settings.page = page;
-        }
+    //     if (typeof(page) != "undefined" && page >= 0 && page < _this.settings.pages) {
+    //         _this.settings.page = page;
+    //     }
 
-        var bookmarkStart = (_this.settings.page) * _this.settings.limit;
-        var bookmarkStop = bookmarkStart + (_this.settings.limit - 1);
+    //     var bookmarkStart = (_this.settings.page) * _this.settings.limit;
+    //     var bookmarkStop = bookmarkStart + (_this.settings.limit - 1);
 
-        if (bookmarkStop > b.unique_count.length) {
-            bookmarkStop = b.unique_count.length;
-        }
+    //     if (bookmarkStop > b.unique_count.length) {
+    //         bookmarkStop = b.unique_count.length;
+    //     }
 
-        _this.allBookmarks = [];
-        for (var i = bookmarkStart; i < bookmarkStop; i++) {
+    //     _this.allBookmarks = [];
+    //     for (var i = bookmarkStart; i < bookmarkStop; i++) {
 
-            chrome.bookmarks.get(b.unique_urls_id[i], function (result) {
-                _this.allBookmarks.push(result[0]);
-                if ( b.unique_urls_id[bookmarkStop-1] == result[0].id) {
-                    d.resolve();
-                }
-            });
+    //         chrome.bookmarks.get(b.unique_urls_id[i], function (result) {
+    //             _this.allBookmarks.push(result[0]);
+    //             if ( b.unique_urls_id[bookmarkStop-1] == result[0].id) {
+    //                 d.resolve();
+    //             }
+    //         });
 
-        }
+    //     }
 
-        return d;
-    }
+    //     return d;
+    // }
 
     // getFromChromeBookmarks (id){
 
