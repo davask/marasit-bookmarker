@@ -189,6 +189,7 @@ class storageBookmarker {
         b.unique_bookmarks[b.unique_bookmarks.length] = "url_"+bookmark.id+"_"+bookmark.url;
         b.unique_urls_id[b.unique_urls_id.length] = bookmark.id;
         b.unique_urls[b.unique_urls.length] = bookmark.url;
+        _this.allBookmarks[_this.allBookmarks.length] = bookmark;
 
     }
 

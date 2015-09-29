@@ -18,72 +18,46 @@
 
         <section class="container">
             <div  class="row">
-                <div class="col-xs-12">
-                    Search: <input ng-model="query">
-                </div>
-                <div class="col-xs-12">
-                    How Many: <input ng-model="quantity">
-                </div>
-                <div class="col-xs-12">
+                <pre>Bookmarks : {{totalItems}}, Page: {{currentPage}} / {{numPages}}</pre>
+                <div class="col-xs-4">
+                    order by :
                     <select ng-model="orderProp">
                         <option value="title">Alphabetical</option>
                         <option value="id">Id</option>
                         <option value="dateAdded">Newest</option>
                     </select>
                 </div>
-            </div>
-        </section>
-
-        <section class="container">
-            <div  class="row">
-                <div class="col-xs-12">
-                    Search: <input ng-model="query">
+                <div class="col-xs-4">
+                    <input ng-model="query" ng-change="filter()" placeholder="Search">
                 </div>
-                <div class="col-xs-12">
-                    How Many: <input ng-model="quantity">
-                </div>
-                <div class="col-xs-12">
-                    <select ng-model="orderProp">
-                        <option value="title">Alphabetical</option>
-                        <option value="id">Id</option>
-                        <option value="dateAdded">Newest</option>
+                <div class="col-xs-4">
+                    <select ng-model="entryLimit" ng-change="filter()">
+                        <option value="10">10</option>
+                        <option value="100">100</option>
+                        <option value="1000">1000</option>
+                        <option value="{{bookmarks.length}}">All ({{bookmarks.length}})</option>
                     </select>
                 </div>
-                <div class="col-xs-12 pagination" ng-controller="dwlPagination">
-                    <h4>Default</h4>
-                    <pagination total-items="totalItems" ng-model="currentPage" ng-change="pageChanged()"></pagination>
-                    <pagination boundary-links="true" total-items="totalItems" ng-model="currentPage" class="pagination-sm" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></pagination>
-                    <pagination direction-links="false" boundary-links="true" total-items="totalItems" ng-model="currentPage"></pagination>
-                    <pagination direction-links="false" total-items="totalItems" ng-model="currentPage" num-pages="smallnumPages"></pagination>
-                    <pre>The selected page no: {{currentPage}}</pre>
-                    <button type="button" class="btn btn-info" ng-click="setPage(3)">Set current page to: 3</button>
-
-                    <hr />
-                    <h4>Pager</h4>
-                    <pager total-items="totalItems" ng-model="currentPage"></pager>
-
-                    <hr />
-                    <h4>Limit the maximum visible buttons</h4>
-                    <pagination total-items="bigTotalItems" ng-model="bigCurrentPage" max-size="maxSize" class="pagination-sm" boundary-links="true"></pagination>
-                    <pagination total-items="bigTotalItems" ng-model="bigCurrentPage" max-size="maxSize" class="pagination-sm" boundary-links="true" rotate="false" num-pages="numPages"></pagination>
-                    <pre>Page: {{bigCurrentPage}} / {{numPages}}</pre>
+                <div class="col-xs-12">
+                    numPages : {{numPages}}<br/>
+                    <pagination total-items="totalItems" ng-model="currentPage" max-size="maxSize" class="pagination-sm" boundary-links="true" rotate="false" num-pages="numPages"></pagination>
                 </div>
             </div>
         </section>
 
-        <section class="container">
-            <div ng-cloak ng-repeat="bookmark in bookmarks" repeat-complete="initBookmark()" >
+        <section class="container bookmarksDisplay">
+            <!--button class="btn btn-link" ng-click="initBookmark()">see all</button-->
+            <div ng-cloak ng-repeat="bookmark in filtered = ( bookmarks | filter:query) | orderBy: orderProp | startFrom:(currentPage-1)*entryLimit | limitTo: entryLimit">
                 <div  class="row">
                     <div class="col-xs-12">
-                        {{bookmark.id}} - <a href="{{bookmark.url}}" target="_blank"><strong>{{bookmark.title}}</strong></a>
+                        {{bookmark.id}} -
+                        <a href="{{bookmark.url}}" target="_blank">
+                            <strong>{{bookmark.title}}</strong>&nbsp;
+                            <small>{{bookmark.url}}</small>
+                        </a>
                     </div>
                 </div>
-                <div  class="row">
-                    <div class="col-xs-12">
-                        <small>{{bookmark.url}}</small>
-                    </div>
-                </div>
-                <div  class="row">
+                <!--div  class="row">
                     <div class="col-xs-6">
                         <small>index : {{bookmark.index}}</small><br/>
                         <small>parentId : {{bookmark.parentId}}</small><br/>
@@ -93,9 +67,19 @@
                         <small>added : {{bookmark.dateAdded}}</small><br/>
                         <small>group modified : {{bookmark.dateGroupModified}}</small>
                     </div>
+                </div-->
+            </div>
+        </section>
+
+        <section class="container">
+            <div  class="row">
+                <div class="col-xs-12 pagination">
+                    <h4>Pager</h4>
+                    <pager total-items="totalItems" ng-model="currentPage" max-size="maxSize"></pager>
                 </div>
             </div>
         </section>
+
         <img src="../img/spinner.gif" alt="loading" class="dwlLoading"/>
 
         <!-- Scripts -->

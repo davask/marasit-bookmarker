@@ -6,7 +6,7 @@
 
 
 body {         /* Change width and height to own preferences */
-    width: 500px;
+    width: 600px;
     height: 400px;
     overflow-x: hidden;
 }
@@ -29,6 +29,7 @@ body {         /* Change width and height to own preferences */
  */
 
  .dwlLoading {
+     display:none;
      position: absolute;
     top: 0;
     left: 50%;
@@ -36,3 +37,13 @@ body {         /* Change width and height to own preferences */
     margin-left: -25%;
     margin-top: 100px;
  }
+
+.pagination {
+    margin: 0 auto;
+    text-align: center;
+}
+
+.bookmarksDisplay {
+    max-height: 400px;
+    overflow-x: hidden;
+}

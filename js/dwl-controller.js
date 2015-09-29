@@ -1,25 +1,10 @@
-var dwlApp = angular.module('dwlApp', []);
+var dwlApp = angular.module('dwlApp', ['ui.bootstrap']);
 
-dwlApp.controller('dwlPagination', function ($scope, $log) {
-  $scope.totalItems = 64;
-  $scope.currentPage = 4;
+dwlApp.factory("bookMarker", function() {
 
-  $scope.setPage = function (pageNo) {
-    $scope.currentPage = pageNo;
-  };
+    return chrome.extension.getBackgroundPage().dwlBk;
 
-  $scope.pageChanged = function() {
-    $log.log('Page changed to: ' + $scope.currentPage);
-  };
-
-  $scope.maxSize = 5;
-  $scope.bigTotalItems = 175;
-  $scope.bigCurrentPage = 1;
-}).factory("bookMarker", [function() {
-
-    return new chromeBookmarker({init:true});
-
-}]).directive("repeatComplete",function( $rootScope ) {
+}).directive("repeatComplete",function( $rootScope ) {
     // source : http://www.bennadel.com/blog/2592-hooking-into-the-complete-event-of-an-ngrepeat-loop-in-angularjs.htm
     var uuid = 0;
     function compile( tElement, tAttributes ) {
@@ -47,31 +32,61 @@ dwlApp.controller('dwlPagination', function ($scope, $log) {
         priority: 1001,
         restrict: "A"
     });
-}).controller("dwlCtrl", ['$scope', 'bookMarker', function ($scope, bookMarker) {
+}).filter('startFrom', function () {
+    return function (input, start) {
+        if (input) {
+            start = +start;
+            return input.slice(start);
+        }
+        return [];
+    };
+}).controller("dwlCtrl", ['$scope', 'bookMarker', '$log', '$timeout', function ($scope, bookMarker, $log, $timeout) {
 
-    var b = bookMarker.bookmarks;
+    jQuery('.dwlLoading').show();
 
-    // $scope.orderProp = 'title';
     $scope.bookmarks = [{}];
 
-    $scope.initBookmark = function(){
+    $scope.totalItems = bookMarker.bookmarks.unique_count;
+    $scope.currentPage = 1;
+    $scope.maxSize = 10;
+    $scope.bookmarks = bookMarker.allBookmarks;
+    $scope.numPages = Math.ceil($scope.bookmarks.length/$scope.maxSize);
 
-        console.log('initBookmark',b.unique_urls_id);
+    $scope.orderProp = 'title';
+    $scope.entryLimit = "10";
 
-        for (var i = 0; i < b.unique_urls_id.length; i++) {
-
-            $scope.bookmarks.push({id:b.unique_urls_id[i]});
-            // chrome.bookmarks.get(b.unique_urls_id[i], function (result) {
-            //     $scope.$watch(function(){
-            //         $scope.bookmarks.push(result[0]);
-            //     });
-            // });
-            // if (((i+1) % 100) == 0) {
-            //     $scope.$apply();
-            // }
-        }
-
+    $scope.setPage = function (pageNo) {
+        $scope.currentPage = pageNo;
     };
+
+    $scope.pageChanged = function() {
+        $log.log('Page changed to: ' + $scope.currentPage);
+    };
+
+    $scope.hideLoading = function () {
+        jQuery('.dwlLoading').hide();
+    };
+
+    $scope.filter = function() {
+        $timeout(function() {
+            //wait for 'filtered' to be changed
+            /* change pagination with $scope.filtered */
+            $scope.totalItems = $scope.filtered.length;
+            $scope.numPages = Math.ceil($scope.filtered.length/parseInt($scope.entryLimit,10));
+
+            if ($scope.numPages < $scope.maxSize) {
+                $scope.maxSize = $scope.numPages;
+            }
+
+        }, 10);
+    };
+
+    $scope.initBookmark = function () {
+        jQuery('.dwlLoading').hide();
+        console.log('initBookmark');
+    };
+
+    $scope.initBookmark();
 
 }]);
 
@@ -80,4 +95,3 @@ var initApp = function () {
       angular.bootstrap(document, ['dwlApp']);
     });
 };
-console.log('dwl-controller.js loaded');
