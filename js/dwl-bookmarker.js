@@ -35,8 +35,29 @@ if (typeof Array.prototype.regexIndexOf === 'undefined') {
     };
 }
 
-// Author
+Array.prototype.clean = function(deleteValue) {
+  for (var i = 0; i < this.length; i++) {
+    if (this[i] == deleteValue) {
+      this.splice(i, 1);
+      i--;
+    }
+  }
+  return this;
+};
 
+Array.prototype.unique = function() {
+    var a = this.concat();
+    for(var i=0; i<a.length; ++i) {
+        for(var j=i+1; j<a.length; ++j) {
+            if(a[i] === a[j])
+                a.splice(j--, 1);
+        }
+    }
+
+    return a;
+};
+
+// Author
 class storageBookmarker {
 
     constructor () {
@@ -60,6 +81,22 @@ class storageBookmarker {
             duplicate : []
 
         };
+
+        _this.b = {};
+        _this.tagRegexSep = [
+            '\\s',
+            '!',
+            '\\/',
+            '#',
+            '@'
+        ];
+        _this.tagSep = [
+            ' ',
+            '!',
+            '/',
+            '#',
+            '@'
+        ];
 
     }
 
@@ -114,6 +151,35 @@ class storageBookmarker {
         b.duplicate = [];
 
         d.resolve();
+        return d;
+
+    }
+
+    getBookmarkObject (id) {
+
+        var _this = this;
+        _this.b = {};
+        var d = $.Deferred();
+
+        chrome.bookmarks.get(id, function(bookmarks){
+            _this.b = _this.setSpecificBookmarksData (bookmarks[0]);
+            d.resolve();
+        });
+
+        return d;
+
+    }
+
+    setBookmarkObject (id, title) {
+
+        var _this = this;
+        _this.b = {};
+        var d = $.Deferred();
+
+        chrome.bookmarks.update(id, { 'title': title }, function (){
+            d.resolve();
+        });
+
         return d;
 
     }
@@ -181,6 +247,19 @@ class storageBookmarker {
 
     }
 
+    setSpecificBookmarksData (bookmark) {
+
+        var _this = this;
+
+        bookmark.safeUrl = _this.getSafeUrl(bookmark.url);
+        bookmark.favicon = _this.getFavicon(bookmark.safeUrl);
+        bookmark.tags = _this.getBookmarkTags(bookmark.title);
+        bookmark.titleNoTag = _this.getTitleNoTag(bookmark.title);
+
+        return bookmark;
+
+    }
+
     setUniqueUrlsInObject (bookmark) {
 
         var _this = this;
@@ -189,7 +268,10 @@ class storageBookmarker {
         b.unique_bookmarks[b.unique_bookmarks.length] = "url_"+bookmark.id+"_"+bookmark.url;
         b.unique_urls_id[b.unique_urls_id.length] = bookmark.id;
         b.unique_urls[b.unique_urls.length] = bookmark.url;
-        _this.allBookmarks[_this.allBookmarks.length] = bookmark;
+
+        var b = _this.setSpecificBookmarksData(bookmark);
+
+        _this.allBookmarks[_this.allBookmarks.length] = b;
 
     }
 
@@ -202,6 +284,90 @@ class storageBookmarker {
         b.duplicate[b.duplicate.length] = bookmark.id;
 
     }
+
+    getFavicon (url) {
+
+        var _this = this;
+
+        var favicon = '';
+        var faviconArray = [];
+        var regex = '^https?:\\/\\/?[\\da-z\\.-]+\\.[a-z\\.]{2,6}';
+
+        faviconArray = url.match(regex);
+
+        if (faviconArray != null && faviconArray.length > 0) {
+            favicon = faviconArray[0]+'/favicon.ico';
+        }
+
+        return favicon;
+
+    }
+
+    getSafeUrl (url) {
+
+        var _this = this;
+
+        var safeUrl = '';
+        var safeUrlArray = [];
+        var regex = '^https?:\\/\\/?[\\da-z\\.-]+\\.[a-z\\.]{2,6}.*$';
+
+        safeUrlArray = url.match(regex);
+
+        if (safeUrlArray != null && safeUrlArray.length > 0) {
+            safeUrl = url;
+        }
+
+        return safeUrl;
+
+    }
+
+    getBookmarkTags (title){
+
+        var _this = this;
+        var s = _this.tagRegexSep.join('');
+
+        var tags = [];
+        var tagsArray = [];
+        var allTags = '';
+
+        var regexAllTags = '^\\[((?:['+s+']?[^\\]'+s+')]*)*)\\]\\s?';
+        var regexEachTags = '\\s?['+s+']?[^\\]\\s'+s+']*';
+
+        allTags = title.match(regexAllTags);
+        if (allTags != null && allTags.length > 0) {
+            tagsArray = allTags[1].match(new RegExp(regexEachTags,'g')).clean("");
+        }
+
+        if (tagsArray != null && tagsArray.length > 0) {
+            for (var i = 0; i < tagsArray.length; i++) {
+                tags.push(tagsArray[i].trim());
+            }
+        }
+
+        return tags;
+
+    }
+
+    getTitleNoTag (title){
+
+        var _this = this;
+        var s = _this.tagRegexSep.join('');
+
+        var titleNoTag = "";
+        var titleNoTagArray = [];
+
+        var regex = '^(?:\\[(?:(?:['+s+']?[^\\]'+s+')]*)*)\\]\\s?)(.*)$';
+        titleNoTagArray = title.match(regex);
+
+        if (titleNoTagArray != null && titleNoTagArray.length > 0) {
+            titleNoTag = titleNoTagArray[1];
+        }
+
+        return titleNoTag;
+
+    }
+
+
 
 }
 
@@ -228,10 +394,10 @@ class chromeBookmarker extends storageBookmarker {
         if(_this.settings.init == true) {
             _this.retrieve().done(function(){
                 _this.initPagination();
-                console.log('chromeBookmarker instantiate');
+                // console.log('chromeBookmarker instantiate');
             });
         } else {
-            console.log('chromeBookmarker instantiate');
+            // console.log('chromeBookmarker instantiate');
         }
 
     }
@@ -242,7 +408,7 @@ class chromeBookmarker extends storageBookmarker {
         var d = $.Deferred();
 
         _this.getBookmarksFromStorage().done(function(){
-            console.log('bookmarks retrieved');
+            // console.log('bookmarks retrieved');
             d.resolve();
         });
 
@@ -255,7 +421,7 @@ class chromeBookmarker extends storageBookmarker {
         var _this = this;
 
         _this.settings.pages = Math.ceil(_this.bookmarks.unique_count / _this.settings.limit);
-        console.log('pagination instantiate');
+        // console.log('pagination instantiate');
 
     }
 
@@ -266,7 +432,7 @@ class chromeBookmarker extends storageBookmarker {
         var d = $.Deferred();
 
         chrome.bookmarks.search(search, function(bookmarks){
-            console.log(bookmarks);
+            // console.log(bookmarks);
             d.resolve();
         });
 
@@ -280,95 +446,13 @@ class chromeBookmarker extends storageBookmarker {
         var d = $.Deferred();
 
         chrome.bookmarks.get("0", function(bookmarks){
-            console.log(bookmarks[0]);
+            // console.log(bookmarks[0]);
         });
 
         d.resolve();
 
         return d;
     }
-
-    // getAllUniqueBookmarksFromChromeBookmarks () {
-
-    //     var _this = this;
-    //     var b = _this.bookmarks;
-    //     var d = $.Deferred();
-
-    //     _this.allBookmarks = [];
-    //     for (var i = 0; i < b.unique_urls_id.length; i++) {
-
-    //         chrome.bookmarks.get(b.unique_urls_id[i], function (result) {
-    //             _this.allBookmarks.push(result[0]);
-    //             if ( b.unique_urls_id[b.unique_urls_id.length-1] == result[0].id) {
-    //                 d.resolve();
-    //             }
-    //         });
-
-    //     }
-
-    //     return d;
-    // }
-
-    // getPagedBookmarksFromChromeBookmarks (page) {
-
-    //     var _this = this;
-    //     var b = _this.bookmarks;
-    //     var d = $.Deferred();
-
-    //     if (typeof(page) != "undefined" && page >= 0 && page < _this.settings.pages) {
-    //         _this.settings.page = page;
-    //     }
-
-    //     var bookmarkStart = (_this.settings.page) * _this.settings.limit;
-    //     var bookmarkStop = bookmarkStart + (_this.settings.limit - 1);
-
-    //     if (bookmarkStop > b.unique_count.length) {
-    //         bookmarkStop = b.unique_count.length;
-    //     }
-
-    //     _this.allBookmarks = [];
-    //     for (var i = bookmarkStart; i < bookmarkStop; i++) {
-
-    //         chrome.bookmarks.get(b.unique_urls_id[i], function (result) {
-    //             _this.allBookmarks.push(result[0]);
-    //             if ( b.unique_urls_id[bookmarkStop-1] == result[0].id) {
-    //                 d.resolve();
-    //             }
-    //         });
-
-    //     }
-
-    //     return d;
-    // }
-
-    // getFromChromeBookmarks (id){
-
-    //     var _this = this;
-    //     var d = $.Deferred();
-
-    //     chrome.bookmarks.get(id, function (result) {
-    //         _this.bookmark = result[0];
-    //         d.resolve();
-    //     });
-
-    //     return d;
-    // }
-
-    // getChromeBookmarkIdFromUrl (url) {
-
-    //     var _this = this;
-    //     var b = _this.bookmarks;
-
-    //     var regexId = /^url_([0-9]+)_.*$/i;
-    //     var index = b.unique_bookmarks.regexIndexOf(url);
-
-    //     if (index > 0) {
-    //         return b.unique_bookmarks[index].match(regexId)[1];
-    //     } else {
-    //         return null;
-    //     }
-
-    // }
 
     setBookmarksToStorage () {
 
@@ -437,7 +521,7 @@ class chromeBookmarker extends storageBookmarker {
         var _this = this;
         var d = $.Deferred();
 
-        console.log(key + ' unsaved to storage');
+        // console.log(key + ' unsaved to storage');
         // chrome.storage.sync.set({ key : JSON.stringify(value) }, function() {
         //     d.resolve();
         // });
@@ -452,7 +536,7 @@ class chromeBookmarker extends storageBookmarker {
 
         // Save it using the Chrome extension storage API.
         chrome.storage.sync.get(key, function(result) {
-            console.log('getFromChromeStorage', result);
+            // console.log('getFromChromeStorage', result);
             return result[0];
         });
     }
@@ -497,9 +581,7 @@ class dwlBookmarker extends chromeBookmarker {
             text : "load",
         };
 
-        _this.init().done(function(){
-            console.log('dwlBookmarker instantiate');
-        });
+        console.log('dwlBookmarker instantiate');
 
     }
 

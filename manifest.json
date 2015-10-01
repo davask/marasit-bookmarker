@@ -1,19 +1,16 @@
 {
-    // tuto : http://code.tutsplus.com/tutorials/developing-google-chrome-extensions--net-33076
 
-    // Required
     "manifest_version": 2,
     "minimum_chrome_version": "42",
 
-    "version": "1.0",
-    "version_name": "1.0 dev",
+    "version": "1.3",
+    "version_name": "1.3 test",
 
     "name": "davask web limited - chrome bookmarker",
     "short_name": "bookmarker",
 
     "author": "david asquiedge - davaskweblimited.com",
 
-    // Recommended
     "default_locale": "en",
     "current_locale": "en",
 
@@ -30,8 +27,6 @@
        "scripts": [
           "js/jquery-2.0.3.min.js",
           "js/dwl-bookmarker.js",
-   //        "js/angular.min.js",
-   //        "js/dwl-controller.js",
           "js/background.js"
        ]
    },
@@ -39,7 +34,6 @@
        "keyword" : "dwl"
    },
 
-    // extension icon outside omnibox
     "browser_action": {
         "default_icon": {
             "19": "img/icon48.png",
@@ -49,19 +43,8 @@
         "default_popup": "templates/popup.html"
     },
 
-    // extension icon inside omnibox
-    // "page_action": {
-    //     "default_icon": {
-    //         "19": "img/icon48.png",
-    //         "38": "img/icon48.png"
-    //     },
-    //     "default_title": "BookMarker",
-    //     "default_popup": "templates/popup.html"
-    // },
 
    "chrome_url_overrides": {
-   //    "bookmarks": "templates/bookmarks.html",
-       // "newtab": "templates/newtab.html"
    },
 
    "options_page": "templates/options.html",
@@ -73,10 +56,7 @@
     }],
 
 
-    // "content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'",
-    "content_security_policy": "default-src 'self'; style-src 'self' 'unsafe-inline';" ,
-
-    "offline_enabled": true,
+    "content_security_policy": "default-src 'self' 'unsafe-eval'; img-src *; media-src *; style-src 'self' 'unsafe-inline';" ,
 
    "permissions": [
       "activeTab",
@@ -88,20 +68,17 @@
       "notifications",
       "storage",
       "tabs",
-      // "bookmarkManagerPrivate",
-      // {
-      //    "fileSystem": [
-      //        "write"
-      //    ]
-      // },
-      // "metricsPrivate",
-      // "preferencesPrivate",
+      "<all_urls>",
+      "contentSettings",
       "*://*.google.com/*"
    ],
 
-   "optional_permissions": [ "http://*/", "https://*/" ],
+   "optional_permissions": [ "http://*/", "https://*/", "<all_urls>" ],
 
     "web_accessible_resources": [
         "img/icon128.png"
-    ]
+    ],
+
+    "offline_enabled": true
+
 }
