@@ -7,4 +7,9 @@
 // });
 
 var dwlBk = new dwlBookmarker();
-dwlBk.init();
+dwlBk.init().done(function(){
+    chrome.runtime.sendMessage({
+        dwlBk: dwlBk
+    });
+});
+

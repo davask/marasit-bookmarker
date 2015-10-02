@@ -344,7 +344,7 @@ class storageBookmarker {
             }
         }
 
-        return tags;
+        return tags.unique();
 
     }
 

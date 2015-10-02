@@ -30,13 +30,14 @@ body, section {         /* Change width and height to own preferences */
  */
 
  .dwlLoading {
-     display:none;
-     position: absolute;
+    display:none;
+    position: absolute;
     top: 0;
     left: 50%;
     width: 50%;
     margin-left: -25%;
     margin-top: 100px;
+    opacity:0.5;
  }
 
 .pagination {
@@ -59,6 +60,16 @@ body, section {         /* Change width and height to own preferences */
 
 .tagsDisplay li {
     line-height: 1rem;
+}
+
+.tagsDisplay li .btn input {
+    border: none;
+    color: #fff;
+    background-color: transparent;
+}
+
+.tagsDisplay li .btn:hover input {
+    color: #333333;
 }
 
 .tagsDisplay .btn {
