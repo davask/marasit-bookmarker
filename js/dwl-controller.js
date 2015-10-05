@@ -1,19 +1,158 @@
 var dwlApp = angular.module('dwlApp', ['ui.bootstrap']);
 
-dwlApp.factory("bookMarker", ['$q', function($q) {
+dwlApp.value('title', 'davask web limited - chrome bookmarker');
+dwlApp.value('author', 'david asquiedge');
 
-    var getBookmarkObject = function() {
+dwlApp.factory("details", ['title', 'author', function(title, author) {
+    return {
+        'title':title,
+        'author':author
+    };
+}]);
 
-        var deferred = $q.defer();
-        deferred.resolve(chrome.extension.getBackgroundPage().dwlBk);
+dwlApp.service('dwlBkObject', function(){
+    var dwlBk = new dwlBookmarker();
+    dwlBk.init();
+    return dwlBk;
+});
 
-        return deferred.promise;
+dwlApp.directive("repeatComplete",function( $rootScope ) {
+
+    // source : http://www.bennadel.com/blog/2592-hooking-into-the-complete-event-of-an-ngrepeat-loop-in-angularjs.htm
+    var _this = this;
+    var uuid = 0;
+
+    _this.compile = function ( tElement, tAttributes ) {
+
+        var id = ++uuid;
+
+        tElement.attr( "repeat-complete-id", id );
+        tElement.removeAttr( "repeat-complete" );
+
+        var completeExpression = tAttributes.repeatComplete;
+        var parent = tElement.parent();
+        var parentScope = ( parent.scope() || $rootScope );
+
+        var unbindWatcher = parentScope.$watch(function() {
+
+            console.info( "Digest running." );
+
+            var lastItem = parent.children( "*[ repeat-complete-id = '" + id + "' ]:last" );
+            if ( ! lastItem.length ) {
+                return;
+            }
+
+            var itemScope = lastItem.scope();
+
+            if ( itemScope.$last ) {
+                unbindWatcher();
+                itemScope.$eval( completeExpression );
+            }
+
+        });
+
+    }
+
+    return({
+        compile: _this.compile,
+        priority: 1001,
+        restrict: "A"
+    });
+
+});
+
+dwlApp.filter('startFrom', function () {
+
+    return function (input, start) {
+
+        if (input) {
+            start = +start;
+            return input.slice(start);
+        }
+
+        return [];
+
     };
 
-    var getBookmarkTags = function () {
+});
+
+dwlApp.filter('regex', function() {
+
+    return function(input, field, regex) {
+
+        var patt = new RegExp(regex);
+        var out = [];
+
+        for (var i = 0; i < input.length; i++){
+            if(patt.test(input[i][field])) {
+                out.push(input[i]);
+            }
+        }
+
+        return out;
+
+    };
+
+});
+
+dwlApp.filter('list', function() {
+
+    return function(input, ids) {
+
+        var idsArray = [];
+        var out = [];
+
+        if(typeof(ids) != "undefined" && ids != '') {
+            idsArray = ids.split(',');
+
+            for (var i = 0; i < input.length; i++){
+                if(idsArray.indexOf(input[i].id) > -1) {
+                    out.push(input[i]);
+                }
+            }
+
+        } else {
+
+            out = input;
+
+        }
+
+        return out;
+
+    };
+
+});
+
+dwlApp.controller("dwlCtrl", ['$scope', '$q', 'details', 'dwlBkObject', '$log', '$timeout', '$window', function ($scope, $q, details, dwlBkObject, $log, $timeout, $window) {
+
+    var _this = this;
+    _this.title = details.title;
+    _this.author = details.author;
+    _this.dwlBkObject = dwlBkObject;
+
+    jQuery('.dwlLoading').show();
+
+    var defaultMaxSize = 10;
+    var defaultEntryLimit = "10";
+
+    _this.setMaxsize = function () {
+
+        if ($scope.numPages < $scope.maxSize) {
+            $scope.maxSize = $scope.numPages;
+        } else {
+            $scope.maxSize = defaultMaxSize;
+        }
+
+    };
+
+    _this.getBookmarkTags = function () {
 
         var deferred = $q.defer();
-        var b = chrome.extension.getBackgroundPage().dwlBk.allBookmarks;
+        var b = _this.dwlBkObject.allBookmarks;
+        if (b.length == 0) {
+            _this.dwlBkObject = chrome.extension.getBackgroundPage().dwlBk;
+            b = _this.dwlBkObject.allBookmarks;
+        }
 
         var tags = ['dwl-noTag'];
         var inputs = {'dwl-noTag':[]};
@@ -59,95 +198,6 @@ dwlApp.factory("bookMarker", ['$q', function($q) {
     };
 
 
-    return {
-        getBookmarkObject: getBookmarkObject,
-        getBookmarkTags: getBookmarkTags
-    };
-
-}]).directive("repeatComplete",function( $rootScope ) {
-    // source : http://www.bennadel.com/blog/2592-hooking-into-the-complete-event-of-an-ngrepeat-loop-in-angularjs.htm
-    var uuid = 0;
-    function compile( tElement, tAttributes ) {
-        var id = ++uuid;
-        tElement.attr( "repeat-complete-id", id );
-        tElement.removeAttr( "repeat-complete" );
-        var completeExpression = tAttributes.repeatComplete;
-        var parent = tElement.parent();
-        var parentScope = ( parent.scope() || $rootScope );
-        var unbindWatcher = parentScope.$watch(function() {
-            console.info( "Digest running." );
-            var lastItem = parent.children( "*[ repeat-complete-id = '" + id + "' ]:last" );
-            if ( ! lastItem.length ) {
-                return;
-            }
-            var itemScope = lastItem.scope();
-            if ( itemScope.$last ) {
-                unbindWatcher();
-                itemScope.$eval( completeExpression );
-            }
-        });
-    }
-    return({
-        compile: compile,
-        priority: 1001,
-        restrict: "A"
-    });
-}).filter('startFrom', function () {
-    return function (input, start) {
-        if (input) {
-            start = +start;
-            return input.slice(start);
-        }
-        return [];
-    };
-}).filter('regex', function() {
-    return function(input, field, regex) {
-        var patt = new RegExp(regex);
-        var out = [];
-        for (var i = 0; i < input.length; i++){
-            if(patt.test(input[i][field])) {
-                out.push(input[i]);
-            }
-        }
-        return out;
-    };
-}).filter('list', function() {
-    return function(input, ids) {
-
-        var idsArray = [];
-        var out = [];
-
-        if(typeof(ids) != "undefined" && ids != '') {
-            idsArray = ids.split(',');
-
-            for (var i = 0; i < input.length; i++){
-                if(idsArray.indexOf(input[i].id) > -1) {
-                    out.push(input[i]);
-                }
-            }
-
-        } else {
-            out = input;
-        }
-
-        return out;
-
-    };
-}).controller("dwlCtrl", ['$scope', 'bookMarker', '$log', '$timeout', '$window', function ($scope, bookMarker, $log, $timeout, $window) {
-
-    jQuery('.dwlLoading').show();
-
-    var defaultMaxSize = 10;
-    var defaultEntryLimit = "10";
-
-    var setMaxsize = function () {
-        if ($scope.numPages < $scope.maxSize) {
-            $scope.maxSize = $scope.numPages;
-        } else {
-            $scope.maxSize = defaultMaxSize;
-        }
-    };
-
     $scope.maxSize = defaultMaxSize;
     $scope.entryLimit = defaultEntryLimit;
 
@@ -172,15 +222,21 @@ dwlApp.factory("bookMarker", ['$q', function($q) {
     };
 
     $scope.filter = function() {
+
         $timeout(function() {
+
             $scope.totalItems = $scope.filtered.length;
             $scope.numPages = Math.ceil($scope.filtered.length/parseInt($scope.entryLimit,10));
-            setMaxsize();
+            _this.setMaxsize();
+
         }, 10);
+
     };
 
     $scope.$watchGroup(['currentPage', 'entryLimit', 'filterQuery', 'filterType', 'ids'], function(newPage){
+
         $timeout(function() {
+
             jQuery('.glyphicon[data-lazy]').each(function(){
                 var _this = this;
                 if (jQuery(_this).attr('data-lazy') != '') {
@@ -189,8 +245,11 @@ dwlApp.factory("bookMarker", ['$q', function($q) {
                     });
                 }
             });
+
             $window.jQuery('.checkbox input[type="checkbox"]:checked').removeAttr('checked');
+
         }, 0);
+
     });
 
     $scope.getBookmarksByTag = function(tag){
@@ -262,31 +321,27 @@ dwlApp.factory("bookMarker", ['$q', function($q) {
 
             if (value != dataValue) {
 
-                bookMarker.getBookmarkObject().then(function(dwlBk) {
+                if (_this.dwlBkObject.tagSep.indexOf(value.charAt(0)) < 0) {
+                    value = ' '+value;
+                }
 
-                    if (dwlBk.tagSep.indexOf(value.charAt(0)) < 0) {
-                        value = ' '+value;
-                    }
+                for (var i = 0; i < idsWithTag.length; i++) {
 
-                    for (var i = 0; i < idsWithTag.length; i++) {
+                    _this.dwlBkObject.getBookmarkObject(idsWithTag[i]).done(function(){
 
-                        dwlBk.getBookmarkObject(idsWithTag[i]).done(function(){
+                        var valueIndex = _this.dwlBkObject.b.tags.indexOf(dataValue);
+                        _this.dwlBkObject.b.tags[valueIndex] = value;
 
-                            var valueIndex = dwlBk.b.tags.indexOf(dataValue);
-                            dwlBk.b.tags[valueIndex] = value;
+                        _this.dwlBkObject.b.tags = _this.dwlBkObject.getBookmarkTags('['+_this.dwlBkObject.b.tags.join('')+'] '+_this.dwlBkObject.b.titleNoTag);
 
-                            dwlBk.b.tags = $scope.dwlBk.getBookmarkTags('['+dwlBk.b.tags.join('')+'] '+dwlBk.b.titleNoTag);
-
-                            dwlBk.setBookmarkObject(dwlBk.b.id, '['+dwlBk.b.tags.join('')+'] '+dwlBk.b.titleNoTag).done(function(){
-                                jQuery('.dwlLoading').show();
-                                chrome.extension.getBackgroundPage().location.reload();
-                            });
-
+                        _this.dwlBkObject.setBookmarkObject(_this.dwlBkObject.b.id, '['+_this.dwlBkObject.b.tags.join('')+'] '+_this.dwlBkObject.b.titleNoTag).done(function(){
+                            jQuery('.dwlLoading').show();
+                            chrome.extension.getBackgroundPage().location.reload();
                         });
 
-                    }
+                    });
 
-                });
+                }
 
             }
 
@@ -305,45 +360,42 @@ dwlApp.factory("bookMarker", ['$q', function($q) {
             var value = jQuery(event.target).val();
             var indexCreated = false;
 
-            bookMarker.getBookmarkObject().then(function(dwlBk) {
+            _this.dwlBkObject.getBookmarkObject($scope.idTags).done(function() {
 
-                dwlBk.getBookmarkObject($scope.idTags).done(function(){
+                if (typeof(_this.dwlBkObject.b.tags[tagIndex]) == 'undefined') {
+                    _this.dwlBkObject.b.tags[_this.dwlBkObject.b.tags.length] = '';
+                    indexCreated = true;
+                }
 
-                    if (typeof(dwlBk.b.tags[tagIndex]) == 'undefined') {
-                        dwlBk.b.tags[dwlBk.b.tags.length] = '';
-                        indexCreated = true;
-                    }
+                if (value != _this.dwlBkObject.b.tags[tagIndex]) {
 
-                    if (value != dwlBk.b.tags[tagIndex]) {
+                    if(value == '') {
 
-                        if(value == '') {
+                        _this.dwlBkObject.b.tags.splice(tagIndex, 1);
 
-                            dwlBk.b.tags.splice(tagIndex, 1);
+                    } else {
 
-                        } else {
-
-                            if (dwlBk.tagSep.indexOf(value.charAt(0)) < 0) {
-                                value = ' '+value;
-                            }
-
-                            dwlBk.b.tags[tagIndex] = value;
-
+                        if (_this.dwlBkObject.tagSep.indexOf(value.charAt(0)) < 0) {
+                            value = ' '+value;
                         }
 
-                        dwlBk.b.tags = $scope.dwlBk.getBookmarkTags('['+dwlBk.b.tags.join('')+'] '+dwlBk.b.titleNoTag);
-
-                        dwlBk.setBookmarkObject($scope.idTags, '['+dwlBk.b.tags.join('')+'] '+dwlBk.b.titleNoTag).done(function(){
-                            jQuery('.dwlLoading').show();
-                            chrome.extension.getBackgroundPage().location.reload();
-                        });
-
-                    } else if (indexCreated) {
-
-                        dwlBk.b.tags.splice(tagIndex, 1);
+                        _this.dwlBkObject.b.tags[tagIndex] = value;
 
                     }
 
-                });
+                    _this.dwlBkObject.b.tags = _this.dwlBkObject.getBookmarkTags('['+_this.dwlBkObject.b.tags.join('')+'] '+_this.dwlBkObject.b.titleNoTag);
+
+                    _this.dwlBkObject.setBookmarkObject($scope.idTags, '['+_this.dwlBkObject.b.tags.join('')+'] '+_this.dwlBkObject.b.titleNoTag).done(function(){
+                        jQuery('.dwlLoading').show();
+                        chrome.extension.getBackgroundPage().location.reload();
+                    });
+
+                } else if (indexCreated) {
+
+                    // _this.dwlBkObject.b.tags.splice(tagIndex, 1);
+                    _this.dwlBkObject.b = {}
+
+                }
 
             });
 
@@ -355,7 +407,7 @@ dwlApp.factory("bookMarker", ['$q', function($q) {
         $scope.currentPage = 1;
         $scope.totalItems = $scope.bookmarks.length;
         $scope.numPages = Math.ceil($scope.totalItems/parseInt($scope.entryLimit,10));
-        setMaxsize();
+        _this.setMaxsize();
         jQuery('.dwlLoading').hide();
     };
 
@@ -363,37 +415,31 @@ dwlApp.factory("bookMarker", ['$q', function($q) {
         function(request, sender, sendResponse) {
             if (typeof(request.dwlBk) == "object") {
 
-                bookMarker.getBookmarkObject().then(function(dwlBk) {
-                    $scope.dwlBk = dwlBk;
-                    $scope.bookmarks = $scope.dwlBk.allBookmarks;
-                    bookMarker.getBookmarkTags().then(function(out) {
-                        $scope.bookmarksTags = out;
-                        $scope.initBookmark();
+                _this.getBookmarkTags().then(function(out) {
+                    $scope.bookmarks = _this.dwlBkObject.allBookmarks;
+                    $scope.bookmarksTags = out;
+                    $scope.initBookmark();
 
-                        if($scope.idTags != '') {
-                            var bid = jQuery('.tags', '#'+$scope.idTags).attr('id').hide();
-                            // var bid = jQuery('.tags', '#'+$scope.idTags).attr('id').replace('bi-','');
-                            // jQuery('li input', '#'+$scope.idTags+' #bi-'+bid).each(function(index){
-                            //     jQuery(this).val($scope.bookmarks[bid].tags[index]);
-                            // });
-                            // jQuery('.newTag', '#'+$scope.idTags).val('');
-                            $scope.idTags = '';
-                        }
+                    if($scope.idTags != '') {
+                        var bid = jQuery('.tags', '#'+$scope.idTags).attr('id');
+                        var bid = jQuery('.tags', '#'+$scope.idTags).attr('id').replace('bi-','');
+                        jQuery('li input', '#'+$scope.idTags+' #bi-'+bid).each(function(index){
+                            jQuery(this).val($scope.bookmarks[bid].tags[index]);
+                        });
+                        jQuery('.newTag', '#'+$scope.idTags).val('');
+                        $scope.idTags = '';
+                    }
 
-                    });
                 });
 
             }
     });
 
-    bookMarker.getBookmarkObject().then(function(dwlBk) {
-        $scope.dwlBk = dwlBk;
-        $scope.bookmarks = $scope.dwlBk.allBookmarks;
-        bookMarker.getBookmarkTags().then(function(out) {
-            $scope.bookmarksTags = out;
-            $scope.initBookmark();
-            document.getElementById("filterQuery").focus();
-        });
+    _this.getBookmarkTags().then(function(out) {
+        $scope.bookmarks = _this.dwlBkObject.allBookmarks;
+        $scope.bookmarksTags = out;
+        $scope.initBookmark();
+        document.getElementById("filterQuery").focus();
     });
 
 }]);

@@ -83,6 +83,7 @@ class storageBookmarker {
         };
 
         _this.b = {};
+        _this.t = [];
         _this.tagRegexSep = [
             '\\s',
             '!',
@@ -321,6 +322,59 @@ class storageBookmarker {
 
     }
 
+    getBookmarksTags () {
+
+        var _this = this;
+        var d = $.Deferred();
+        var b = _this.allBookmarks;
+
+        var tags = ['dwl-noTag'];
+        var inputs = {'dwl-noTag':[]};
+
+        console.log(Array.isArray(b), b.length, b);
+
+        for (var i = 0; i < b.length; i++) {
+
+            if (b[i].tags.length > 0) {
+
+                for (var y = 0; y < b[i].tags.length; y++) {
+
+                    b[i].tags[y] = b[i].tags[y].toLowerCase();
+
+                    if (typeof(inputs[b[i].tags[y]]) == "undefined") {
+                        inputs[b[i].tags[y]] = [];
+                    }
+                    inputs[b[i].tags[y]].push(b[i].id);
+
+                }
+
+                tags = tags.concat(b[i].tags);
+
+            } else {
+
+                inputs['dwl-noTag'].push(b[i].id);
+
+            }
+
+        }
+
+        tags = tags.unique();
+
+        for (var i = 0; i < tags.length; i++) {
+            _this.t.push({
+                'index' : i,
+                'tag' : tags[i],
+                'data' : tags[i],
+                'ids' :inputs[tags[i]]
+            });
+            if (i == tags.length-1) {
+                d.resolve();
+            }
+        }
+
+        return d;
+    }
+
     getBookmarkTags (title){
 
         var _this = this;
@@ -328,7 +382,7 @@ class storageBookmarker {
 
         var tags = [];
         var tagsArray = [];
-        var allTags = '';
+        var allTags = [];
 
         var regexAllTags = '^\\[((?:['+s+']?[^\\]'+s+')]*)*)\\]\\s?';
         var regexEachTags = '\\s?['+s+']?[^\\]\\s'+s+']*';

@@ -1,12 +1,12 @@
 <!doctype html>
-<html xmlns:ng="http://angularjs.org">
+<html xmlns:ng="http://angularjs.org" ng-controller="dwlCtrl as dwl">
     <head>
 
         <meta charset="utf-8">
-        <meta name="description" content="davask web limited bookmarker">
-        <meta name="author" content="David Asquiedge">
+        <meta name="description" content="{{dwl.title}}">
+        <meta name="author" content="{{dwl.author}}">
 
-        <title>davask web limited bookmarker</title>
+        <title>{{dwl.title}}</title>
 
         <!-- Cascading Style Sheets -->
         <link href="../css/bootstrap.min.css" rel="stylesheet" media="screen">
@@ -14,7 +14,7 @@
 
     </head>
 
-    <body ng-controller="dwlCtrl">
+    <body>
 
         <section>
 
@@ -84,11 +84,11 @@
                             <div ng-cloak ng-repeat="bookmark in filtered = ( bookmarks | regex:filterType:query | list:ids) | startFrom:(currentPage-1)*entryLimit | limitTo: entryLimit | orderBy: orderProp as bookmarksFiltered track by $index" class="col-xs-12 checkbox bd-{{bookmark.dateAdded}}" id="{{bookmark.id}}">
                                 <label>
                                     <input type="checkbox" val="{{bookmark.url}}">&nbsp;
-                                    <a href="{{bookmark.url}}" target="_blank">
+                                    <a ng-href="{{bookmark.url}}" target="_blank">
                                         <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>
                                     </a>
                                     <span class="glyphicon glyphicon-dwlfavicon" aria-hidden="true" data-lazy="{{bookmark.favicon}}"></span>
-                                    <a class="btn btn-link btn-xs" role="button" data-toggle="collapse" href="#collapse{{bookmark.id}}" aria-expanded="false" aria-controls="collapse{{bookmark.id}}">
+                                    <a class="btn btn-link btn-xs" role="button" data-toggle="collapse" ng-href="#collapse{{bookmark.id}}" aria-expanded="false" aria-controls="collapse{{bookmark.id}}">
                                         <span class="caret"></span>&nbsp;
                                         <span ng-if="bookmark.titleNoTag">{{bookmark.titleNoTag}}</span>
                                         <span ng-if="!bookmark.titleNoTag">{{bookmark.safeUrl}}</span>
@@ -98,7 +98,7 @@
                                 <div class="collapse" id="collapse{{bookmark.id}}">
                                     <div class="well">
                                         <strong>{{bookmark.titleNoTag}}</strong>
-                                        <a href="{{bookmark.url}}" target="_blank">
+                                        <a ng-href="{{bookmark.url}}" target="_blank">
                                             {{bookmark.safeUrl}}
                                         </a>
                                         <p>description</p>
