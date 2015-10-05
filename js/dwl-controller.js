@@ -1,22 +1,48 @@
-var dwlApp = angular.module('dwlApp', ['ui.bootstrap']);
+var dwlApp = angular.module('dwlApp', ['ui.bootstrap','ngRoute']);
+
+dwlApp.run(function($rootScope) {
+   $rootScope.$on('$routeChangeError', function(event, current, previous, rejection) {
+      console.log(event, current, previous, rejection)
+   })
+});
+
+dwlApp.config(function config($routeProvider) {
+    $routeProvider
+        .when('/', {
+            templateUrl: 'views/app.html',
+            controller: 'dwlCtrl',
+            controllerAs: 'dwl'
+        })
+});
 
 dwlApp.value('title', 'davask web limited - chrome bookmarker');
 dwlApp.value('author', 'david asquiedge');
 
-dwlApp.factory("details", ['title', 'author', function(title, author) {
+dwlApp.factory("details", ['title', 'author', function details(title, author) {
     return {
         'title':title,
         'author':author
     };
 }]);
 
-dwlApp.service('dwlBkObject', function(){
-    var dwlBk = new dwlBookmarker();
-    dwlBk.init();
-    return dwlBk;
+dwlApp.factory('dwlBkObject', function dwlBkObject($q){
+
+    return function(){
+
+        var deferred = $q.defer();
+        var dwlBk = new dwlBookmarker();
+
+        dwlBk.init().done(function(){
+            deferred.resolve(dwlBk);
+        });
+
+        return deferred.promise;
+
+    }
+
 });
 
-dwlApp.directive("repeatComplete",function( $rootScope ) {
+dwlApp.directive("repeatComplete",function repeatComplete( $rootScope ) {
 
     // source : http://www.bennadel.com/blog/2592-hooking-into-the-complete-event-of-an-ngrepeat-loop-in-angularjs.htm
     var _this = this;
@@ -61,7 +87,7 @@ dwlApp.directive("repeatComplete",function( $rootScope ) {
 
 });
 
-dwlApp.filter('startFrom', function () {
+dwlApp.filter('startFrom', function startFrom() {
 
     return function (input, start) {
 
@@ -76,26 +102,30 @@ dwlApp.filter('startFrom', function () {
 
 });
 
-dwlApp.filter('regex', function() {
+dwlApp.filter('regex', function regex() {
 
     return function(input, field, regex) {
 
-        var patt = new RegExp(regex);
-        var out = [];
+        if (typeof(input) != "undefined" ) {
 
-        for (var i = 0; i < input.length; i++){
-            if(patt.test(input[i][field])) {
-                out.push(input[i]);
+            var patt = new RegExp(regex);
+            var out = [];
+
+            for (var i = 0; i < input.length; i++){
+                if(patt.test(input[i][field])) {
+                    out.push(input[i]);
+                }
             }
-        }
 
-        return out;
+            return out;
+
+        }
 
     };
 
 });
 
-dwlApp.filter('list', function() {
+dwlApp.filter('list', function list() {
 
     return function(input, ids) {
 
@@ -123,13 +153,13 @@ dwlApp.filter('list', function() {
 
 });
 
-dwlApp.controller("dwlCtrl", ['$scope', '$q', 'details', 'dwlBkObject', '$log', '$timeout', '$window', function ($scope, $q, details, dwlBkObject, $log, $timeout, $window) {
+dwlApp.controller("dwlCtrl", ['$scope', '$q', 'details', 'dwlBkObject', '$log', '$timeout', '$window', function dwlCtrl($scope, $q, details, dwlBkObject, $log, $timeout, $window) {
 
     var _this = this;
+
     _this.title = details.title;
     _this.author = details.author;
-    _this.dwlBkObject = dwlBkObject;
-
+    _this.dwlBk = {};
     jQuery('.dwlLoading').show();
 
     var defaultMaxSize = 10;
@@ -148,10 +178,10 @@ dwlApp.controller("dwlCtrl", ['$scope', '$q', 'details', 'dwlBkObject', '$log', 
     _this.getBookmarkTags = function () {
 
         var deferred = $q.defer();
-        var b = _this.dwlBkObject.allBookmarks;
+        var b = _this.dwlBk.allBookmarks;
         if (b.length == 0) {
-            _this.dwlBkObject = chrome.extension.getBackgroundPage().dwlBk;
-            b = _this.dwlBkObject.allBookmarks;
+            _this.dwlBk = chrome.extension.getBackgroundPage().dwlBk;
+            b = _this.dwlBk.allBookmarks;
         }
 
         var tags = ['dwl-noTag'];
@@ -321,20 +351,20 @@ dwlApp.controller("dwlCtrl", ['$scope', '$q', 'details', 'dwlBkObject', '$log', 
 
             if (value != dataValue) {
 
-                if (_this.dwlBkObject.tagSep.indexOf(value.charAt(0)) < 0) {
+                if (_this.dwlBk.tagSep.indexOf(value.charAt(0)) < 0) {
                     value = ' '+value;
                 }
 
                 for (var i = 0; i < idsWithTag.length; i++) {
 
-                    _this.dwlBkObject.getBookmarkObject(idsWithTag[i]).done(function(){
+                    _this.dwlBk.getBookmarkObject(idsWithTag[i]).done(function(){
 
-                        var valueIndex = _this.dwlBkObject.b.tags.indexOf(dataValue);
-                        _this.dwlBkObject.b.tags[valueIndex] = value;
+                        var valueIndex = _this.dwlBk.b.tags.indexOf(dataValue);
+                        _this.dwlBk.b.tags[valueIndex] = value;
 
-                        _this.dwlBkObject.b.tags = _this.dwlBkObject.getBookmarkTags('['+_this.dwlBkObject.b.tags.join('')+'] '+_this.dwlBkObject.b.titleNoTag);
+                        _this.dwlBk.b.tags = _this.dwlBk.getBookmarkTags('['+_this.dwlBk.b.tags.join('')+'] '+_this.dwlBk.b.titleNoTag);
 
-                        _this.dwlBkObject.setBookmarkObject(_this.dwlBkObject.b.id, '['+_this.dwlBkObject.b.tags.join('')+'] '+_this.dwlBkObject.b.titleNoTag).done(function(){
+                        _this.dwlBk.setBookmarkObject(_this.dwlBk.b.id, '['+_this.dwlBk.b.tags.join('')+'] '+_this.dwlBk.b.titleNoTag).done(function(){
                             jQuery('.dwlLoading').show();
                             chrome.extension.getBackgroundPage().location.reload();
                         });
@@ -347,6 +377,7 @@ dwlApp.controller("dwlCtrl", ['$scope', '$q', 'details', 'dwlBkObject', '$log', 
 
         }
     }
+
     $scope.editable = function(event) {
 
         if (jQuery(event.target).attr('readonly')) {
@@ -360,40 +391,53 @@ dwlApp.controller("dwlCtrl", ['$scope', '$q', 'details', 'dwlBkObject', '$log', 
             var value = jQuery(event.target).val();
             var indexCreated = false;
 
-            _this.dwlBkObject.getBookmarkObject($scope.idTags).done(function() {
+            _this.dwlBk.getBookmarkObject($scope.idTags).done(function() {
 
-                if (typeof(_this.dwlBkObject.b.tags[tagIndex]) == 'undefined') {
-                    _this.dwlBkObject.b.tags[_this.dwlBkObject.b.tags.length] = '';
+                if (typeof(_this.dwlBk.b.tags[tagIndex]) == 'undefined') {
+                    _this.dwlBk.b.tags[_this.dwlBk.b.tags.length] = '';
                     indexCreated = true;
                 }
 
-                if (value != _this.dwlBkObject.b.tags[tagIndex]) {
+                if (value != _this.dwlBk.b.tags[tagIndex]) {
 
                     if(value == '') {
 
-                        _this.dwlBkObject.b.tags.splice(tagIndex, 1);
+                        _this.dwlBk.b.tags.splice(tagIndex, 1);
 
                     } else {
 
-                        if (_this.dwlBkObject.tagSep.indexOf(value.charAt(0)) < 0) {
+                        if (_this.dwlBk.tagSep.indexOf(value.charAt(0)) < 0) {
                             value = ' '+value;
                         }
 
-                        _this.dwlBkObject.b.tags[tagIndex] = value;
+                        _this.dwlBk.b.tags[tagIndex] = value;
 
                     }
 
-                    _this.dwlBkObject.b.tags = _this.dwlBkObject.getBookmarkTags('['+_this.dwlBkObject.b.tags.join('')+'] '+_this.dwlBkObject.b.titleNoTag);
+                    _this.dwlBk.b.tags = _this.dwlBk.getBookmarkTags('['+_this.dwlBk.b.tags.join('')+'] '+_this.dwlBk.b.titleNoTag);
 
-                    _this.dwlBkObject.setBookmarkObject($scope.idTags, '['+_this.dwlBkObject.b.tags.join('')+'] '+_this.dwlBkObject.b.titleNoTag).done(function(){
+                    _this.dwlBk.setBookmarkObject($scope.idTags, '['+_this.dwlBk.b.tags.join('')+'] '+_this.dwlBk.b.titleNoTag).done(function(){
                         jQuery('.dwlLoading').show();
-                        chrome.extension.getBackgroundPage().location.reload();
+
+                        $scope.resetBookmarker(function(){
+                            if($scope.idTags != '') {
+                                var bid = jQuery('.tags', '#'+$scope.idTags).attr('id');
+                                var bid = jQuery('.tags', '#'+$scope.idTags).attr('id').replace('bi-','');
+                                jQuery('li input', '#'+$scope.idTags+' #bi-'+bid).each(function(index){
+                                    jQuery(this).val($scope.bookmarks[bid].tags[index]);
+                                });
+                                jQuery('.newTag', '#'+$scope.idTags).val('');
+                                $scope.idTags = '';
+                            }
+                        });
+                        // chrome.extension.getBackgroundPage().location.reload();
+
                     });
 
                 } else if (indexCreated) {
 
-                    // _this.dwlBkObject.b.tags.splice(tagIndex, 1);
-                    _this.dwlBkObject.b = {}
+                    // _this.dwlBk.b.tags.splice(tagIndex, 1);
+                    _this.dwlBk.b = {}
 
                 }
 
@@ -411,41 +455,30 @@ dwlApp.controller("dwlCtrl", ['$scope', '$q', 'details', 'dwlBkObject', '$log', 
         jQuery('.dwlLoading').hide();
     };
 
-    chrome.runtime.onMessage.addListener(
-        function(request, sender, sendResponse) {
-            if (typeof(request.dwlBk) == "object") {
+    $scope.resetBookmarker = function(callBack) {
 
-                _this.getBookmarkTags().then(function(out) {
-                    $scope.bookmarks = _this.dwlBkObject.allBookmarks;
-                    $scope.bookmarksTags = out;
-                    $scope.initBookmark();
+        dwlBkObject().then(function(dwlBk){
+            _this.dwlBk = dwlBk;
+            _this.getBookmarkTags().then(function(out) {
 
-                    if($scope.idTags != '') {
-                        var bid = jQuery('.tags', '#'+$scope.idTags).attr('id');
-                        var bid = jQuery('.tags', '#'+$scope.idTags).attr('id').replace('bi-','');
-                        jQuery('li input', '#'+$scope.idTags+' #bi-'+bid).each(function(index){
-                            jQuery(this).val($scope.bookmarks[bid].tags[index]);
-                        });
-                        jQuery('.newTag', '#'+$scope.idTags).val('');
-                        $scope.idTags = '';
-                    }
+                $scope.bookmarks = _this.dwlBk.allBookmarks;
+                $scope.bookmarksTags = out;
+                $scope.initBookmark();
 
-                });
+                if(typeof(callBack) != "undefined") {
+                    callBack();
+                }
 
-            }
-    });
+                console.log('bookamerker reset');
 
-    _this.getBookmarkTags().then(function(out) {
-        $scope.bookmarks = _this.dwlBkObject.allBookmarks;
-        $scope.bookmarksTags = out;
-        $scope.initBookmark();
+            });
+        });
+
+    };
+
+    $scope.resetBookmarker(function(){
         document.getElementById("filterQuery").focus();
     });
 
-}]);
 
-var initApp = function () {
-    angular.element(document).ready(function() {
-      angular.bootstrap(document, ['dwlApp']);
-    });
-};
+}]);
