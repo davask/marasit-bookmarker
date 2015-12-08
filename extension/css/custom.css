@@ -1,0 +1,125 @@
+/**
+ * Chrome Extension Twitter Bootstrap 3 Template
+ * Custom CSS
+ *
+ */
+
+
+body, section {         /* Change width and height to own preferences */
+    width: 800px;
+    height: 600px;
+    overflow: hidden;
+    font-size: 1.2rem;
+}
+
+
+/* Basic style tweaks */
+/*section { padding: 5px;}*/
+/*.navbar { margin-bottom: 2px; }*/
+
+/* Scroll Bar */
+/*
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); }
+::-webkit-scrollbar-thumb, ::-webkit-scrollbar-thumb:window-inactive  { background: red; }
+*/
+/**
+ * Chrome Extension dwl bookmarker
+ * Author CSS
+ *
+ */
+
+ .dwlLoading {
+    display:none;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 50%;
+    margin-left: -25%;
+    margin-top: 100px;
+    opacity:0.5;
+ }
+
+.pagination {
+    margin: 0 auto;
+    text-align: center;
+}
+
+.bookmarksDisplay {
+    /*height: 430px;*/
+    height: 284px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    border-bottom:1px solid #eeeeee;
+}
+
+.tagsDisplay ul {
+    /*height: 534px;*/
+    height: 110px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+.tagsDisplay:first-child ul {
+    height: 158px;
+}
+
+.tagsDisplay li {
+    line-height: 1rem;
+}
+
+.tagsDisplay li .btn input {
+    border: none;
+    color: #fff;
+    background-color: transparent;
+}
+
+.tagsDisplay li .btn:hover input {
+    color: #333333;
+}
+
+.tagsDisplay .btn {
+    font-size: 1rem;
+    line-height: 1rem;
+    padding: 0 4px;
+    margin-bottom: 1px;
+}
+
+.tagsDisplay .btn:hover {
+    background-color: #eee;
+    border: 1px solid #000;
+    color: #999;
+    text-decoration: none;
+}
+
+pre {
+    padding: 0px 4px;
+    text-align: center;
+}
+
+.glyphicon {
+    width: 16px;
+    height: 16px;
+    background-size: contain;
+}
+
+.glyphicon-dwlfavicon {
+    background-image:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAACXBIWXMAAABIAAAASABGyWs+AAAAe1BMVEUAAAB5eXmFhYWPj4+cnJyrq6usrKywsLCysrK0tLS3t7e5ubm7u7u8vLy9vb2+vr6/v7/ExMTX19fg39/g4ODy8PDz8fHz8vHz8vL08vL18/P19PT29PT29fX29vb39vX39vb49/b5+Pf6+fj6+vn7+/r8+/v8/Pv///9dXxrvAAAAAXRSTlMAQObYZgAAAAFiS0dEKL2wtbIAAABtSURBVBjThc7BCoJQFITh79q1QIla9f7v1y6QEPGcFpZZLZrlz8zPFGfPxA0ql5Ilue77AVWmlOg6A1W8AAfDpjGOFHbafgHHuW2naes4cf+QIqlybqIJmhVkZCSxgliOlXfj2/ED/kyKYpP0APiUTB6XxQGDAAAAAElFTkSuQmCC');
+}
+
+.bookmarksDisplay p {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.checkbox input[type="text"] {
+    border: 1px solid #eeeeee;
+    border-radius: 5px;
+    padding: 0 3px;
+    text-align: center;
+}
+
+.bookmarksDisplay .well {
+    padding: 2px 5px;
+    margin: 0;
+}

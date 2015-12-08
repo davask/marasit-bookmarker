@@ -1,0 +1,52 @@
+<!doctype html>
+<html xmlns:ng="http://angularjs.org" ng-app="dwlApp">
+    <head>
+
+        <meta charset="utf-8">
+        <meta name="description" content="{{dwl.title}}">
+        <meta name="author" content="{{dwl.author}}">
+
+        <title>{{dwl.title}}</title>
+
+        <!-- Cascading Style Sheets -->
+        <link href="../vendor/bootstrap-3.3.5/css/bootstrap-3.3.5.min.css" rel="stylesheet" media="screen">
+        <link href="../css/custom.css" rel="stylesheet" media="screen">
+
+        <!-- Scripts -->
+        <script src="../vendor/zone.js/dist/zone.min.js"></script>
+        <script src="../vendor/zone.js/dist/long-stack-trace-zone.min.js"></script>
+
+    </head>
+
+    <body>
+
+        <section ng-view></section>
+
+        <!--section class="container">
+            <div  class="row">
+                <div class="col-xs-12">
+                    <h4>TODOS</h4>
+                    <ul>
+                        <li>Add checkbox for multi open links</li>
+                        <li>refresh all bookmarks objects</li>
+                        <li>filter on regexp where each work is /*word*/</li>
+                    </ul>
+                </div>
+            </div>
+        </section-->
+
+        <img src="../img/spinner.gif" alt="loading" class="dwlLoading"/>
+
+        <!-- Scripts -->
+        <script src="../vendor/jquery-2.0.3/js/jquery-2.0.3.min.js"></script>
+        <script src="../vendor/bootstrap-3.3.5/js/bootstrap-3.3.5.min.js"></script>
+        <script src="../vendor/angular-1.4.7/js/angular.min.js"></script>
+        <script src="../vendor/angular-1.4.7/js/angular-route.min.js"></script>
+        <script src="../vendor/ui-bootstrap-0.13.4/js/ui-bootstrap-tpls-0.13.4.min.js"></script>
+        <script src="../js/dwl-bookmarker.js"></script>
+        <script src="../js/dwl-zone.js"></script>
+        <script src="../js/dwl-controller.js"></script>
+        <script src="../js/popup.js"></script>
+
+    </body>
+</html>
