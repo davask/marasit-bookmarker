@@ -26,7 +26,11 @@
        "persistent": true,
        "scripts": [
           "vendor/jquery-2.0.3/js/jquery-2.0.3.min.js",
+          "js/dwl-helper.js",
+          "js/dwl-bookmarker-storage.js",
+          "js/dwl-bookmarker-chrome.js",
           "js/dwl-bookmarker.js",
+          "js/dwl-omnibox.js",
           "js/background.js"
        ]
    },

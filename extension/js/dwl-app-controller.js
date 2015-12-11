@@ -1,186 +1,78 @@
-var dwlApp = angular.module('dwlApp', ['ui.bootstrap','ngRoute']);
+dwlApp.controller("appCtrl", [
+      'TITLE','AUTHOR',
+      function (
+          TITLE,AUTHOR
+) {
 
-dwlApp.run(function($rootScope) {
-   $rootScope.$on('$routeChangeError', function(event, current, previous, rejection) {
-      console.log(event, current, previous, rejection)
-   })
-});
+    var _this = this;
 
-dwlApp.config(function config($routeProvider) {
-    $routeProvider
-        .when('/', {
-            templateUrl: 'views/app.html',
-            controller: 'dwlCtrl',
-            controllerAs: 'dwl'
-        })
-});
+    _this.title = TITLE;
+    _this.author = AUTHOR;
 
-dwlApp.value('title', 'davask web limited - chrome bookmarker');
-dwlApp.value('author', 'david asquiedge');
-
-dwlApp.factory("details", ['title', 'author', function details(title, author) {
-    return {
-        'title':title,
-        'author':author
-    };
 }]);
 
-dwlApp.factory('dwlBkObject', function dwlBkObject($q){
+dwlApp.controller("dwlInitCtrl", [
+    '$route', '$routeParams', '$location',
+    '$scope',
+    'tabsFactory',
+    function (
+        $route, $routeParams, $location,
+        $scope,
+        tabsFactory
+) {
 
-    return function(){
-
-        var deferred = $q.defer();
-        var dwlBk = new dwlBookmarker();
-
-        dwlBk.init().done(function(){
-            deferred.resolve(dwlBk);
-        });
-
-        return deferred.promise;
-
-    }
-
-});
-
-dwlApp.directive("repeatComplete",function repeatComplete( $rootScope ) {
-
-    // source : http://www.bennadel.com/blog/2592-hooking-into-the-complete-event-of-an-ngrepeat-loop-in-angularjs.htm
     var _this = this;
-    var uuid = 0;
 
-    _this.compile = function ( tElement, tAttributes ) {
+    _this.$route = $route;
+    _this.$location = $location;
+    _this.$routeParams = $routeParams;
 
-        var id = ++uuid;
-
-        tElement.attr( "repeat-complete-id", id );
-        tElement.removeAttr( "repeat-complete" );
-
-        var completeExpression = tAttributes.repeatComplete;
-        var parent = tElement.parent();
-        var parentScope = ( parent.scope() || $rootScope );
-
-        var unbindWatcher = parentScope.$watch(function() {
-
-            console.info( "Digest running." );
-
-            var lastItem = parent.children( "*[ repeat-complete-id = '" + id + "' ]:last" );
-            if ( ! lastItem.length ) {
-                return;
-            }
-
-            var itemScope = lastItem.scope();
-
-            if ( itemScope.$last ) {
-                unbindWatcher();
-                itemScope.$eval( completeExpression );
-            }
-
-        });
-
-    }
-
-    return({
-        compile: _this.compile,
-        priority: 1001,
-        restrict: "A"
+    $scope.$watch(function () {
+      return tabsFactory.getTabs();
+    }, function (tabs) {
+      $scope.tabs = tabs;
     });
 
-});
+}]);
 
-dwlApp.filter('startFrom', function startFrom() {
-
-    return function (input, start) {
-
-        if (input) {
-            start = +start;
-            return input.slice(start);
-        }
-
-        return [];
-
-    };
-
-});
-
-dwlApp.filter('regex', function regex() {
-
-    return function(input, field, regex) {
-
-        if (typeof(input) != "undefined" ) {
-
-            var patt = new RegExp(regex);
-            var out = [];
-
-            for (var i = 0; i < input.length; i++){
-                if(patt.test(input[i][field])) {
-                    out.push(input[i]);
-                }
-            }
-
-            return out;
-
-        }
-
-    };
-
-});
-
-dwlApp.filter('list', function list() {
-
-    return function(input, ids) {
-
-        var idsArray = [];
-        var out = [];
-
-        if(typeof(ids) != "undefined" && ids != '') {
-            idsArray = ids.split(',');
-
-            for (var i = 0; i < input.length; i++){
-                if(idsArray.indexOf(input[i].id) > -1) {
-                    out.push(input[i]);
-                }
-            }
-
-        } else {
-
-            out = input;
-
-        }
-
-        return out;
-
-    };
-
-});
-
-dwlApp.filter('reverse', function() {
-  return function(items) {
-    return items.slice().reverse();
-  };
-});
-
-dwlApp.filter('space2dash',function() {
-    return function(input) {
-        if (input) {
-            return input.replace(/\s+/g, '_');
-        }
-    }
-});
-
-dwlApp.filter('dash2space',function() {
-    return function(input) {
-        if (input) {
-            return input.replace(/_+/g, ' ');
-        }
-    }
-});
-
-dwlApp.controller("dwlCtrl", ['$scope', '$q', 'details', 'dwlBkObject', '$log', '$timeout', '$window', function ($scope, $q, details, dwlBkObject, $log, $timeout, $window) {
+dwlApp.controller("dwlAllCtrl", [
+      '$route', '$routeParams', '$location',
+      'tabsFactory',
+      function (
+          $route, $routeParams, $location,
+          tabsFactory
+) {
 
     var _this = this;
 
-    _this.title = details.title;
-    _this.author = details.author;
+    _this.name = "All bookmark";
+    _this.params = $routeParams;
+
+    tabsFactory.setTab('all');
+
+}]);
+
+dwlApp.controller("dwlCtrl", [
+    '$routeParams',
+    '$scope', '$window',
+    '$q', '$timeout',
+    'tabsFactory', 'dwlBkObject',
+    '$log',
+    function (
+        $routeParams,
+        $scope, $window,
+        $q, $timeout,
+        tabsFactory, dwlBkObject,
+        $log
+    ) {
+
+    var _this = this;
+
+    _this.name = "dwlCtrl";
+    _this.params = $routeParams;
+
+    tabsFactory.setTab('unique');
+
     _this.dwlBk = {};
     jQuery('.dwlLoading').show();
 
