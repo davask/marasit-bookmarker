@@ -1,13 +1,64 @@
 <div class="col-xs-3">
-    <div  class="row">
-
-    </div>
+        {{bookmarks.length}}/{{chromeBookmarks.length}} [{{filter.type}}]
+        <select ng-model="filter.type" class="col-xs-12" >
+            <option value="all">All - {{(chromeBookmarks | bkType:'').length}}</option>
+            <option value="bookmark">bookmark - {{(chromeBookmarks | bkType:'bookmark').length}}</option>
+            <option value="folder">folder - {{(chromeBookmarks | bkType:'folder').length}}</option>
+        </select>
+        <hr/>
 </div>
 
-<div class="col-xs-9">
+<div class="col-xs-9 scrollable displayArea">
 
     <div class="row">
-
+        <div ng-repeat="bookmark in bookmarks = ( chromeBookmarks | bkType:filter.type ) | startFrom:currentPage*pageSize | limitTo:pageSize track by $index">
+            <label>
+                <input type="checkbox" val="{{bookmark.url}}">&nbsp;
+                <a ng-href="{{bookmark.url}}" target="_blank">
+                    <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>
+                </a>
+                <span class="glyphicon glyphicon-dwlfavicon" aria-hidden="true" data-lazy="{{bookmark.favicon}}"></span>
+                <a class="btn btn-link btn-xs" role="button" data-toggle="collapse" ng-href="#collapse{{bookmark.id}}" aria-expanded="false" aria-controls="collapse{{bookmark.id}}">
+                    <span class="caret"></span>&nbsp;
+                    <span ng-if="bookmark.title">{{bookmark.title}}</span>
+                    <span ng-if="bookmark.url">{{bookmark.url}}</span>
+                    <span ng-if="!bookmark.title && !bookmark.url">id : {{bookmark.id}}</span>
+                    <span ng-show="!bookmark.url"> - folder</span>
+                </a>
+            </label>
+            <div class="collapse" id="collapse{{bookmark.id}}">
+                <div class="well">
+                    <a ng-href="{{bookmark.url}}" target="_blank">
+                        {{bookmark.url}} (x{{bookmark.duplicate.length}})
+                    </a>
+                    <hr>
+                    <!-- <span ng-show="bookmark.parentId">path : [{{ getPathTree(bookmark.id) | space2dash }}]</span> -->
+                    <hr>
+                    <span ng-show="!bookmark.parentId">no&nbsp;</span>parent(s)<br/>
+                    <small ng-if="chromeBookmarksDetails[bookmark.parentId].title">{{chromeBookmarksDetails[bookmark.parentId].title}}</small>
+                    <small ng-if="!chromeBookmarksDetails[bookmark.parentId].title && chromeBookmarksDetails[bookmark.parentId].url">{{chromeBookmarksDetails[bookmark.parentId].url}}</small>
+                    <small ng-if="!chromeBookmarksDetails[bookmark.parentId].title && !chromeBookmarksDetails[bookmark.parentId].url && chromeBookmarksDetails[bookmark.parentId].id">id : {{chromeBookmarksDetails[bookmark.parentId].id}}</small>
+                    <hr>
+                    <span ng-show="!bookmark.children">no&nbsp;</span>children<br/>
+                    <span ng-repeat="childId in bookmark.children" class="list-inline list-unstyled" ng-show="bookmark.children">
+                        <small ng-if="chromeBookmarksDetails[childId].title">{{chromeBookmarksDetails[childId].title}}</small>
+                        <small ng-if="!chromeBookmarksDetails[childId].title && chromeBookmarksDetails[childId].url">{{chromeBookmarksDetails[childId].url}}</small>
+                        <small ng-if="!chromeBookmarksDetails[childId].title && !chromeBookmarksDetails[childId].url && !chromeBookmarksDetails[childId].id">id : {{chromeBookmarksDetails[childId].id}}</small>
+                        <span ng-show="!$last">|&nbsp;&nbsp;</span>
+                    </span>
+                    <hr>
+                    <button data-toggle="collapse" ng-href="#collapse{{bookmark.id}}_details" aria-expanded="false" aria-controls="collapse{{bookmark.id}}_details">details</button>
+                    <pre class="collapse" id="collapse{{bookmark.id}}_details">{{bookmark | json}}</pre>
+                </div>
+            </div>
+        </div>
+        <button ng-disabled="currentPage == 0" ng-click="currentPage=currentPage-1">
+            Previous
+        </button>
+        {{currentPage+1}}/{{numberOfPages()}}
+        <button ng-disabled="currentPage >= data.length/pageSize - 1" ng-click="currentPage=currentPage+1">
+            Next
+        </button>
     </div>
 </div>
 

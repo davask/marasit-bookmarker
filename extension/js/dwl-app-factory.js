@@ -1,46 +1,28 @@
-dwlApp.factory('tabsFactory', [function () {
+dwlApp.factory('chromeBkFactory', ['$q', function ($q){
 
-    var _this = this;
+    return function(){
 
-    var tabs = {
-        'all' : false,
-        'unique' : false,
-        'untagged' : false
-    };
+        var deferred = $q.defer();
+        var chromeBk = new chromeNativeBookmarker();
 
-    _this.tabs = tabs;
+        chromeBk.init().then(function(){
+            deferred.resolve(chromeBk);
+        });
 
-    _this.setTab = function(tab) {
-        if (typeof(tab) == "undefined" || typeof(_this.tabs[tab]) == "undefined") {
-            tab = 'all';
-        }
-        _this.initTab();
-        console.log(tab, _this.initTab(), _this.tabs);
-        _this.tabs[tab] = true;
-        console.log(tab, _this.initTab(), _this.tabs);
+        return deferred.promise;
 
-    };
-
-    _this.getTabs = function() {
-        return _this.tabs;
-    };
-
-    _this.initTab = function() {
-        _this.tabs = tabs;
-    };
-
-    return _this;
+    }
 
 }]);
 
-dwlApp.factory('dwlBkObject', function dwlBkObject($q){
+dwlApp.factory('dwlBkFactory', ['$q', function ($q){
 
     return function(){
 
         var deferred = $q.defer();
         var dwlBk = new dwlBookmarker();
 
-        dwlBk.init().done(function(){
+        dwlBk.init().then(function(){
             deferred.resolve(dwlBk);
         });
 
@@ -48,4 +30,21 @@ dwlApp.factory('dwlBkObject', function dwlBkObject($q){
 
     }
 
-});
+}]);
+
+dwlApp.factory('dwlBKManipFactory', ['$q', function ($q){
+
+    return function(){
+
+        var deferred = $q.defer();
+        var dwlBk = new dwlBookmarker();
+
+        dwlBk.init().then(function(){
+            deferred.resolve(dwlBk);
+        });
+
+        return deferred.promise;
+
+    }
+
+}]);

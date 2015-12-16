@@ -123,3 +123,12 @@ pre {
     padding: 2px 5px;
     margin: 0;
 }
+
+.scrollable {
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+.displayArea {
+    max-height: 560px;
+    max-width: 608px;
+}

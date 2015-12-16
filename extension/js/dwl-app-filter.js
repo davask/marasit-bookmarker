@@ -2,12 +2,45 @@ dwlApp.filter('startFrom', function startFrom() {
 
     return function (input, start) {
 
-        if (input) {
+        if (input && input.length > 0) {
             start = +start;
             return input.slice(start);
         }
 
         return [];
+
+    };
+
+});
+
+dwlApp.filter('bkType', function() {
+
+    return function (input, type) {
+
+        var out = [];
+
+        if (typeof(type) != "undefined" && type =="folder") {
+
+            for (var i = 0; i < input.length; i++){
+                console.log();
+                if (typeof(input[i].url) == "undefined" || input[i].url == "") {
+                    out.push(input[i]);
+                }
+            }
+
+        } else if (typeof(type) != "undefined" && type =="bookmark") {
+
+            for (var i = 0; i < input.length; i++){
+                if (typeof(input[i].url) != "undefined" && input[i].url != "") {
+                    out.push(input[i]);
+                }
+            }
+
+        } else {
+            out = input;
+        }
+
+        return out;
 
     };
 

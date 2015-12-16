@@ -1,77 +1,130 @@
-dwlApp.controller("appCtrl", [
-      'TITLE','AUTHOR',
-      function (
-          TITLE,AUTHOR
-) {
-
+dwlApp.controller("appCtrl", ['TITLE','AUTHOR',
+                                  function (TITLE,AUTHOR) {
     var _this = this;
 
     _this.title = TITLE;
     _this.author = AUTHOR;
-
 }]);
 
-dwlApp.controller("dwlInitCtrl", [
-    '$route', '$routeParams', '$location',
-    '$scope',
-    'tabsFactory',
-    function (
-        $route, $routeParams, $location,
-        $scope,
-        tabsFactory
-) {
-
+dwlApp.controller("dwlInitCtrl", ['$route', '$routeParams', '$location','$rootScope','$scope','tabsService','$log',
+                                      function ($route, $routeParams, $location,$rootScope,$scope,tabsService,$log) {
     var _this = this;
 
     _this.$route = $route;
     _this.$location = $location;
     _this.$routeParams = $routeParams;
 
-    $scope.$watch(function () {
-      return tabsFactory.getTabs();
-    }, function (tabs) {
-      $scope.tabs = tabs;
+    $rootScope.tabs = tabsService.tabs;
+
+}]);
+
+dwlApp.controller("dwlAllCtrl", ['$route', '$routeParams', '$location','$rootScope', '$scope','$filter', 'tabsService', 'bookmarkService', '$q', '$log',
+                                      function ($route, $routeParams, $location,$rootScope, $scope,$filter,tabsService,bookmarkService,$q,$log) {
+    var _this = this;
+
+    _this.name = "All bookmarks";
+    _this.params = $routeParams;
+
+    /* tab initialization */
+    tabsService.setTab('all');
+    $rootScope.tabs = tabsService.getTabs();
+
+    /* all bookmarks pagination */
+    $scope.filter = {
+        'type' : 'bookmark'
+    };
+
+    $scope.currentPage = 0;
+    $scope.pageSize = 10;
+
+    $scope.numberOfBookmarks = function () {
+        return $scope.bookmarks.length;
+    };
+
+    $scope.numberOfPages=function(){
+        return Math.ceil($scope.numberOfBookmarks()/$scope.pageSize);
+    }
+
+    $scope.getPathTree=function(id){
+        return bookmarkService.getParentTree(chrome.extension.getBackgroundPage().chromeBk.chromeBookmarks, id);
+    }
+
+    /* search in chrome bookmark */
+    $scope.search=function(search) {
+
+        var d = $q.defer();
+
+        if(typeof(search) != 'undefined' && search != '') {
+            console.log(search);
+            bookmarkService.search(search).then(function(bookmarks){
+                console.log(bookmarks);
+                d.resolve(bookmarks.length);
+            });
+        } else {
+            d.resolve(0);
+        }
+
+        return d.promise;
+    }
+
+    /* assign unique urls bookmarks to scope */
+    $scope.$watch(function() {
+
+        return chrome.extension.getBackgroundPage().chromeBk.chromeBookmarksUrls;
+
+    }, function(newValue, oldValue) {
+        $rootScope.chromeBookmarksIds = [];
+        for (var url in newValue) {
+            $rootScope.chromeBookmarksIds.push(newValue[url][0]);
+        }
+
+        $rootScope.chromeBookmarks = [];
+        for (var i = 0; i < $rootScope.chromeBookmarksIds.length; i++) {
+            var bookmark = chrome.extension.getBackgroundPage().chromeBk.chromeBookmarks[$rootScope.chromeBookmarksIds[i]];
+            bookmark['duplicate'] = chrome.extension.getBackgroundPage().chromeBk.chromeBookmarksUrls[bookmark.url];
+            $rootScope.chromeBookmarks.push(bookmark);
+        };
+        chrome.browserAction.setBadgeText({text:""+Object.keys($rootScope.chromeBookmarks).length});
+
+    },true);
+
+    /* assign saved bookmarks details to scope*/
+    $scope.$watch(function() {
+        return chrome.extension.getBackgroundPage().chromeBk.chromeBookmarks;
+    }, function(newValue, oldValue) {
+        $scope.chromeBookmarksDetails = newValue;
+    });
+
+    /* assign scope bookmarks*/
+    $scope.$watch(function() {
+        return $rootScope.chromeBookmarks;
+    }, function(newValue, oldValue) {
+        $scope.chromeBookmarks = newValue;
     });
 
 }]);
 
-dwlApp.controller("dwlAllCtrl", [
-      '$route', '$routeParams', '$location',
-      'tabsFactory',
-      function (
-          $route, $routeParams, $location,
-          tabsFactory
-) {
-
+dwlApp.controller("dwlUntaggedCtrl", ['$route', '$routeParams', '$location','$rootScope', '$scope','tabsService','$log',
+                                                  function ($route, $routeParams, $location,$rootScope, $scope,tabsService,$log) {
     var _this = this;
 
-    _this.name = "All bookmark";
+    _this.name = "Untagged bookmarks";
     _this.params = $routeParams;
 
-    tabsFactory.setTab('all');
+    tabsService.setTab('untagged');
+    $rootScope.tabs = tabsService.getTabs();
 
 }]);
 
-dwlApp.controller("dwlCtrl", [
-    '$routeParams',
-    '$scope', '$window',
-    '$q', '$timeout',
-    'tabsFactory', 'dwlBkObject',
-    '$log',
-    function (
-        $routeParams,
-        $scope, $window,
-        $q, $timeout,
-        tabsFactory, dwlBkObject,
-        $log
-    ) {
-
+dwlApp.controller("dwlCtrl", ['$routeParams','$rootScope', '$scope', '$window','$q', '$timeout','tabsService', 'dwlBkFactory','$log',
+                                  function ($routeParams,$rootScope, $scope, $window,$q, $timeout, tabsService, dwlBkFactory,$log) {
     var _this = this;
 
-    _this.name = "dwlCtrl";
+    _this.name = "Unique bookmarks";
     _this.params = $routeParams;
 
-    tabsFactory.setTab('unique');
+    tabsService.setTab('unique');
+    $rootScope.tabs = tabsService.getTabs();
 
     _this.dwlBk = {};
     jQuery('.dwlLoading').show();
@@ -425,7 +478,7 @@ dwlApp.controller("dwlCtrl", [
 
     $scope.resetBookmarker = function(callBack) {
 
-        dwlBkObject().then(function(dwlBk){
+        dwlBkFactory().then(function(dwlBk){
             _this.dwlBk = dwlBk;
             _this.getBookmarkTags().then(function(out) {
 

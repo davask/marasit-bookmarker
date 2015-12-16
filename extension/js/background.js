@@ -6,10 +6,12 @@
 //   });
 // });
 
-var dwlBk = new dwlBookmarker();
-dwlBk.init().done(function(){
-    chrome.runtime.sendMessage({
-        dwlBk: dwlBk
-    });
-});
+// var dwlBk = new dwlBookmarker();
+// dwlBk.init().then(function(){
+//     chrome.runtime.sendMessage({
+//         dwlBk: dwlBk
+//     });
+// });
 
+var chromeBk = new chromeNativeBookmarker();
+chromeBk.init();

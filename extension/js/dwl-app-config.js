@@ -12,8 +12,8 @@ dwlApp.config(['$routeProvider', '$locationProvider', function config($routeProv
         })
         .when('/untagged', {
             templateUrl: '../templates/views/app.html',
-            controller: 'dwlAllCtrl',
-            controllerAs: 'dwlAll'
+            controller: 'dwlUntaggedCtrl',
+            controllerAs: 'dwlUntagged'
         })
         .otherwise({
             redirectTo: '/all'

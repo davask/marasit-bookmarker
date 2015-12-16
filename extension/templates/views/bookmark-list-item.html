@@ -1,0 +1,40 @@
+<label>
+    <input type="checkbox" val="{{bookmark.url}}">&nbsp;
+    <a ng-href="{{bookmark.url}}" target="_blank">
+        <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>
+    </a>
+    <span class="glyphicon glyphicon-dwlfavicon" aria-hidden="true" data-lazy="{{bookmark.favicon}}"></span>
+    <a class="btn btn-link btn-xs" role="button" data-toggle="collapse" ng-href="#collapse{{bookmark.id}}" aria-expanded="false" aria-controls="collapse{{bookmark.id}}">
+        <span class="caret"></span>&nbsp;
+        <span ng-if="bookmark.titleNoTag">{{bookmark.titleNoTag}}</span>
+        <span ng-if="!bookmark.titleNoTag">{{bookmark.safeUrl}}</span>
+    </a>
+</label>
+<br/>
+<div class="collapse" id="collapse{{bookmark.id}}">
+    <div class="well">
+        <strong>{{bookmark.titleNoTag}}</strong>
+        <a ng-href="{{bookmark.url}}" target="_blank">
+            {{bookmark.safeUrl}}
+        </a>
+        <p>parent(s)</p>
+        <ul class="list-inline list-unstyled">
+            <li>
+                /{{ allOriginalBookmarksById[bookmark.parentId].title | space2dash }}
+            </li>
+<!--                                 <li ng-repeat="parent in parents = (getAscendingParents(bookmark)) | reverse">
+                /{{ allOriginalBookmarksById[bookmark.parentId].title | space2dash }}
+            </li>
+-->                            </ul>
+        <p>description</p>
+        <ul id="bi-{{bookmark.index}}"class="list-inline tags">
+            <li ng-cloak ng-repeat="tag in bookmark.tags as tagsIndexes track by $index">
+                <input id="{{bookmark.id}}-{{$index}}" type="text" value="{{tag}}" ng-blur="editable($event)"/>
+            </li>
+            <li ng-repeat-end>
+                <input id="{{bookmark.id}}-{{bookmark.tags.length}}" class="newTag" type="text" value="{{empty}}" placeholder="new Tag" ng-blur="editable($event)" ng-focus="editable($event)"/>
+            </li>
+        </ul>
+        <small>{{bookmark.title}}</small>
+    </div>
+</div>
