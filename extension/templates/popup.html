@@ -22,31 +22,39 @@
 
             <div class="row" ng-controller="dwlInitCtrl as dwlInit">
                 <div class="col-sm-3">
-<!--
-                    <p>$location.path() = {{dwlInit.$location.path()}}</p>
+                    <select ng-model="activity" class="col-xs-12" ng-change="updateActivity()">
+                        <option ng-repeat="option in activities" value="{{option.name}}">{{option.name}}</option>
+                    </select>
+                    <hr/>
+
+<!--                     <p>$location.path() = {{dwlInit.$location.path()}}</p>
                     <p>$route.current.templateUrl = {{dwlInit.$route.current.templateUrl}}</p>
                     <p>$route.current.params = {{dwlInit.$route.current.params}}</p>
                     <p>$routeParams = {{dwlInit.$routeParams}}</p>
-                    <hr />
- -->
+                    <p>route = {{route}}</p>
+                    <hr /> -->
+
                 </div>
                 <!-- Nav tabs -->
                 <ul class="nav nav-tabs col-sm-9">
-                    <li ng-class="{active:tabs.all}">
-                        <a href="/all">All</a>
-                    </li>
-                    <li ng-class="{active:tabs.unique}">
-                        <a href="/unique">Unique</a>
-                    </li>
-                    <li ng-class="{active:tabs.untagged}">
-                        <a href="/untagged">Untagged</a>
+                    <li ng-class="{active:route == tabs.name}" ng-repeat="tabs in routes" ng-click="updateRoute(tabs.name)">
+                        <a href="{{tabs.path}}">{{tabs.name}} ({{count[tabs.name]()}})</a>
                     </li>
                 </ul>
             </div>
-
-            <!-- Tab panes -->
-            <div class="view-animate-container tab-content row">
-                <div ng-view class="view-animate"></div>
+            <div class="row">
+                <div class="col-sm-3">
+                    <select ng-model="route" class="col-xs-12" ng-change="updateRouting()">
+                        <option ng-repeat="option in routes" value="{{option.name}}">{{option.name}} - {{count[option.name]()}}</option>
+                    </select>
+                    <hr/>
+                </div>
+                <div class="col-xs-9 scrollable displayArea">
+                    <!-- Tab panes -->
+                    <div class="view-animate-container tab-content row">
+                        <div ng-view class="view-animate"></div>
+                    </div>
+                </div>
             </div>
 
         </section>

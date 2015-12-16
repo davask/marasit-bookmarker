@@ -1,4 +1,4 @@
-<div ng-repeat="bookmark in bookmarks = ( chromeBookmarks | bkType:filter.type ) | startFrom:currentPage*pageSize | limitTo:pageSize track by $index">
+<div ng-repeat="bookmark in bookmarks = ( chromeBookmarks | orderBy:'url' ) | startFrom:currentPage*pageSize | limitTo:pageSize track by $index">
     <label>
         <input type="checkbox" val="{{bookmark.url}}">&nbsp;
         <a ng-href="{{bookmark.url}}" target="_blank">

@@ -1,32 +1,71 @@
-dwlApp.service('tabsService', [function () {
+dwlApp.service('activityService', [function () {
 
     var _this = this;
 
-    _this.defaultTabs = {
-        'all' : false,
-        'unique' : false,
-        'untagged' : false
-    };
-
-    _this.tabs = angular.copy(_this.defaultTabs);
-
-    _this.setTab = function(tab) {
-        if (typeof(tab) == "undefined" || typeof(_this.tabs[tab]) == "undefined") {
-            tab = 'all';
+    _this.defaultActivities = {
+        'bookmark' : {
+            'name':'bookmark'
         }
-        _this.initTab();
-        _this.tabs[tab] = true;
-
     };
 
-    _this.getTabs = function() {
-        return _this.tabs;
+    _this.getActivitiesOptions = function () {
+
+        var options = [];
+
+        for(var option in _this.defaultActivities) {
+            options.push(_this.defaultActivities[option]);
+        }
+
+        return options;
+    }
+
+    _this.activities = _this.getActivitiesOptions();
+
+    return _this;
+
+}]);
+
+dwlApp.service('routesService', [function () {
+
+    var _this = this;
+
+    _this.defaultRoutes = {
+        'all' : {
+            'name':'all',
+            'path':'/all'
+        },
+
+        'unique' : {
+            'name':'unique',
+            'path':'/unique',
+            'selected' : true
+        },
+        'folder' : {
+            'name':'folder',
+            'path':'/folder'
+        },
+        'duplicate' : {
+            'name':'duplicate',
+            'path':'/duplicate'
+        },
+        'untagged' : {
+            'name':'untagged',
+            'path':'/untagged'
+        }
     };
 
-    _this.initTab = function() {
-        _this.tabs = angular.copy(_this.defaultTabs);
-        return true;
-    };
+    _this.getRoutesOptions = function () {
+
+        var options = [];
+
+        for(var option in _this.defaultRoutes) {
+            options.push(_this.defaultRoutes[option]);
+        }
+
+        return options;
+    }
+
+    _this.routes = _this.getRoutesOptions();
 
     return _this;
 

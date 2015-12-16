@@ -24,6 +24,7 @@ class chromeNativeBookmarker {
         _this.chromeBookmarksOriginal = {};
         _this.chromeBookmarksIds = [];
         _this.chromeBookmarksFolders = [];
+        _this.chromeBookmarksDuplicate = [];
         _this.chromeBookmarksUrls = {};
 
         _this.storage = function() {
@@ -64,6 +65,7 @@ class chromeNativeBookmarker {
 
             _this.chromeBookmarksIds = JSON.parse(_this.storage()['chromeBookmarksIds']);
             _this.chromeBookmarksFolders = JSON.parse(_this.storage()['chromeBookmarksFolders']);
+            _this.chromeBookmarksDuplicate = JSON.parse(_this.storage()['chromeBookmarksDuplicate']);
             _this.chromeBookmarksUrls = JSON.parse(_this.storage()['chromeBookmarksUrls']);
 
             for (var i = 0; i < _this.chromeBookmarksIds.length; i++) {
@@ -129,6 +131,7 @@ class chromeNativeBookmarker {
             if (i == Object.keys(_this.chromeBookmarks).length) {
                 _this.storage().setItem('chromeBookmarksIds', JSON.stringify(_this.chromeBookmarksIds));
                 _this.storage().setItem('chromeBookmarksFolders', JSON.stringify(_this.chromeBookmarksFolders));
+                _this.storage().setItem('chromeBookmarksDuplicate', JSON.stringify(_this.chromeBookmarksDuplicate));
                 _this.storage().setItem('chromeBookmarksUrls', JSON.stringify(_this.chromeBookmarksUrls));
                 console.log('chromeNativeBookmarker all bookmarks saved');
                 d.resolve();
@@ -163,6 +166,9 @@ class chromeNativeBookmarker {
         if(typeof(bookmark.url) !== 'undefined' && bookmark.url != '') {
             if(typeof(_this.chromeBookmarksUrls[bookmark.url]) == 'undefined') {
                 _this.chromeBookmarksUrls[bookmark.url] = [];
+            }
+            if (_this.chromeBookmarksUrls[bookmark.url].length > 0) {
+                _this.chromeBookmarksDuplicate.push(bookmark.id);
             }
             _this.chromeBookmarksUrls[bookmark.url].push(bookmark.id);
         } else {
