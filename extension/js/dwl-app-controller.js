@@ -17,26 +17,34 @@ dwlApp.controller("dwlInitCtrl", ['$route', '$routeParams', '$location','$rootSc
     $rootScope.activities = activityService.activities;
     $rootScope.activity = 'bookmark';
 
-    $rootScope.updateActivity = function() {
-       $log.log('updateActivity',$rootScope);
-        // if ($rootScope.activity == 'bookmark') {
-        //     $rootScope.initBookmark();
-        // }
+    $rootScope.updateRoute = function(route) {
+        $rootScope.route = route;
+        $rootScope.updateRouting();
     }
+
+    $rootScope.updateRouting = function() {
+       _this.$location.path(routesService.defaultRoutes[$rootScope.activity][$rootScope.route].path);
+    }
+
+    $rootScope.updateActivity = function() {
+        $rootScope.activity = $scope.activity;
+        $rootScope.routes = [];
+        $rootScope.routes = routesService.routes($scope.activity);
+
+        if ($rootScope.activity == 'todo') {
+            $rootScope.initTodo();
+        } else {
+            $rootScope.initBookmark();
+        }
+    }
+
+    $rootScope.initTodo = function () {
+        $rootScope.updateRoute('todo');
+    };
 
     $rootScope.initBookmark = function () {
 
-    $rootScope.routes = routesService.routes;
-    $rootScope.route = 'unique';
-
-        $rootScope.updateRoute = function(route) {
-            $rootScope.route = route;
-            $rootScope.updateRouting();
-        }
-
-        $rootScope.updateRouting = function() {
-           $location.path(routesService.defaultRoutes[$scope.route].path);
-        }
+        $rootScope.updateRoute('unique');
 
         $rootScope.count = {
             'all': function () {
@@ -57,28 +65,36 @@ dwlApp.controller("dwlInitCtrl", ['$route', '$routeParams', '$location','$rootSc
         };
     };
 
-    $rootScope.initBookmark();
-
+    $rootScope.updateActivity();
 
 }]);
 
-dwlApp.controller("dwlAllCtrl", ['$route', '$routeParams', '$location','$rootScope', '$scope','$filter', 'routesService', 'bookmarkService', '$q', '$log',
+/* -------------------------------------- */
+/* -------BOOKMARKS----------- */
+/* -------------------------------------- */
+dwlApp.controller("dwlCommonCtrl", ['$route', '$routeParams', '$location','$rootScope', '$scope','$filter', 'routesService', 'bookmarkService', '$q', '$log',
                                       function ($route, $routeParams, $location,$rootScope, $scope,$filter,routesService,bookmarkService,$q,$log) {
+
     var _this = this;
 
-    _this.name = "All bookmarks";
-    _this.params = $routeParams;
+    $rootScope.name = "All bookmarks";
+    $rootScope.params = $routeParams;
 
-    /* all bookmarks pagination */
-    $scope.filter = {
-        'type' : 'all'
-    };
+    $scope.bkPagination = 'bookmarks';
+
+    $scope.bkToWatch = chrome.extension.getBackgroundPage().chromeBk.chromeBookmarksIds;
+    $scope.isBkObject = false;
+
+    $scope.bkIds = function(newValue, oldValue){
+        return newValue;
+    }
 
     $scope.currentPage = 0;
     $scope.pageSize = 10;
 
     $scope.numberOfBookmarks = function () {
-        return $scope.bookmarks.length;
+        console.log($rootScope.name, $scope.bkPagination);
+        return $scope[$scope.bkPagination].length;
     };
 
     $scope.numberOfPages=function(){
@@ -92,15 +108,19 @@ dwlApp.controller("dwlAllCtrl", ['$route', '$routeParams', '$location','$rootSco
     /* assign unique urls bookmarks to scope */
     $scope.$watch(function() {
 
-        return chrome.extension.getBackgroundPage().chromeBk.chromeBookmarksIds;
+        return $scope.bkToWatch;
 
     }, function(newValue, oldValue) {
-        $rootScope.chromeBookmarksIds = newValue;
+
+        $rootScope.chromeBookmarksIds = [];
+
+        $rootScope.chromeBookmarksIds = $scope.bkIds(newValue, oldValue);
 
         $rootScope.chromeBookmarks = [];
+        console.log($rootScope.chromeBookmarksIds);
         for (var i = 0; i < $rootScope.chromeBookmarksIds.length; i++) {
             var bookmark = chrome.extension.getBackgroundPage().chromeBk.chromeBookmarks[$rootScope.chromeBookmarksIds[i]];
-            bookmark['duplicate'] = []
+            bookmark['duplicate'] = [];
             if(typeof(bookmark.url) != 'undefined') {
                 bookmark['duplicate'] = chrome.extension.getBackgroundPage().chromeBk.chromeBookmarksUrls[bookmark.url];
             }
@@ -108,7 +128,7 @@ dwlApp.controller("dwlAllCtrl", ['$route', '$routeParams', '$location','$rootSco
         };
         chrome.browserAction.setBadgeText({text:""+Object.keys($rootScope.chromeBookmarks).length});
 
-    },true);
+    },$scope.isBkObject);
 
     /* assign saved bookmarks details to scope*/
     $scope.$watch(function() {
@@ -126,63 +146,60 @@ dwlApp.controller("dwlAllCtrl", ['$route', '$routeParams', '$location','$rootSco
 
 }]);
 
-dwlApp.controller("dwlUniqueCtrl", ['$route', '$routeParams', '$location','$rootScope', '$scope','$filter', 'bookmarkService', '$q', '$log',
-                                      function ($route, $routeParams, $location,$rootScope, $scope,$filter,bookmarkService,$q,$log) {
+dwlApp.controller("dwlAllCtrl", ['$controller', '$rootScope', '$scope',
+                                      function ($controller,$rootScope, $scope) {
     var _this = this;
 
-    _this.name = "All bookmarks";
-    _this.params = $routeParams;
+    $controller('dwlCommonCtrl', {$rootScope: $rootScope,$scope: $scope});
 
     /* all bookmarks pagination */
-    $scope.currentPage = 0;
-    $scope.pageSize = 10;
-
-    $scope.numberOfBookmarks = function () {
-        return $scope.bookmarks.length;
+    $scope.filter = {
+        'type' : 'all'
     };
 
-    $scope.numberOfPages=function(){
-        return Math.ceil($scope.numberOfBookmarks()/$scope.pageSize);
-    }
+}]);
 
-    $scope.getPathTree=function(id){
-        return bookmarkService.getParentTree(chrome.extension.getBackgroundPage().chromeBk.chromeBookmarks, id);
-    }
+dwlApp.controller("dwlUniqueCtrl", ['$controller', '$rootScope', '$scope',
+                                      function ($controller,$rootScope, $scope) {
+    var _this = this;
 
-    /* assign unique urls bookmarks to scope */
-    $scope.$watch(function() {
+    $controller('dwlCommonCtrl', {$rootScope: $rootScope,$scope: $scope});
 
-        return chrome.extension.getBackgroundPage().chromeBk.chromeBookmarksUrls;
+    $rootScope.name = "Unique bookmarks";
+    $scope.bkToWatch = chrome.extension.getBackgroundPage().chromeBk.chromeBookmarksUrls;
+    $scope.isBkObject = true;
 
-    }, function(newValue, oldValue) {
-        $rootScope.chromeBookmarksIds = [];
+    $scope.bkIds = function(newValue, oldValue){
+        var ids = [];
         for (var url in newValue) {
-            $rootScope.chromeBookmarksIds.push(newValue[url][0]);
+            ids.push(newValue[url][0]);
         }
+        return ids;
+    }
 
-        $rootScope.chromeBookmarks = [];
-        for (var i = 0; i < $rootScope.chromeBookmarksIds.length; i++) {
-            var bookmark = chrome.extension.getBackgroundPage().chromeBk.chromeBookmarks[$rootScope.chromeBookmarksIds[i]];
-            bookmark['duplicate'] = chrome.extension.getBackgroundPage().chromeBk.chromeBookmarksUrls[bookmark.url];
-            $rootScope.chromeBookmarks.push(bookmark);
-        };
-        chrome.browserAction.setBadgeText({text:""+Object.keys($rootScope.chromeBookmarks).length});
+}]);
 
-    },true);
+dwlApp.controller("dwlFolderCtrl", ['$controller', '$rootScope', '$scope',
+                                      function ($controller,$rootScope, $scope) {
+    var _this = this;
 
-    /* assign saved bookmarks details to scope*/
-    $scope.$watch(function() {
-        return chrome.extension.getBackgroundPage().chromeBk.chromeBookmarks;
-    }, function(newValue, oldValue) {
-        $scope.chromeBookmarksDetails = newValue;
-    });
+    $controller('dwlCommonCtrl', {$rootScope: $rootScope,$scope: $scope});
 
-    /* assign scope bookmarks*/
-    $scope.$watch(function() {
-        return $rootScope.chromeBookmarks;
-    }, function(newValue, oldValue) {
-        $scope.chromeBookmarks = newValue;
-    });
+    $rootScope.name = "Folder bookmarks";
+    $scope.bkToWatch = chrome.extension.getBackgroundPage().chromeBk.chromeBookmarksFolders;
+
+}]);
+
+dwlApp.controller("dwlDuplicateCtrl", ['$controller', '$rootScope', '$scope',
+                                      function ($controller,$rootScope, $scope) {
+    var _this = this;
+
+    $controller('dwlCommonCtrl', {$rootScope: $rootScope,$scope: $scope});
+
+    $scope.bkPagination = 'chromeBookmarks';
+
+    $rootScope.name = "Duplicate bookmarks";
+    $scope.bkToWatch = chrome.extension.getBackgroundPage().chromeBk.chromeBookmarksDuplicate;
 
 }]);
 
@@ -190,122 +207,20 @@ dwlApp.controller("dwlUntaggedCtrl", ['$route', '$routeParams', '$location','$ro
                                                   function ($route, $routeParams, $location,$rootScope, $scope,$log) {
     var _this = this;
 
-    _this.name = "Untagged bookmarks";
-    _this.params = $routeParams;
+    $rootScope.name = "Untagged bookmarks";
+    $rootScope.params = $routeParams;
 
 }]);
 
-dwlApp.controller("dwlFolderCtrl", ['$route', '$routeParams', '$location','$rootScope', '$scope','$log',
+
+/* -------------------------------------- */
+/* -----------TODOS---------------- */
+/* -------------------------------------- */
+dwlApp.controller("dwlTodoCtrl", ['$route', '$routeParams', '$location','$rootScope', '$scope','$log',
                                                   function ($route, $routeParams, $location,$rootScope, $scope,$log) {
     var _this = this;
 
-    _this.name = "Folder bookmarks";
-    _this.params = $routeParams;
-
-    /* all bookmarks pagination */
-    $scope.currentPage = 0;
-    $scope.pageSize = 10;
-
-    $scope.numberOfBookmarks = function () {
-        return $scope.bookmarks.length;
-    };
-
-    $scope.numberOfPages=function(){
-        return Math.ceil($scope.numberOfBookmarks()/$scope.pageSize);
-    }
-
-    $scope.getPathTree=function(id){
-        return bookmarkService.getParentTree(chrome.extension.getBackgroundPage().chromeBk.chromeBookmarks, id);
-    }
-
-    /* assign unique urls bookmarks to scope */
-    $scope.$watch(function() {
-
-        return chrome.extension.getBackgroundPage().chromeBk.chromeBookmarksFolders;
-
-    }, function(newValue, oldValue) {
-        $rootScope.chromeBookmarksIds = newValue;
-
-        $rootScope.chromeBookmarks = [];
-        for (var i = 0; i < $rootScope.chromeBookmarksIds.length; i++) {
-            var bookmark = chrome.extension.getBackgroundPage().chromeBk.chromeBookmarks[$rootScope.chromeBookmarksIds[i]];
-            bookmark['duplicate'] = chrome.extension.getBackgroundPage().chromeBk.chromeBookmarksUrls[bookmark.url];
-            $rootScope.chromeBookmarks.push(bookmark);
-        };
-        chrome.browserAction.setBadgeText({text:""+Object.keys($rootScope.chromeBookmarks).length});
-
-    });
-
-    /* assign saved bookmarks details to scope*/
-    $scope.$watch(function() {
-        return chrome.extension.getBackgroundPage().chromeBk.chromeBookmarks;
-    }, function(newValue, oldValue) {
-        $scope.chromeBookmarksDetails = newValue;
-    });
-
-    /* assign scope bookmarks*/
-    $scope.$watch(function() {
-        return $rootScope.chromeBookmarks;
-    }, function(newValue, oldValue) {
-        $scope.chromeBookmarks = newValue;
-    });
+    $rootScope.name = "Todos";
+    $rootScope.params = $routeParams;
 
 }]);
-
-dwlApp.controller("dwlDuplicateCtrl", ['$route', '$routeParams', '$location','$rootScope', '$scope','$log',
-                                                  function ($route, $routeParams, $location,$rootScope, $scope,$log) {
-    var _this = this;
-
-    _this.name = "Duplicate bookmarks";
-    _this.params = $routeParams;
-
-    /* all bookmarks pagination */
-    $scope.currentPage = 0;
-    $scope.pageSize = 10;
-
-    $scope.numberOfBookmarks = function () {
-        return $scope.chromeBookmarks.length;
-    };
-
-    $scope.numberOfPages=function(){
-        return Math.ceil($scope.numberOfBookmarks()/$scope.pageSize);
-    }
-
-    $scope.getPathTree=function(id){
-        return bookmarkService.getParentTree(chrome.extension.getBackgroundPage().chromeBk.chromeBookmarks, id);
-    }
-
-    /* assign unique urls bookmarks to scope */
-    $scope.$watch(function() {
-
-        return chrome.extension.getBackgroundPage().chromeBk.chromeBookmarksDuplicate;
-
-    }, function(newValue, oldValue) {
-        $rootScope.chromeBookmarksIds = newValue;
-
-        $rootScope.chromeBookmarks = [];
-        for (var i = 0; i < $rootScope.chromeBookmarksIds.length; i++) {
-            var bookmark = chrome.extension.getBackgroundPage().chromeBk.chromeBookmarks[$rootScope.chromeBookmarksIds[i]];
-            bookmark['duplicate'] = chrome.extension.getBackgroundPage().chromeBk.chromeBookmarksUrls[bookmark.url];
-            $rootScope.chromeBookmarks.push(bookmark);
-        };
-        chrome.browserAction.setBadgeText({text:""+Object.keys($rootScope.chromeBookmarks).length});
-
-    },true);
-
-    /* assign saved bookmarks details to scope*/
-    $scope.$watch(function() {
-        return chrome.extension.getBackgroundPage().chromeBk.chromeBookmarks;
-    }, function(newValue, oldValue) {
-        $scope.chromeBookmarksDetails = newValue;
-    });
-
-    /* assign scope bookmarks*/
-    $scope.$watch(function() {
-        return $rootScope.chromeBookmarks;
-    }, function(newValue, oldValue) {
-        $scope.chromeBookmarks = newValue;
-    });
-
-}]);
-

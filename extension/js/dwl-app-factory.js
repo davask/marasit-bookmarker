@@ -15,24 +15,7 @@ dwlApp.factory('chromeBkFactory', ['$q', function ($q){
 
 }]);
 
-dwlApp.factory('dwlBkFactory', ['$q', function ($q){
-
-    return function(){
-
-        var deferred = $q.defer();
-        var dwlBk = new dwlBookmarker();
-
-        dwlBk.init().then(function(){
-            deferred.resolve(dwlBk);
-        });
-
-        return deferred.promise;
-
-    }
-
-}]);
-
-dwlApp.factory('dwlBKManipFactory', ['$q', function ($q){
+dwlApp.factory('_dwlBkFactory', ['$q', function ($q){
 
     return function(){
 

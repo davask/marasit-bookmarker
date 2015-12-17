@@ -132,3 +132,8 @@ pre {
     max-height: 560px;
     max-width: 608px;
 }
+
+h1 {
+    margin: 0;
+    font-size: 2rem;
+}

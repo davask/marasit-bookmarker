@@ -5,6 +5,9 @@ dwlApp.service('activityService', [function () {
     _this.defaultActivities = {
         'bookmark' : {
             'name':'bookmark'
+        },
+        'todo' : {
+            'name':'todo'
         }
     };
 
@@ -30,42 +33,50 @@ dwlApp.service('routesService', [function () {
     var _this = this;
 
     _this.defaultRoutes = {
-        'all' : {
-            'name':'all',
-            'path':'/all'
-        },
+        'bookmark' : {
+            'all' : {
+                'name':'all',
+                'path':'/all'
+            },
 
-        'unique' : {
-            'name':'unique',
-            'path':'/unique',
-            'selected' : true
+            'unique' : {
+                'name':'unique',
+                'path':'/unique',
+                'selected' : true
+            },
+            'folder' : {
+                'name':'folder',
+                'path':'/folder'
+            },
+            'duplicate' : {
+                'name':'duplicate',
+                'path':'/duplicate'
+            },
+            'untagged' : {
+                'name':'untagged',
+                'path':'/untagged'
+            }
         },
-        'folder' : {
-            'name':'folder',
-            'path':'/folder'
-        },
-        'duplicate' : {
-            'name':'duplicate',
-            'path':'/duplicate'
-        },
-        'untagged' : {
-            'name':'untagged',
-            'path':'/untagged'
+        'todo' : {
+            'todo' : {
+                'name':'todo',
+                'path':'/todo'
+            }
         }
     };
 
-    _this.getRoutesOptions = function () {
+    _this.getRoutesOptions = function (route) {
 
         var options = [];
 
-        for(var option in _this.defaultRoutes) {
-            options.push(_this.defaultRoutes[option]);
+        for(var option in _this.defaultRoutes[route]) {
+            options.push(_this.defaultRoutes[route][option]);
         }
 
         return options;
     }
 
-    _this.routes = _this.getRoutesOptions();
+    _this.routes = _this.getRoutesOptions;
 
     return _this;
 

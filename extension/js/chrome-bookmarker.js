@@ -162,6 +162,7 @@ class chromeNativeBookmarker {
         var children = [];
 
         chrome.browserAction.setBadgeText({text:""+Object.keys(_this.chromeBookmarks).length});
+
         _this.chromeBookmarksIds.push(bookmark.id);
         if(typeof(bookmark.url) !== 'undefined' && bookmark.url != '') {
             if(typeof(_this.chromeBookmarksUrls[bookmark.url]) == 'undefined') {

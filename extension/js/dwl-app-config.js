@@ -1,5 +1,6 @@
 dwlApp.config(['$routeProvider', '$locationProvider', function config($routeProvider, $locationProvider) {
     $routeProvider
+        /* bookmarks */
         .when('/all', {
             templateUrl: '../templates/views/all.html',
             controller: 'dwlAllCtrl',
@@ -25,6 +26,13 @@ dwlApp.config(['$routeProvider', '$locationProvider', function config($routeProv
             controller: 'dwlUntaggedCtrl',
             controllerAs: 'dwlUntagged'
         })
+        /* todos */
+        .when('/todo', {
+            templateUrl: '../templates/views/todo.html',
+            controller: 'dwlTodoCtrl',
+            controllerAs: 'dwlTodo'
+        })
+
         .otherwise({
             redirectTo: '/unique'
         });
