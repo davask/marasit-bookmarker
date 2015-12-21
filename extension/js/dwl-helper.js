@@ -62,3 +62,60 @@ var diffFilter = function (obj1,obj2) {
     }
     return result;
 };
+
+var permutate = (function() {
+
+    var results = [];
+
+    function doPermute(input, output, used, size, level) {
+
+        if (size == level) {
+            var sep = '/';
+            var paths = sep+output.join(sep);
+            paths = paths.replace('/root','');
+            if(paths != sep && paths != '') {
+                results.push(paths.toLowerCase());
+            }
+            return;
+        }
+
+        level++;
+
+        for (var i = 0; i < input.length; i++) {
+
+            if (used[i] === true) {
+                continue;
+            }
+
+            used[i] = true;
+
+            output.push(input[i]);
+
+            doPermute(input, output, used, size, level);
+
+            used[i] = false;
+
+            output.pop();
+        }
+    }
+
+    return {
+        getPermutations: function(input, size) {
+
+            results = [];
+
+            // var chars = input.split('');
+            var chars = input;
+            var output = [];
+            var used = new Array(chars.length);
+
+            if(typeof(size) == 'undefined') {
+                size = chars.length;
+            }
+
+            doPermute(chars, output, used, size, 0);
+
+            return results.unique();
+        }
+    }
+})();

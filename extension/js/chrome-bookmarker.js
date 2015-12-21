@@ -89,10 +89,12 @@ class chromeNativeBookmarker {
         var d = $.Deferred();
 
         _this.getAllChromeBookmarksAsArray().then(function() {
-            _this.saveAllChromeBookmarksAsArray().then(function() {
-                chrome.browserAction.setBadgeText({text:""+Object.keys(_this.chromeBookmarks).length});
-                console.log('chromeNativeBookmarker reset');
-                d.resolve();
+            _this.getAlternativePathsForAllBookmarks().then(function() {
+                _this.saveAllChromeBookmarksAsArray().then(function() {
+                    chrome.browserAction.setBadgeText({text:""+Object.keys(_this.chromeBookmarks).length});
+                    console.log('chromeNativeBookmarker reset');
+                    d.resolve();
+                });
             });
         });
 
@@ -115,6 +117,93 @@ class chromeNativeBookmarker {
         });
 
         return d;
+    }
+
+    getAlternativePathsForAllBookmarks () {
+
+        var _this = this;
+        var d = $.Deferred();
+
+        var i = 0;
+        for(var id in _this.chromeBookmarks) {
+            i++;
+            chrome.browserAction.setBadgeText({text:""+i});
+
+            _this.chromeBookmarks[id].paths = _this.getAlternativesTree(id);
+
+            if (i == Object.keys(_this.chromeBookmarks).length) {
+                console.log('chromeNativeBookmarker all bookmarks paths generated');
+                d.resolve();
+            }
+
+        };
+
+        return d;
+    }
+
+    getBkPath (id) {
+
+        var _this = this;
+        var path = '';
+
+        if(typeof(_this.chromeBookmarks[id]) != "undefined" && _this.chromeBookmarks[id].title != '') {
+            path = _this.chromeBookmarks[id].title;
+        } else if (typeof(_this.chromeBookmarks[id]) != "undefined" && _this.chromeBookmarks[id].id == 0) {
+            path = 'root';
+        } else if (typeof(_this.chromeBookmarks[id]) != "undefined") {
+            path = 'bk_'+_this.chromeBookmarks[id].id;
+        }
+
+        return path;
+
+    }
+
+    getParentTree (id) {
+
+        var _this = this;
+        var path = '/';
+        var parentId = _this.chromeBookmarks[id].parentId;
+
+        path = path + _this.getBkPath(parentId);
+
+        if(typeof(_this.chromeBookmarks[parentId]) != 'undefined' && _this.chromeBookmarks[parentId].parentId) {
+            path = _this.getParentTree(parentId) + path;
+        }
+
+        return path;
+
+    }
+
+    getTreeLeeves (id) {
+
+        var _this = this;
+        var paths = [];
+
+        paths.push(_this.getBkPath(id));
+
+        if(typeof(_this.chromeBookmarks[id]) != 'undefined' && _this.chromeBookmarks[id].parentId) {
+            paths = paths.concat(_this.getTreeLeeves(_this.chromeBookmarks[id].parentId));
+        }
+
+        return paths;
+
+    }
+
+    getAlternativesTree (id) {
+
+        var _this = this;
+        var paths = [];
+        var allPaths = [];
+        var parentId = _this.chromeBookmarks[id].parentId;
+
+        if(typeof(_this.chromeBookmarks[parentId]) != 'undefined' && _this.chromeBookmarks[parentId].parentId) {
+            paths = _this.getTreeLeeves(parentId);
+        }
+
+        // allPaths = permutate.getPermutations(paths);
+
+        return paths;
+
     }
 
     saveAllChromeBookmarksAsArray () {

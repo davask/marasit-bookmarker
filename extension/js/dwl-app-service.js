@@ -36,31 +36,36 @@ dwlApp.service('routesService', [function () {
         'bookmark' : {
             'all' : {
                 'name':'all',
-                'path':'/all'
+                'path':'/all',
+                'selected' : true
             },
 
             'unique' : {
                 'name':'unique',
                 'path':'/unique',
-                'selected' : true
+                'selected' : false
             },
             'folder' : {
                 'name':'folder',
-                'path':'/folder'
+                'path':'/folder',
+                'selected' : false
             },
             'duplicate' : {
                 'name':'duplicate',
-                'path':'/duplicate'
+                'path':'/duplicate',
+                'selected' : false
             },
             'untagged' : {
                 'name':'untagged',
-                'path':'/untagged'
+                'path':'/untagged',
+                'selected' : false
             }
         },
         'todo' : {
             'todo' : {
                 'name':'todo',
-                'path':'/todo'
+                'path':'/todo',
+                'selected' : false
             }
         }
     };
@@ -85,25 +90,60 @@ dwlApp.service('routesService', [function () {
 dwlApp.service('bookmarkService', [function () {
 
     var _this = this;
+    var path = '';
+
+    _this.getBkPath = function (bks, id) {
+
+        if(typeof(bks[id]) != "undefined" && bks[id].title != '') {
+            path = bks[id].title;
+        } else if (typeof(bks[id]) != "undefined" && bks[id].id == 0) {
+            path = 'root';
+        } else if (typeof(bks[id]) != "undefined") {
+            path = 'bk_'+bks[id].id;
+        }
+
+        return path;
+
+    };
 
     _this.getParentTree = function (bks, id) {
 
         var path = '/';
         var parentId = bks[id].parentId;
 
-        if(typeof(bks[parentId]) != "undefined" && bks[parentId].title != '') {
-            path = path + bks[parentId].title;
-        } else if (bks[parentId].id == 0) {
-            path = path + 'root';
-        } else {
-            path = path + 'bk_'+bks[parentId].id;
-        }
+        path = path + _this.getBkPath(bks, parentId);
 
-        if(bks[parentId].parentId) {
+        if(typeof(bks[parentId]) != 'undefined' && bks[parentId].parentId) {
             path = _this.getParentTree(bks, parentId) + path;
         }
 
         return path;
+
+    };
+
+    _this.getTreeLeeves = function (bks, id) {
+
+
+        var paths = [];
+
+        paths.push(_this.getBkPath(bks, id));
+
+        if(typeof(bks[id]) != 'undefined' && bks[id].parentId) {
+            paths = paths.concat(_this.getTreeLeeves(bks, bks[id].parentId));
+        }
+
+        return paths;
+
+    };
+
+    _this.getAlternativesTree = function (bks, id) {
+
+        var paths = [];
+        var allPaths = [];
+
+        allPaths = permutate.getPermutations(bks[id].paths);
+
+        return allPaths;
 
     };
 

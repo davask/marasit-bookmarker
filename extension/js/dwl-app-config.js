@@ -6,6 +6,12 @@ dwlApp.config(['$routeProvider', '$locationProvider', function config($routeProv
             controller: 'dwlAllCtrl',
             controllerAs: 'dwlAll'
         })
+        /* bookmark */
+        // .when('/bookmark/:id', {
+        //     templateUrl: '../templates/views/bookmark.html',
+        //     controller: 'dwlBkCtrl',
+        //     controllerAs: 'dwlBk'
+        // })
         .when('/unique', {
             templateUrl: '../templates/views/unique.html',
             controller: 'dwlUniqueCtrl',
