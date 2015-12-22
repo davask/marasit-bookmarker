@@ -1,0 +1,60 @@
+<!doctype html>
+<html xmlns:ng="http://angularjs.org" ng-app="dwlApp">
+    <head ng-controller="dwlCtrl as dwl" ng-clock>
+
+        <meta charset="utf-8">
+        <meta name="description" content="{{app.title}}">
+        <meta name="author" content="{{app.author}}">
+
+        <title>{{app.title}}</title>
+
+        <base href="/">
+
+        <!-- Cascading Style Sheets -->
+        <link href="../vendor/bootstrap-3.3.5/css/bootstrap-3.3.5.min.css" rel="stylesheet" media="screen">
+        <link href="../css/custom.css" rel="stylesheet" media="screen">
+
+    </head>
+
+    <body ng-controller="dwlInitCtrl as dwlInit">
+
+        <section>
+
+            <div class="row">
+                <div class="col-sm-3">
+                    {{bookmarks.length}}
+                </div>
+                <div class="col-sm-9">
+                    <div ng-repeat="b in bookmarks">
+                        {{b.title}} - {{b.url}}<br/>
+                        {{b.dateAdded}} - {{b.id}} - {{b.index}}<br/>
+                        {{b.parentId}}<br/>
+                        {{b.storage}}<br/>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <img src="../img/spinner.gif" alt="loading" class="dwlLoading"/>
+
+        <!-- javascripts -->
+        <script src="../vendor/jquery-2.0.3/js/jquery-2.0.3.min.js"></script>
+        <script src="../vendor/bootstrap-3.3.5/js/bootstrap-3.3.5.min.js"></script>
+        <script src="../vendor/angular-1.4.7/js/angular.min.js"></script>
+        <script src="../vendor/angular-1.4.7/js/angular-route.min.js"></script>
+        <script src="../vendor/angular-1.4.7/js/angular-animate.min.js"></script>
+        <script src="../vendor/ui-bootstrap-0.13.4/js/ui-bootstrap-tpls-0.13.4.min.js"></script>
+
+        <!-- scripts -->
+        <script src="../js/dwl-helper.js"></script>
+        <script src="../js/dwl-omnibox.js"></script>
+
+        <script src="../js/dwl-app.js"></script>
+        <script src="../js/dwl-app-constant.js"></script>
+        <script src="../js/dwl-app-controller.js"></script>
+
+        <script src="../js/popup.js"></script>
+
+    </body>
+</html>
