@@ -5,11 +5,11 @@ _this.dwlShow = function(tbaId) {
         chrome.bookmarks.search(tab.url, function(bookmarks){
             var nb = bookmarks.length;
             if (nb > 1) {
-                // chrome.pageAction.setIcon({tabId: tbaId, path: 'img/spinner.gif'});
+                chrome.pageAction.setIcon({tabId: tbaId, path: 'img/icon-black16.png'});
             } else if (nb == 1) {
                 // chrome.pageAction.setIcon({tabId: tbaId, path: 'img/spinner.gif'});
             } else {
-                chrome.pageAction.setIcon({tabId: tbaId, path: 'img/spinner.gif'});
+                chrome.pageAction.setIcon({tabId: tbaId, path: 'img/icon-white16.png'});
             }
             chrome.pageAction.show(tbaId);
         });
