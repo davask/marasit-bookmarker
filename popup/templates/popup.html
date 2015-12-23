@@ -50,6 +50,8 @@
                         <option ng-repeat="option in routes" value="{{option.name}}">{{option.name}}</option>
                     </select>
                     <hr/>
+                    <button ng-click="resetAllBookmarks()" ng-show="activity == 'bookmark'">reset all bookmarks (take time)</button>
+
                 </div>
                 <div class="col-xs-9 scrollable displayArea">
                     <!-- Tab panes -->

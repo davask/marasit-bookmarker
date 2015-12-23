@@ -1,4 +1,8 @@
 var _this = this;
+
+var chromeBk = new chromeNativeBookmarker();
+var tagBk = new tagManagerBookmarker();
+
 _this.dwlShow = function(tbaId) {
 
     chrome.tabs.get(tbaId,function(tab){

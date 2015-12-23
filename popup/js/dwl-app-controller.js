@@ -16,6 +16,7 @@ dwlApp.controller("dwlInitCtrl", ['$route', '$routeParams', '$location','$rootSc
 
     $rootScope.activities = activityService.activities;
     $rootScope.activity = 'bookmark';
+    _this.chromeBk = chrome.extension.getBackgroundPage().chromeBk;
 
     $rootScope.updateRoute = function(route) {
         $rootScope.route = route;
@@ -48,13 +49,13 @@ dwlApp.controller("dwlInitCtrl", ['$route', '$routeParams', '$location','$rootSc
 
         $rootScope.count = {
             'all': function () {
-                return chrome.extension.getBackgroundPage().chromeBk.chromeBookmarksIds.length
+                return _this.chromeBk.chromeBookmarksIds.length
             },
             'folder': function () {
-                return chrome.extension.getBackgroundPage().chromeBk.chromeBookmarksFolders.length
+                return _this.chromeBk.chromeBookmarksFolders.length
             },
             'unique': function () {
-                return Object.keys(chrome.extension.getBackgroundPage().chromeBk.chromeBookmarksUrls).length
+                return Object.keys(_this.chromeBk.chromeBookmarksUrls).length
             },
             'duplicate': function () {
                 return this.all() - this.folder() - this.unique();
@@ -63,6 +64,10 @@ dwlApp.controller("dwlInitCtrl", ['$route', '$routeParams', '$location','$rootSc
                 return 0;
             }
         };
+    };
+
+    $rootScope.resetAllBookmarks = function(){
+        _this.chromeBk.reInitAllBookmarksAsArray();
     };
 
     $rootScope.updateActivity();

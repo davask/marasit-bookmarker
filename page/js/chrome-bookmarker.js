@@ -50,57 +50,21 @@ class chromeNativeBookmarker {
 
         if(typeof(_this.storage()['chromeBookmarksIds']) == "undefined") {
 
-            _this.reInitAllBookmarksAsArray().then(function() {
+            if (typeof(chrome.browserAction) != 'undefined') {
+                chrome.browserAction.setBadgeText({text:""+_this.badge.text});
+            }
+
+            _this.resetAllBookmarksAsArray().then(function() {
+                if (typeof(chrome.browserAction) != 'undefined') {
+                    chrome.browserAction.setBadgeText({text:""+Object.keys(_this.chromeBookmarksUrls).length});
+                }
+                console.log('chromeNativeBookmarker initialized');
                 d.resolve();
             });
 
         } else {
 
-            _this.reLoadAllBookmarksAsArray().then(function(){
-                d.resolve();
-            });
-
-        }
-
-        return d;
-    }
-
-    // CLEAR ALL BOOKMARKS
-
-    clearStorage () {
-
-        var _this = this;
-
-        _this.storage().clear();
-        console.log('chromeNativeBookmarker storage cleared');
-
-    }
-
-    clearAllBookmarks () {
-
-        var _this = this;
-
-        _this.chromeBookmarks = {};
-        _this.chromeBookmarksOriginal = {};
-        _this.chromeBookmarksIds = [];
-        _this.chromeBookmarksFolders = [];
-        _this.chromeBookmarksDuplicate = [];
-        _this.chromeBookmarksUrls = {};
-
-        console.log('chromeNativeBookmarker object cleared');
-
-    }
-
-    // LOAD ALL STORAGE BOOKMARKS
-    reLoadAllBookmarksAsArray () {
-
-        var _this = this;
-        var d = $.Deferred();
-
-        if(typeof(_this.storage()['chromeBookmarksIds']) != "undefined") {
-
             _this.badge.text = 'load';
-
             if (typeof(chrome.browserAction) != 'undefined') {
                 chrome.browserAction.setBadgeText({text:""+_this.badge.text});
             }
@@ -122,43 +86,12 @@ class chromeNativeBookmarker {
                 }
             };
 
-        } else {
-
-            console.log('chromeNativeBookmarker no storage available');
-            d.resolve();
-
         }
 
         return d;
-
     }
+
     // RESET ALL BOOKMARKS
-    reInitAllBookmarksAsArray () {
-
-        var _this = this;
-        var d = $.Deferred();
-
-        _this.clearStorage();
-        _this.clearAllBookmarks();
-
-        if (typeof(chrome.browserAction) != 'undefined') {
-            chrome.browserAction.setBadgeText({text:""+_this.badge.text});
-        }
-
-        _this.resetAllBookmarksAsArray().then(function() {
-            if (typeof(chrome.browserAction) != 'undefined') {
-                chrome.browserAction.setBadgeText({text:""+Object.keys(_this.chromeBookmarksUrls).length});
-            }
-
-            console.log('chromeNativeBookmarker initialized');
-
-            d.resolve();
-        });
-
-        return d;
-
-    }
-
     resetAllBookmarksAsArray () {
 
         var _this = this;

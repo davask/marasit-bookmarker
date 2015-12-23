@@ -26,6 +26,8 @@
        "persistent": true,
        "scripts": [
           "vendor/jquery-2.0.3/js/jquery-2.0.3.min.js",
+          "js/chrome-bookmarker.js",
+          "js/dwl-bookmarker-tag-manager.js",
           "js/dwl-helper.js",
           "js/dwl-omnibox.js",
           "js/background.js"
