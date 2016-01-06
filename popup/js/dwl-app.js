@@ -1,4 +1,7 @@
-var dwlApp = angular.module('dwlApp', ['ui.bootstrap', 'ngRoute', 'ngAnimate']);
+var dwlApp = angular.module('dwlApp', [
+                            'ui.bootstrap', 'ngRoute', 'ngAnimate',
+                            'timer'
+                        ]);
 
 dwlApp.run(function($rootScope) {
    $rootScope.$on('$routeChangeError', function(event, current, previous, rejection) {

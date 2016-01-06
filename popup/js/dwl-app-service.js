@@ -8,6 +8,9 @@ dwlApp.service('activityService', [function () {
         },
         'todo' : {
             'name':'todo'
+        },
+        'timer' : {
+            'name':'timer'
         }
     };
 
@@ -65,6 +68,13 @@ dwlApp.service('routesService', [function () {
             'todo' : {
                 'name':'todo',
                 'path':'/todo',
+                'selected' : false
+            }
+        },
+        'timer' : {
+            'timer' : {
+                'name':'timer',
+                'path':'/timer',
                 'selected' : false
             }
         }

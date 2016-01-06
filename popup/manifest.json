@@ -26,6 +26,8 @@
        "persistent": true,
        "scripts": [
           "vendor/jquery-2.0.3/js/jquery-2.0.3.min.js",
+          "vendor/angular-1.4.7/js/angular.min.js",
+          "vendor/angular-timer-master/dist/assets/js/angular-timer-all.min.js",
           "js/dwl-helper.js",
           "js/chrome-bookmarker.js",
           // "js/dwl-bookmarker-storage.js",

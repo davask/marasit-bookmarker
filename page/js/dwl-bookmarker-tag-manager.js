@@ -40,6 +40,42 @@ class tagManagerBookmarker {
 
     }
 
+    getFavicon (url) {
+
+        var _this = this;
+
+        var favicon = '';
+        var faviconArray = [];
+        var regex = '^https?:\\/\\/?[\\da-z\\.-]+\\.[a-z\\.]{2,6}';
+
+        faviconArray = url.match(regex);
+
+        if (faviconArray != null && faviconArray.length > 0) {
+            favicon = faviconArray[0]+'/favicon.ico';
+        }
+
+        return favicon;
+
+    }
+
+    getSafeUrl (url) {
+
+        var _this = this;
+
+        var safeUrl = '';
+        var safeUrlArray = [];
+        var regex = '^https?:\\/\\/?[\\da-z\\.-]+\\.[a-z\\.]{2,6}.*$';
+
+        safeUrlArray = url.match(regex);
+
+        if (safeUrlArray != null && safeUrlArray.length > 0) {
+            safeUrl = url;
+        }
+
+        return safeUrl;
+
+    }
+
     getBookmarkTags (title){
 
         var _this = this;
@@ -65,9 +101,9 @@ class tagManagerBookmarker {
 
         tags = tags.unique();
 
-        if(tags.length == 0) {
-            tags = null;
-        }
+        // if(tags.length == 0) {
+        //     tags = null;
+        // }
 
         return tags;
 
@@ -91,6 +127,19 @@ class tagManagerBookmarker {
         }
 
         return titleNoTag;
+
+    }
+
+    setSpecificTagData (bookmark) {
+
+        var _this = this;
+
+        bookmark['safeUrl'] = _this.getSafeUrl(bookmark.url);
+        bookmark['favicon'] = _this.getFavicon(bookmark.safeUrl);
+        bookmark['tags'] = _this.getBookmarkTags(bookmark.title);
+        bookmark['titleNoTag'] = _this.getTitleNoTag(bookmark.title);
+
+        return bookmark;
 
     }
 

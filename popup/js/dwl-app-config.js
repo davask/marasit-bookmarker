@@ -38,6 +38,12 @@ dwlApp.config(['$routeProvider', '$locationProvider', function config($routeProv
             controller: 'dwlTodoCtrl',
             controllerAs: 'dwlTodo'
         })
+        /* timer */
+        .when('/timer', {
+            templateUrl: '../templates/views/timer.html',
+            controller: 'dwlTimerCtrl',
+            controllerAs: 'dwlTimer'
+        })
 
         .otherwise({
             redirectTo: '/unique'

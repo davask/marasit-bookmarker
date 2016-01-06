@@ -30,11 +30,20 @@
                 </div>
                 <div class="col-sm-9">
                     <div>
+                        <span class="glyphicon glyphicon-dwlfavicon" aria-hidden="true" data-lazy="{{bookmark.favicon}}"></span>
                         <b>{{tab.titleNoTag}}</b><br/>
                         <small>{{tab.title}}</small><br/>
-                        ({{tab.url}})<br/>
-                        <ul ng-show="tab.tags">
-                            <li ng-repeat="tag in tab.tags">{{tag}}</li>
+                        <a ng-href="{{bookmark.url}}" target="_blank">
+                            {{bookmark.safeUrl}}
+                        </a>
+                        <br/>
+                        <ul class="list-inline" id="noTag">
+                            <li ng-repeat="tag in b.tags track by $index" ng-show="tag">
+                                <input id="noTag-{{$index}}" type="text" value="{{tag}}" ng-blur="editable($event)"/>
+                            </li>
+                            <li ng-repeat-end>
+                                <input id="noTag-{{$index+1}}" class="newTag" type="text" value="" ng-blur="editable($event)" ng-focus="editable($event)"/>
+                            </li>
                         </ul>
                         <b>tab</b>
                         <div ng-show="b.tab">
@@ -56,8 +65,13 @@
                         <b>{{b.titleNoTag}}</b><br/>
                         <small>{{b.title}}</small><br/>
                         ({{b.url}})<br/>
-                        <ul ng-show="b.tags" class="list-inline">
-                            <li ng-repeat="tag in b.tags">{{tag}}</li>
+                        <ul class="list-inline" id="{{b.id}}">
+                            <li ng-repeat="tag in b.tags track by $index" ng-show="tag">
+                                <input id="{{b.id}}-{{$index}}" type="text" value="{{tag}}" ng-blur="editable($event)"/>
+                            </li>
+                            <li ng-repeat-end>
+                                <input id="{{b.id}}-{{$index+1}}" class="newTag" type="text" value="" ng-blur="editable($event)" ng-focus="editable($event)"/>
+                            </li>
                         </ul>
                         <div>
                             {{b.dateAdded}} - {{b.id}} - {{b.index}}<br/>

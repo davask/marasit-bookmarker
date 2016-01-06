@@ -24,6 +24,7 @@ dwlApp.controller("dwlInitCtrl", ['$route', '$routeParams', '$location','$rootSc
     }
 
     $rootScope.updateRouting = function() {
+        console.log($rootScope.activity, $rootScope.route, routesService.defaultRoutes);
        _this.$location.path(routesService.defaultRoutes[$rootScope.activity][$rootScope.route].path);
     }
 
@@ -34,6 +35,8 @@ dwlApp.controller("dwlInitCtrl", ['$route', '$routeParams', '$location','$rootSc
 
         if ($rootScope.activity == 'todo') {
             $rootScope.initTodo();
+        } else if ($rootScope.activity == 'timer') {
+            $rootScope.initTimer();
         } else {
             $rootScope.initBookmark();
         }
@@ -41,6 +44,10 @@ dwlApp.controller("dwlInitCtrl", ['$route', '$routeParams', '$location','$rootSc
 
     $rootScope.initTodo = function () {
         $rootScope.updateRoute('todo');
+    };
+
+    $rootScope.initTimer = function () {
+        $rootScope.updateRoute('timer');
     };
 
     $rootScope.initBookmark = function () {
@@ -236,5 +243,38 @@ dwlApp.controller("dwlTodoCtrl", ['$route', '$routeParams', '$location','$rootSc
 
     $rootScope.name = "Todos";
     $rootScope.params = $routeParams;
+
+}]);
+
+/* -------------------------------------- */
+/* -----------TIMER ---------------- */
+/* -------------------------------------- */
+dwlApp.controller("dwlTimerCtrl", ['$route', '$routeParams', '$location','$rootScope', '$scope','$log',
+                                                  function ($route, $routeParams, $location,$rootScope, $scope,$log) {
+    var _this = this;
+
+    $rootScope.name = "Timer";
+    $rootScope.params = $routeParams;
+
+    $scope.timerRunning = false;
+
+    $scope.startTimer = function (){
+        $scope.$broadcast('timer-start');
+        $scope.timerRunning = true;
+    };
+
+    $scope.resumeTimer = function (){
+        $scope.$broadcast('timer-resume');
+        $scope.timerRunning = true;
+    };
+
+    $scope.stopTimer = function (){
+        $scope.$broadcast('timer-stop');
+        $scope.timerRunning = false;
+    };
+
+    $scope.$on('timer-stopped', function (event, args) {
+        console.log('timer-stopped args = ', args);
+    });
 
 }]);
