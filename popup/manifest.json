@@ -66,6 +66,9 @@
             "vendor/jquery-2.0.3/js/jquery-2.0.3.min.js",
             "js/content.js"
         ],
+        "css": [
+            "css/content.css"
+        ],
         "run_at": "document_end"
     }],
 

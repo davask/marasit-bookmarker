@@ -1,0 +1,12 @@
+#dwl-bk {
+    min-height: 20px;
+    min-width: 20px;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    border: 1px solid #f1f1f1;
+    background: #f1f1f1;
+    color: #333333;
+    font-weight: bold;
+    padding: 0 5px;
+}

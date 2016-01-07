@@ -4,10 +4,7 @@ _this.dwlShow = function(tbaId) {
 
     chrome.tabs.get(tbaId,function(tab){
 
-        chrome.tabs.sendMessage(tab.id, { text: "report_back" }, function(element){
-            // console.log(element);
-        });
-
+        var nb =0;
         chrome.bookmarks.search(tab.url, function(bookmarks){
             var nb = bookmarks.length;
             if (nb > 1) {
@@ -19,6 +16,11 @@ _this.dwlShow = function(tbaId) {
             }
             // chrome.browserAction.show(tbaId);
         });
+
+        chrome.tabs.sendMessage(tab.id, { 'nb' : nb }, function(element){
+            // console.log(element);
+        });
+
     });
 
 }
