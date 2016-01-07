@@ -1,3 +1,11 @@
+dwlApp.service('tagService', [function () {
+
+    var _this = this;
+
+    return _this;
+
+}]);
+
 dwlApp.service('activityService', [function () {
 
     var _this = this;
@@ -37,22 +45,27 @@ dwlApp.service('routesService', [function () {
 
     _this.defaultRoutes = {
         'bookmark' : {
-            'all' : {
-                'name':'all',
-                'path':'/all',
+            'page' : {
+                'name':'page',
+                'path':'/page',
                 'selected' : true
             },
+            // 'all' : {
+            //     'name':'all',
+            //     'path':'/all',
+            //     'selected' : true
+            // },
 
             'unique' : {
                 'name':'unique',
                 'path':'/unique',
                 'selected' : false
             },
-            'folder' : {
-                'name':'folder',
-                'path':'/folder',
-                'selected' : false
-            },
+            // 'folder' : {
+            //     'name':'folder',
+            //     'path':'/folder',
+            //     'selected' : false
+            // },
             'duplicate' : {
                 'name':'duplicate',
                 'path':'/duplicate',

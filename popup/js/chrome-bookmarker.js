@@ -27,9 +27,7 @@ class chromeNativeBookmarker {
         _this.chromeBookmarksDuplicate = [];
         _this.chromeBookmarksUrls = {};
 
-        _this.storage = function() {
-            return localStorage;
-        };
+        _this.storage = _this.getStorage();
 
         _this.badge = {
             title : function() {
@@ -48,7 +46,7 @@ class chromeNativeBookmarker {
         var _this = this;
         var d = $.Deferred();
 
-        if(typeof(_this.storage()['chromeBookmarksIds']) == "undefined") {
+        if(typeof(_this.storage['chromeBookmarksIds']) == "undefined") {
 
             _this.reInitAllBookmarksAsArray().then(function() {
                 d.resolve();
@@ -65,13 +63,18 @@ class chromeNativeBookmarker {
         return d;
     }
 
+
+    getStorage () {
+        return localStorage;
+    };
+
     // CLEAR ALL BOOKMARKS
 
     clearStorage () {
 
         var _this = this;
 
-        _this.storage().clear();
+        _this.storage.clear();
         console.log('chromeNativeBookmarker storage cleared');
 
     }
@@ -97,7 +100,7 @@ class chromeNativeBookmarker {
         var _this = this;
         var d = $.Deferred();
 
-        if(typeof(_this.storage()['chromeBookmarksIds']) != "undefined") {
+        if(typeof(_this.storage['chromeBookmarksIds']) != "undefined") {
 
             _this.badge.text = 'load';
 
@@ -105,15 +108,22 @@ class chromeNativeBookmarker {
                 chrome.browserAction.setBadgeText({text:""+_this.badge.text});
             }
 
-            _this.chromeBookmarksIds = JSON.parse(_this.storage()['chromeBookmarksIds']);
-            _this.chromeBookmarksFolders = JSON.parse(_this.storage()['chromeBookmarksFolders']);
-            _this.chromeBookmarksDuplicate = JSON.parse(_this.storage()['chromeBookmarksDuplicate']);
-            _this.chromeBookmarksUrls = JSON.parse(_this.storage()['chromeBookmarksUrls']);
+            _this.chromeBookmarksIds = JSON.parse(_this.storage['chromeBookmarksIds']);
+            _this.chromeBookmarksFolders = JSON.parse(_this.storage['chromeBookmarksFolders']);
+            _this.chromeBookmarksDuplicate = JSON.parse(_this.storage['chromeBookmarksDuplicate']);
+            _this.chromeBookmarksUrls = JSON.parse(_this.storage['chromeBookmarksUrls']);
 
+            var refresh = false;
             for (var i = 0; i < _this.chromeBookmarksIds.length; i++) {
                 var id = _this.chromeBookmarksIds[i];
-                _this.chromeBookmarks[id] = JSON.parse(_this.storage()['chromeBookmarks_'+id]);
+
+                if(typeof(_this.storage['chromeBookmarks_'+id]) == "undefined") {
+                    refresh = true;
+                } else {
+                    _this.chromeBookmarks[id] = JSON.parse(_this.storage['chromeBookmarks_'+id]);
+                }
                 if(i == _this.chromeBookmarksIds.length-1) {
+                    _this.saveAllBookmarksData();
                     if (typeof(chrome.browserAction) != 'undefined') {
                         chrome.browserAction.setBadgeText({text:""+Object.keys(_this.chromeBookmarksUrls).length});
                     }
@@ -138,6 +148,8 @@ class chromeNativeBookmarker {
         var _this = this;
         var d = $.Deferred();
 
+        chrome.browserAction.setIcon({path: 'img/icon-white16.png'})
+
         _this.clearStorage();
         _this.clearAllBookmarks();
 
@@ -150,6 +162,7 @@ class chromeNativeBookmarker {
                 chrome.browserAction.setBadgeText({text:""+Object.keys(_this.chromeBookmarksUrls).length});
             }
 
+            chrome.browserAction.setIcon({path: 'img/icon16.png'})
             console.log('chromeNativeBookmarker initialized');
 
             d.resolve();
@@ -186,7 +199,7 @@ class chromeNativeBookmarker {
         var d = $.Deferred();
 
         _this.getAllChromeBookmarks().then(function(){
-            _this.addBookmarkToArray(_this.chromeBookmarksOriginal).then(function(){
+            _this.addBookmarkToObject(_this.chromeBookmarksOriginal).then(function(){
                 console.log('chromeNativeBookmarker all bookmarks retrieved');
                 d.resolve();
             });
@@ -208,7 +221,7 @@ class chromeNativeBookmarker {
                 chrome.browserAction.setBadgeText({text:""+i});
             }
 
-            _this.saveChromeBookmark(id);
+            _this.saveStorageBookmark(id);
             if (i == Object.keys(_this.chromeBookmarks).length) {
                 _this.saveAllBookmarksData();
                 console.log('chromeNativeBookmarker all bookmarks saved');
@@ -219,13 +232,61 @@ class chromeNativeBookmarker {
         return d;
     }
 
+    // OBJECT RELATED FUNCTIONS
+    removeObjectBookmark (id) {
+        var _this = this;
+        var d = $.Deferred();
+
+        var url = _this.chromeBookmarks[id].url;
+        if (typeof(url) != 'undefined' && url != '' && typeof(_this.chromeBookmarksUrls[url]) != 'undefined') {
+            _this.chromeBookmarksUrls[url].clean(id);
+        }
+        if(typeof(_this.chromeBookmarksUrls[url]) != 'undefined' && _this.chromeBookmarksUrls[url].length == 0) {
+            delete _this.chromeBookmarksUrls[url];
+        }
+
+        delete _this.chromeBookmarks[id];
+
+        _this.chromeBookmarksIds.clean(id);
+        _this.chromeBookmarksFolders.clean(id);
+
+        _this.chromeBookmarksDuplicate.clean(id);
+
+        _this.saveAllBookmarksData();
+
+        d.resolve();
+
+        return d;
+    }
+
     // STORAGE RELATED FUNCTIONS
-    saveChromeBookmark (id) {
+    saveStorageBookmark (id) {
 
         var _this = this;
         var d = $.Deferred();
 
-        _this.storage().setItem('chromeBookmarks_'+id, JSON.stringify(_this.chromeBookmarks[id]));
+        _this.storage.setItem('chromeBookmarks_'+id, JSON.stringify(_this.chromeBookmarks[id]));
+        d.resolve();
+
+        return d;
+    }
+
+    // saveChromeBookmark (id) {
+
+    //     var _this = this;
+    //     var d = $.Deferred();
+
+    //     _this.saveStorageBookmark(id);
+    //     d.resolve();
+
+    //     return d;
+    // }
+
+    removeStorageBookmark (id) {
+        var _this = this;
+        var d = $.Deferred();
+
+        _this.storage.removeItem('chromeBookmarks_'+id);
 
         return d;
     }
@@ -235,10 +296,10 @@ class chromeNativeBookmarker {
         var _this = this;
         var d = $.Deferred();
 
-        _this.storage().setItem('chromeBookmarksIds', JSON.stringify(_this.chromeBookmarksIds));
-        _this.storage().setItem('chromeBookmarksFolders', JSON.stringify(_this.chromeBookmarksFolders));
-        _this.storage().setItem('chromeBookmarksDuplicate', JSON.stringify(_this.chromeBookmarksDuplicate));
-        _this.storage().setItem('chromeBookmarksUrls', JSON.stringify(_this.chromeBookmarksUrls));
+        _this.storage.setItem('chromeBookmarksIds', JSON.stringify(_this.chromeBookmarksIds));
+        _this.storage.setItem('chromeBookmarksFolders', JSON.stringify(_this.chromeBookmarksFolders));
+        _this.storage.setItem('chromeBookmarksDuplicate', JSON.stringify(_this.chromeBookmarksDuplicate));
+        _this.storage.setItem('chromeBookmarksUrls', JSON.stringify(_this.chromeBookmarksUrls));
 
         return d;
     }
@@ -262,8 +323,6 @@ class chromeNativeBookmarker {
         var _this = this;
         var d = $.Deferred();
 
-        console.log(bookmark);
-
         // bookmark.parentId
         // bookmark.index
         // bookmark.title
@@ -278,8 +337,11 @@ class chromeNativeBookmarker {
             // title: "New Tab"
             // url: "chrome://newtab/"
 
-            _this.addBookmarkToArray(chromeBk).then(function(){
-                d.resolve();
+            _this.addBookmarkToObject(chromeBk).then(function(){
+                _this.saveStorageBookmark(chromeBk.id).then(function(){
+                    chrome.browserAction.setBadgeText({text:""+Object.keys(_this.chromeBookmarksUrls).length});
+                    d.resolve();
+                });
             });
         });
 
@@ -291,6 +353,11 @@ class chromeNativeBookmarker {
         var d = $.Deferred();
 
         chrome.bookmarks.remove(id, function (){
+            _this.removeObjectBookmark(id);
+            _this.removeStorageBookmark(id);
+
+            chrome.browserAction.setBadgeText({text:""+Object.keys(_this.chromeBookmarksUrls).length});
+
             d.resolve();
         });
 
@@ -298,7 +365,7 @@ class chromeNativeBookmarker {
     }
 
     // BOOKMARKS OBJECT RELATED FUNCTIONS
-    addBookmarkToArray (bookmark) {
+    addBookmarkToObject (bookmark) {
 
         var _this = this;
         var d = $.Deferred();
@@ -309,20 +376,29 @@ class chromeNativeBookmarker {
         }
 
         _this.chromeBookmarksIds.push(bookmark.id);
+
         if(typeof(bookmark.url) !== 'undefined' && bookmark.url != '') {
+
             if(typeof(_this.chromeBookmarksUrls[bookmark.url]) == 'undefined') {
                 _this.chromeBookmarksUrls[bookmark.url] = [];
             }
+
             if (_this.chromeBookmarksUrls[bookmark.url].length > 0) {
                 _this.chromeBookmarksDuplicate.push(bookmark.id);
             }
+
             _this.chromeBookmarksUrls[bookmark.url].push(bookmark.id);
+
         } else {
+
             _this.chromeBookmarksFolders.push(bookmark.id);
+
         }
+
         if(bookmark.children && bookmark.children.length > 0) {
             children = bookmark.children;
         }
+
         bookmark.children = [];
 
         // recursively process child bookmarks
@@ -332,7 +408,7 @@ class chromeNativeBookmarker {
             for (var i = 0; i < children.length; i++) {
                 child = children[i];
                 bookmark.children.push(child.id);
-                _this.addBookmarkToArray(child).then(function(){
+                _this.addBookmarkToObject(child).then(function(){
                     if(i == children.length-1) {
                         _this.chromeBookmarks[bookmark.id] = bookmark;
                         d.resolve();
@@ -378,7 +454,8 @@ class chromeNativeBookmarker {
         var _this = this;
         var d = $.Deferred();
 
-        _this.chromeBookmarks[id].paths = _this.getAlternativesTree(id);
+        var paths = _this.getAlternativesTree(id).reverse();
+        _this.chromeBookmarks[id].paths = paths;
 
         return d;
     }

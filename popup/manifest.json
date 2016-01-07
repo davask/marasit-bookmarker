@@ -30,6 +30,7 @@
           "vendor/angular-timer-master/dist/assets/js/angular-timer-all.min.js",
           "js/dwl-helper.js",
           "js/chrome-bookmarker.js",
+          "js/dwl-bookmarker-tag-manager.js",
           // "js/dwl-bookmarker-storage.js",
           // "js/dwl-bookmarker-chrome.js",
           // "js/dwl-bookmarker.js",
@@ -58,29 +59,31 @@
    "devtools_page": "templates/devtools.html",
 
    "content_scripts": [{
-        "matches": ["http://*/*", "https://*/*"],
-        "js": ["js/content.js"]
+        "matches": [
+            "*://*/*"
+        ],
+        "js": [
+            "vendor/jquery-2.0.3/js/jquery-2.0.3.min.js",
+            "js/content.js"
+        ],
+        "run_at": "document_end"
     }],
-
 
     "content_security_policy": "default-src 'self' 'unsafe-eval'; img-src 'self' data: *; media-src *; style-src 'self' 'unsafe-inline';" ,
 
    "permissions": [
       "activeTab",
       "bookmarks",
-      "chrome://favicon/",
       "identity",
       "identity.email",
       "management",
       "notifications",
       "storage",
       "tabs",
-      "<all_urls>",
       "contentSettings",
-      "*://*.google.com/*"
+      "<all_urls>",
+      "chrome://favicon/"
    ],
-
-   "optional_permissions": [ "http://*/", "https://*/", "<all_urls>" ],
 
     "web_accessible_resources": [
         "img/icon128.png"

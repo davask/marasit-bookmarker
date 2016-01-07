@@ -7,11 +7,11 @@ dwlApp.config(['$routeProvider', '$locationProvider', function config($routeProv
             controllerAs: 'dwlAll'
         })
         /* bookmark */
-        // .when('/bookmark/:id', {
-        //     templateUrl: '../templates/views/bookmark.html',
-        //     controller: 'dwlBkCtrl',
-        //     controllerAs: 'dwlBk'
-        // })
+        .when('/page', {
+            templateUrl: '../templates/views/page.html',
+            controller: 'dwlPageCtrl',
+            controllerAs: 'dwlPage'
+        })
         .when('/unique', {
             templateUrl: '../templates/views/unique.html',
             controller: 'dwlUniqueCtrl',
