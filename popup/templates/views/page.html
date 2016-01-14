@@ -3,38 +3,8 @@
         {{bookmarks.length}} bookmark(s)
     </div>
     <div>
-        <div ng-repeat="b in bookmarks">
-            <b>{{b.titleNoTag}}</b><br/>
-            <small>{{b.title}}</small><br/>
-            ({{b.url}})<br/>
-            <ul class="list-inline" id="tbp{{b.id}}">
-                <li ng-repeat="tag in b.storage.tagsBasedPaths track by $index" ng-show="tag">
-                    <input id="tbp{{b.id}}-{{$index}}" type="text" value="{{tag}}" ng-blur="editable($event)"/>
-                </li>
-            </ul>
-            <ul class="list-inline" id="{{b.id}}">
-                <li ng-repeat="tag in b.tags track by $index" ng-show="tag">
-                    <input id="{{b.id}}-{{$index}}" type="text" value="{{tag}}" ng-blur="editable($event)"/>
-                </li>
-                <li ng-repeat-end>
-                    <input id="{{b.id}}-{{$index+1}}" class="newTag" type="text" value="" ng-blur="editable($event)" ng-focus="editable($event)"/>
-                </li>
-            </ul>
-            <div>
-                {{b.dateAdded}} - {{b.id}} - {{b.index}}<br/>
-                {{b.parentId}}<br/>
-                {{b.storage}}
-            </div>
-            <b>tab</b>
-            <div ng-show="b.tab">
-                id: {{b.tab.id}} - index: {{b.tab.index}} - windowId: {{b.tab.windowId}}<br/>
-                height: {{b.tab.height}} - width: {{b.tab.width}}<br/>
-                incognito: {{b.tab.incognito}} - status: {{b.tab.status}}<br/>
-                active: {{b.tab.active}} - audible: {{b.tab.audible}} - highlighted: {{b.tab.highlighted}}<span ng-repeat="(mutedIndex, mutedValue) in b.tab.mutedInfo"> - {{mutedIndex}}:{{mutedValue}}</span> - pinned: {{b.tab.pinned}} - selected: {{b.tab.selected}}
-            </div>
-            <br/>
-            <button ng-click="removeBookmark(b.id)">delete bookmark {{b.id}}</button>
-            <hr/>
+        <div ng-repeat="bookmark in bookmarks">
+            <div ng-include src="'/templates/views/bookmarkdetails.html'"></div>
         </div>
     </div>
 </div>
@@ -46,33 +16,9 @@
         <!-- bookmark.title -->
         <!-- bookmark.url -->
     </div>
+
     <div>
-        <div>
-            <span class="glyphicon glyphicon-dwlfavicon" aria-hidden="true" data-lazy="{{bookmark.favicon}}"></span>
-            <b>{{tab.titleNoTag}}</b><br/>
-            <small>{{tab.title}}</small><br/>
-            <a ng-href="{{bookmark.url}}" target="_blank">
-                {{bookmark.safeUrl}}
-            </a>
-            <br/>
-            <ul class="list-inline" id="noTag">
-                <li ng-repeat="tag in b.tags track by $index" ng-show="tag">
-                    <input id="noTag-{{$index}}" type="text" value="{{tag}}" ng-blur="editable($event)"/>
-                </li>
-                <li ng-repeat-end>
-                    <input id="noTag-{{$index+1}}" class="newTag" type="text" value="" ng-blur="editable($event)" ng-focus="editable($event)"/>
-                </li>
-            </ul>
-            <b>tab</b>
-            <div ng-show="b.tab">
-                id: {{tab.id}} - index: {{tab.index}} - windowId: {{tab.windowId}}<br/>
-                height: {{tab.height}} - width: {{tab.width}}<br/>
-                incognito: {{tab.incognito}} - status: {{tab.status}}<br/>
-                active: {{tab.active}} - audible: {{tab.audible}} - highlighted: {{tab.highlighted}}<span ng-repeat="(mutedIndex, mutedValue) in tab.mutedInfo"> - {{mutedIndex}}:{{mutedValue}}</span> - pinned: {{tab.pinned}} - selected: {{tab.selected}}<br/>
-            </div>
-            <br/>
-            <button ng-click="createBookmark({'title':tab.title, 'url':tab.url})">add to bookmarks</button>
-        </div>
+        <div ng-include src="'/templates/views/tab.html'"></div>
     </div>
 </div>
 

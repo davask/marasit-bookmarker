@@ -22,14 +22,19 @@
 
             <div class="row" ng-controller="dwlInitCtrl as dwlInit">
                 <div class="col-sm-3">
-                    <select ng-model="activity" class="col-xs-12" ng-change="updateActivity()">
+                    <select ng-model="activity" class="col-xs-12" ng-change="updateActivity()" ng-show="activities.length > 1">
                         <option ng-repeat="option in activities" value="{{option.name}}">{{option.name}}</option>
                     </select>
-                    <hr/>
+                    <select ng-model="route" class="col-xs-12" ng-change="updateRouting()" ng-show="activity == 'bookmark'">
+                        <option ng-repeat="option in routes" value="{{option.name}}">{{option.name}} - {{count[option.name]}}</option>
+                    </select>
+                    <select ng-model="route" class="col-xs-12" ng-change="updateRouting()" ng-show="activity == 'todo'">
+                        <option ng-repeat="option in routes" value="{{option.name}}">{{option.name}}</option>
+                    </select>
                 </div>
                 <!-- Top Nav -->
                 <div class="col-sm-9">
-                    <h1>{{activity}}/{{route}}</h1>
+                    <h1>activity : {{activity}} - type : {{route}}</h1>
                 </div>
                 <!-- Nav tabs -->
 <!--
@@ -39,19 +44,33 @@
                         <a href="{{tabs.path}}" ng-show="activity == 'todo'">{{tabs.name}}</a>
                     </li>
                 </ul>
- -->
+  -->
             </div>
             <div class="row">
                 <div class="col-sm-3">
-                    <select ng-model="route" class="col-xs-12" ng-change="updateRouting()" ng-show="activity == 'bookmark'">
-                        <option ng-repeat="option in routes" value="{{option.name}}">{{option.name}} - {{count[option.name]}}</option>
-                    </select>
-                    <select ng-model="route" class="col-xs-12" ng-change="updateRouting()" ng-show="activity == 'todo'">
-                        <option ng-repeat="option in routes" value="{{option.name}}">{{option.name}}</option>
-                    </select>
-                    <hr/>
-                    <button ng-click="resetAllBookmarks()" ng-show="activity == 'bookmark'">reset all bookmarks (take time)</button>
-
+                    <div class="col-xs-12" ng-show="activity == 'bookmark' && route != 'page'">
+                        Filter bookmark :<br/>
+                        <input type="text" id="filterQuery" ng-model="query" ng-focus="query = '';" placeholder="Search bookmark">
+                    </div>
+<!--
+                    <button ng-click="filterBookmarks()" ng-show="query != ''">Search</button>
+                    <button ng-click="clearFilter()" ng-show="query != ''">clear search</button>
+ -->
+                    <br/>
+                    <div class="tagsDisplay" ng-show="activity == 'bookmark' && route == 'unique'">
+                        <div class="col-xs-12">
+                            Filter tags :<br/>
+                            <input type="text" id="filterTag" ng-model="queryTag" ng-focus="queryTag = '';" placeholder="Search tags">
+                        </div>
+                        <ul class="list-unstyled list-inline">
+                            <li ng-repeat="(key, value) in (allTags | filter:queryTag | orderBy : value) track by $index">
+                                <a class="btn" ng-click="$parent.query = value" ng-class="!allTagsIds[value] ? 'error' : ''">
+                                    {{value}}
+                                    <small ng-if="allTagsIds[value]">&nbsp;({{allTagsIds[value].length}})</small>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
                 <div class="col-xs-9 scrollable displayArea">
                     <!-- Tab panes -->

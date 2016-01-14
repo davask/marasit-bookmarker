@@ -106,10 +106,10 @@
                             <p>description</p>
                             <ul id="bi-{{bookmark.index}}"class="list-inline tags">
                                 <li ng-cloak ng-repeat="tag in bookmark.tags as tagsIndexes track by $index">
-                                    <input id="{{bookmark.id}}-{{$index}}" type="text" value="{{tag}}" ng-blur="editable($event)"/>
+                                    <input id="{{bookmark.id}}-{{$index}}" type="text" value="{{tag}}" ng-blur="editTag($event)"/>
                                 </li>
                                 <li ng-repeat-end>
-                                    <input id="{{bookmark.id}}-{{bookmark.tags.length}}" class="newTag" type="text" value="{{empty}}" placeholder="new Tag" ng-blur="editable($event)" ng-focus="editable($event)"/>
+                                    <input id="{{bookmark.id}}-{{bookmark.tags.length}}" class="newTag" type="text" value="{{empty}}" placeholder="new Tag" ng-blur="editTag($event)" ng-focus="editTag($event)"/>
                                 </li>
                             </ul>
                             <small>{{bookmark.title}}</small>

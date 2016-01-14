@@ -13,89 +13,95 @@
 }
 
 */
+var chromeNativeBookmarker = {
 
-class chromeNativeBookmarker {
-
-    constructor () {
+    /* INSTANTIATE */
+    'instantiate' : function() {
 
         var _this = this;
 
-        _this.chromeBookmarks = {};
-        _this.chromeBookmarksOriginal = {};
-        _this.chromeBookmarksIds = [];
-        _this.chromeBookmarksFolders = [];
-        _this.chromeBookmarksDuplicate = [];
-        _this.chromeBookmarksUrls = {};
+        _this = merge(_this, chromeLogsBookmarker.init());
+        _this.logs[_this.name+'.instantiate'] = 'chromeNativeBookmarker instantiated';
+        _this.logs[_this.name+'.clearBookmarksOriginal'] = 'chromeNativeBookmarker object cleared';
 
-        _this.storage = _this.getStorage();
+        _this.initialized = true;
+        _this.log(_this.name+'.instantiate');
 
-        _this.badge = {
-            title : function() {
-                var _this = this;
-                return _this.text + " bookmarks";
-            },
-            text : "Init",
-        };
+    },
 
-        console.log('chromeNativeBookmarker instantiate');
+    /* VAR */
+   'initialized' : false,
+   'name' : 'native',
 
-    }
+   'chromeBookmarksOriginal' : {},
 
-    init () {
-
+    /* FUNCTIONS */
+    'getAllChromeBookmarks' : function () {
         var _this = this;
         var d = $.Deferred();
 
-        if(typeof(_this.storage['chromeBookmarksIds']) == "undefined") {
-
-            _this.reInitAllBookmarksAsArray().then(function() {
-                d.resolve();
+        chrome.bookmarks.getTree(function(bookmarksTree){
+            bookmarksTree.forEach(function(bookmark){
+                _this.chromeBookmarksOriginal = bookmark;
             });
-
-        } else {
-
-            _this.reLoadAllBookmarksAsArray().then(function(){
-                d.resolve();
-            });
-
-        }
+            d.resolve();
+        });
 
         return d;
+    },
+
+    /* FUNCTIONS */
+    'clearBookmarksOriginal' : function () {
+
+        this.chromeBookmarksOriginal = {};
+
+        this.log(this.name+'.clearBookmarksOriginal');
+
+    },
+
+    /* INIT */
+    'init' : function () {
+        var _this = this;
+        if (!_this.initialized) {
+            _this.instantiate();
+        }
+        return _this;
     }
 
+}
 
-    getStorage () {
-        return localStorage;
-    };
+var chromeMixedBookmarker = {
 
-    // CLEAR ALL BOOKMARKS
-
-    clearStorage () {
+    /* INSTANTIATE */
+    'instantiate' : function() {
 
         var _this = this;
 
-        _this.storage.clear();
-        console.log('chromeNativeBookmarker storage cleared');
+        _this = merge(_this, chromeLogsBookmarker.init());
+        _this.logs[_this.name+'.instantiate'] = 'chromeMixedBookmarker instantiated';
+        _this.logs[_this.name+'.reLoadAllBookmarksAsArray'] = 'All bookmarks reloaded as array';
+        _this.logs['storage'+'.reLoadAllBookmarksAsArray'] = 'chromeNativeBookmarker no storage available';
+        _this.logs[_this.name+'.reInitAllBookmarksAsArray'] = 'All bookmarks reinitialized as array';
 
-    }
+        _this = merge(_this, chromeBookmarksBookmarker.init());
+        _this = merge(_this, chromeStorageBookmarker.init());
+        _this = merge(_this, chromeBookmarker.init());
+        if (typeof _this.tagBk['tagSep'] == 'undefined') {
+            _this.tagBk = new tagManagerBookmarker();
+        }
 
-    clearAllBookmarks () {
+        _this.initialized = true;
+        _this.log(_this.name+'.instantiate');
 
-        var _this = this;
+    },
 
-        _this.chromeBookmarks = {};
-        _this.chromeBookmarksOriginal = {};
-        _this.chromeBookmarksIds = [];
-        _this.chromeBookmarksFolders = [];
-        _this.chromeBookmarksDuplicate = [];
-        _this.chromeBookmarksUrls = {};
+    /* VAR */
+   'initialized' : false,
+   'name' : 'mixed',
 
-        console.log('chromeNativeBookmarker object cleared');
-
-    }
-
+    /* FUNCTIONS */
     // LOAD ALL STORAGE BOOKMARKS
-    reLoadAllBookmarksAsArray () {
+    'reLoadAllBookmarksAsArray' : function () {
 
         var _this = this;
         var d = $.Deferred();
@@ -112,6 +118,8 @@ class chromeNativeBookmarker {
             _this.chromeBookmarksFolders = JSON.parse(_this.storage['chromeBookmarksFolders']);
             _this.chromeBookmarksDuplicate = JSON.parse(_this.storage['chromeBookmarksDuplicate']);
             _this.chromeBookmarksUrls = JSON.parse(_this.storage['chromeBookmarksUrls']);
+            _this.chromeBookmarksTags = JSON.parse(_this.storage['chromeBookmarksTags']);
+            _this.chromeBookmarksTagsIds = JSON.parse(_this.storage['chromeBookmarksTagsIds']);
 
             var refresh = false;
             for (var i = 0; i < _this.chromeBookmarksIds.length; i++) {
@@ -122,28 +130,30 @@ class chromeNativeBookmarker {
                 } else {
                     _this.chromeBookmarks[id] = JSON.parse(_this.storage['chromeBookmarks_'+id]);
                 }
+                _this.chromeBookmarks[id] = _this.tagBk.setSpecificTagData(_this.chromeBookmarks[id]);
                 if(i == _this.chromeBookmarksIds.length-1) {
                     _this.saveAllBookmarksData();
                     if (typeof(chrome.browserAction) != 'undefined') {
                         chrome.browserAction.setBadgeText({text:""+Object.keys(_this.chromeBookmarksUrls).length});
                     }
-                    console.log('chromeNativeBookmarker initialized');
-                    d.resolve();
+                    _this.log(_this.name+'.reLoadAllBookmarksAsArray')
+                    d.resolve(_this);
                 }
             };
 
         } else {
 
-            console.log('chromeNativeBookmarker no storage available');
-            d.resolve();
+            _this.log('storage'+'.reLoadAllBookmarksAsArray')
+            d.resolve(_this);
 
         }
 
         return d;
 
-    }
+    },
+
     // RESET ALL BOOKMARKS
-    reInitAllBookmarksAsArray () {
+    'reInitAllBookmarksAsArray' : function () {
 
         var _this = this;
         var d = $.Deferred();
@@ -162,17 +172,17 @@ class chromeNativeBookmarker {
                 chrome.browserAction.setBadgeText({text:""+Object.keys(_this.chromeBookmarksUrls).length});
             }
 
-            chrome.browserAction.setIcon({path: 'img/icon16.png'})
-            console.log('chromeNativeBookmarker initialized');
+            chrome.browserAction.setIcon({path: 'img/icon16.png'});
+            _this.log(_this.name+'.reInitAllBookmarksAsArray')
 
-            d.resolve();
+            d.resolve(_this);
         });
 
         return d;
 
-    }
+    },
 
-    resetAllBookmarksAsArray () {
+    'resetAllBookmarksAsArray' : function () {
 
         var _this = this;
         var d = $.Deferred();
@@ -191,135 +201,9 @@ class chromeNativeBookmarker {
 
         return d;
 
-    }
+    },
 
-    getAllChromeBookmarksAsArray () {
-
-        var _this = this;
-        var d = $.Deferred();
-
-        _this.getAllChromeBookmarks().then(function(){
-            _this.addBookmarkToObject(_this.chromeBookmarksOriginal).then(function(){
-                console.log('chromeNativeBookmarker all bookmarks retrieved');
-                d.resolve();
-            });
-        });
-
-        return d;
-    }
-
-    // SAVING RELATED FUNCTIONS
-    saveAllChromeBookmarksAsArray () {
-
-        var _this = this;
-        var d = $.Deferred();
-
-        var i = 0;
-        for(var id in _this.chromeBookmarks) {
-            i++;
-            if (typeof(chrome.browserAction) != 'undefined') {
-                chrome.browserAction.setBadgeText({text:""+i});
-            }
-
-            _this.saveStorageBookmark(id);
-            if (i == Object.keys(_this.chromeBookmarks).length) {
-                _this.saveAllBookmarksData();
-                console.log('chromeNativeBookmarker all bookmarks saved');
-                d.resolve();
-            }
-        }
-
-        return d;
-    }
-
-    // OBJECT RELATED FUNCTIONS
-    removeObjectBookmark (id) {
-        var _this = this;
-        var d = $.Deferred();
-
-        var url = _this.chromeBookmarks[id].url;
-        if (typeof(url) != 'undefined' && url != '' && typeof(_this.chromeBookmarksUrls[url]) != 'undefined') {
-            _this.chromeBookmarksUrls[url].clean(id);
-        }
-        if(typeof(_this.chromeBookmarksUrls[url]) != 'undefined' && _this.chromeBookmarksUrls[url].length == 0) {
-            delete _this.chromeBookmarksUrls[url];
-        }
-
-        delete _this.chromeBookmarks[id];
-
-        _this.chromeBookmarksIds.clean(id);
-        _this.chromeBookmarksFolders.clean(id);
-
-        _this.chromeBookmarksDuplicate.clean(id);
-
-        _this.saveAllBookmarksData();
-
-        d.resolve();
-
-        return d;
-    }
-
-    // STORAGE RELATED FUNCTIONS
-    saveStorageBookmark (id) {
-
-        var _this = this;
-        var d = $.Deferred();
-
-        _this.storage.setItem('chromeBookmarks_'+id, JSON.stringify(_this.chromeBookmarks[id]));
-        d.resolve();
-
-        return d;
-    }
-
-    // saveChromeBookmark (id) {
-
-    //     var _this = this;
-    //     var d = $.Deferred();
-
-    //     _this.saveStorageBookmark(id);
-    //     d.resolve();
-
-    //     return d;
-    // }
-
-    removeStorageBookmark (id) {
-        var _this = this;
-        var d = $.Deferred();
-
-        _this.storage.removeItem('chromeBookmarks_'+id);
-
-        return d;
-    }
-
-    saveAllBookmarksData () {
-
-        var _this = this;
-        var d = $.Deferred();
-
-        _this.storage.setItem('chromeBookmarksIds', JSON.stringify(_this.chromeBookmarksIds));
-        _this.storage.setItem('chromeBookmarksFolders', JSON.stringify(_this.chromeBookmarksFolders));
-        _this.storage.setItem('chromeBookmarksDuplicate', JSON.stringify(_this.chromeBookmarksDuplicate));
-        _this.storage.setItem('chromeBookmarksUrls', JSON.stringify(_this.chromeBookmarksUrls));
-
-        return d;
-    }
-
-    // CHROME RELATED FUNCTIONS
-    getAllChromeBookmarks () {
-        var _this = this;
-        var d = $.Deferred();
-
-        chrome.bookmarks.getTree(function(bookmarksTree){
-            bookmarksTree.forEach(function(bookmark){
-                _this.chromeBookmarksOriginal = bookmark;
-            });
-            d.resolve();
-        });
-
-        return d;
-    }
-
-    createChromeBookmarks (bookmark) {
+    'createChromeBookmarks' : function (bookmark) {
         var _this = this;
         var d = $.Deferred();
 
@@ -346,9 +230,51 @@ class chromeNativeBookmarker {
         });
 
         return d;
-    }
+    },
 
-    removeChromeBookmarks (id) {
+    'updateChromeBookmarksTitle' : function (bookmark) {
+        var _this = this;
+        var d = $.Deferred();
+
+        var chromeBk = {};
+        chromeBk['title']= bookmark.title;
+        chromeBk['url']= bookmark.url;
+
+        chrome.bookmarks.update(bookmark.id, chromeBk, function (bk) {
+
+            _this.updateBookmarkObjectTitle(bookmark).then(function(){
+                _this.saveStorageBookmark(bookmark.id).then(function(){
+                    d.resolve();
+                });
+            });
+        });
+
+        return d;
+    },
+
+    'updateChromeBookmarksUrl' : function (bookmark) {
+
+        var _this = this;
+        var d = $.Deferred();
+
+        var chromeBk = {};
+        chromeBk['title']= bookmark.title;
+        chromeBk['url']= bookmark.url;
+
+
+        chrome.bookmarks.update(bookmark.id, chromeBk, function (bk) {
+
+            _this.updateBookmarkObjectUrl(bookmark).then(function(){
+                _this.saveStorageBookmark(bookmark.id).then(function(){
+                    d.resolve();
+                });
+            });
+        });
+
+        return d;
+    },
+
+    'removeChromeBookmarks' : function (id) {
         var _this = this;
         var d = $.Deferred();
 
@@ -362,14 +288,65 @@ class chromeNativeBookmarker {
         });
 
         return d;
-    }
+    },
 
-    // BOOKMARKS OBJECT RELATED FUNCTIONS
-    addBookmarkToObject (bookmark) {
+    'getAllChromeBookmarksAsArray' : function () {
+
+        var _this = this;
+        var d = $.Deferred();
+
+        _this.getAllChromeBookmarks().then(function(){
+            _this.addBookmarkToObject(_this.chromeBookmarksOriginal).then(function(){
+                console.log('chromeNativeBookmarker all bookmarks retrieved');
+                d.resolve();
+            });
+        });
+
+        return d;
+    },
+
+    'clearAllBookmarks' : function () {
+
+        var _this = this;
+
+        _this.clearBookmarks();
+        _this.clearBookmarksOriginal();
+
+        _this.log(_this.name+'.clearAllBookmarks');
+    },
+
+    'removeObjectBookmark' : function (id) {
+        var _this = this;
+        var d = $.Deferred();
+
+        var url = _this.chromeBookmarks[id].url;
+        if (typeof(url) != 'undefined' && url != '' && typeof(_this.chromeBookmarksUrls[url]) != 'undefined') {
+            _this.chromeBookmarksUrls[url].clean(id);
+        }
+        if(typeof(_this.chromeBookmarksUrls[url]) != 'undefined' && _this.chromeBookmarksUrls[url].length == 0) {
+            delete _this.chromeBookmarksUrls[url];
+        }
+
+        delete _this.chromeBookmarks[id];
+
+        _this.chromeBookmarksIds.clean(id);
+        _this.chromeBookmarksFolders.clean(id);
+
+        _this.chromeBookmarksDuplicate.clean(id);
+
+        _this.saveAllBookmarksData();
+
+        d.resolve();
+
+        return d;
+    },
+
+    'addBookmarkToObject' : function (bookmark) {
 
         var _this = this;
         var d = $.Deferred();
         var children = [];
+        var thisTags = [];
 
         if (typeof(chrome.browserAction) != 'undefined') {
             chrome.browserAction.setBadgeText({text:""+Object.keys(_this.chromeBookmarks).length});
@@ -399,6 +376,16 @@ class chromeNativeBookmarker {
             children = bookmark.children;
         }
 
+        if(typeof(bookmark.title) && bookmark.title.trim() != '') {
+
+            thisTags = _this.tagBk.getBookmarkTags(bookmark.title);
+
+            for (var i = 0; i < thisTags.length; i++) {
+                _this.addTags(thisTags[i], bookmark.id);
+            };
+
+        }
+
         bookmark.children = [];
 
         // recursively process child bookmarks
@@ -422,10 +409,9 @@ class chromeNativeBookmarker {
         }
 
         return d;
-    }
+    },
 
-    // ALTERNATIVES PATH RELATED FUNCTIONS
-    getAlternativePathsForAllBookmarks () {
+    'getAlternativePathsForAllBookmarks' : function () {
 
         var _this = this;
         var d = $.Deferred();
@@ -447,9 +433,461 @@ class chromeNativeBookmarker {
         };
 
         return d;
+    },
+
+    'searchChromeBookmark' : function (search, type) {
+
+        var _this = this;
+        var b = _this.bookmarks;
+        var d = $.Deferred();
+
+        _this.chromeBookmarksIds = JSON.parse(_this.storage['chromeBookmarksIds']);
+
+        if (typeof(type) == "undefined") {
+            type = "unique";
+        }
+
+        if (type == "unique") {
+            var bks = {};
+            var bkType = 'url';
+            var bkObject = 'chromeBookmarksUrls';
+        }
+
+        chrome.bookmarks.search(search, function(bookmarks){
+
+            for (var i = 0; i < bookmarks.length; i++) {
+
+                if (typeof(bookmarks[i][bkType]) != "undefined" && jQuery.inArray(bookmarks[i].id,_this.chromeBookmarksIds)) {
+                    bks[bookmarks[i][bkType]] = _this[bkObject][bookmarks[i][bkType]];
+                }
+
+            };
+
+            d.resolve(bks);
+
+        });
+
+        return d;
+    },
+
+    /* INIT */
+    'init' : function () {
+        var _this = this;
+        if (!_this.initialized) {
+            _this.instantiate();
+        }
+        return _this;
     }
 
-    getAlternativePathsForUniqueBookmark (id) {
+};
+
+var chromeTagsBookmarker = {
+
+    /* INSTANTIATE */
+    'instantiate' : function() {
+
+        var _this = this;
+
+        _this = merge(_this, chromeLogsBookmarker.init());
+        _this.logs[_this.name+'.instantiate'] = 'chromeTagsBookmarker instantiated';
+
+        _this.initialized = true;
+        _this.log(_this.name+'.instantiate');
+
+    },
+
+    /* VAR */
+   'initialized' : false,
+   'name' : 'tags',
+
+    /* FUNCTIONS */
+    'cleanTags' : function (tagValue, bkId) {
+
+        var _this = this;
+        var d = $.Deferred();
+
+        _this.chromeBookmarksTagsIds[tagValue].clean(bkId);
+        if(_this.chromeBookmarksTagsIds[tagValue].length == 0) {
+            delete _this.chromeBookmarksTagsIds[tagValue];
+            _this.chromeBookmarksTags.clean(tagValue.trim());
+        }
+        d.resolve();
+
+        return d;
+
+    },
+
+    'addTags' : function (tagValue, bkId) {
+
+        var _this = this;
+        var d = $.Deferred();
+
+        tagValue = tagValue.trim();
+
+        if(typeof(_this.chromeBookmarksTagsIds[tagValue]) == 'undefined') {
+            _this.chromeBookmarksTagsIds[tagValue] = [];
+        }
+        _this.chromeBookmarksTagsIds[tagValue].push(bkId);
+        _this.chromeBookmarksTagsIds[tagValue] = _this.chromeBookmarksTagsIds[tagValue].unique();
+
+        _this.chromeBookmarksTags.push(tagValue);
+        _this.chromeBookmarksTags = _this.chromeBookmarksTags.unique();
+
+        d.resolve();
+
+        return d;
+
+    },
+
+    /* INIT */
+    'init' : function () {
+        var _this = this;
+        if (!_this.initialized) {
+            _this.instantiate();
+        }
+        return _this;
+    }
+
+};
+
+// var chromeNativeBookmarker = {
+
+//     /* INSTANTIATE */
+//     'instantiate' : function() {
+//         this.initialized = true;
+//         this.log('logs.instantiate');
+//     },
+
+//     /* VAR */
+//    'initialized' : false,
+//    'name' : 'native',
+
+//     /* FUNCTIONS */
+
+//     /* INIT */
+//     'init' : function () {
+//         if (!this.initialized) {
+//             this.instantiate();
+//         }
+//         return this;
+//     }
+
+// };
+
+
+
+var chromeBadgeBookmarker = {
+
+    /* INSTANTIATE */
+    'instantiate' : function() {
+        var _this = this;
+        _this = merge(_this, chromeLogsBookmarker.init());
+        _this.logs[_this.name+'.instantiate'] = 'chromeBadgeBookmarker instantiated';
+
+        _this.initialized = true;
+        _this.log(_this.name+'.instantiate');
+
+    },
+
+    /* VAR */
+    'initialized' : false,
+    'name' : 'badge',
+
+    'badge' : {
+        title : function() {
+            var _this = this;
+            return _this.text + " bookmarks";
+        },
+        text : "Init",
+    },
+
+    /* INIT */
+    'init' : function () {
+        var _this = this;
+        if (!_this.initialized) {
+            _this.instantiate();
+        }
+        return _this;
+    }
+
+};
+
+var chromeStorageBookmarker = {
+
+    /* INSTANTIATE */
+    'instantiate' : function () {
+
+        var _this = this;
+        _this.storage = _this.getStorage();
+
+        _this = merge(_this, chromeLogsBookmarker.init());
+        _this.logs[_this.name+'.clearStorage'] = 'chromeStorageBookmarker storage cleared';
+        _this.logs[_this.name+'.instantiate'] = 'chromeStorageBookmarker instantiated';
+
+        _this.initialized = true;
+        _this.log(_this.name+'.instantiate');
+    },
+
+    /* VAR */
+    'initialized' : false,
+    'name' : 'storage',
+
+    'storage' : {},
+
+    /* FUNCTIONS */
+    'getStorage' : function () {
+        return localStorage;
+    },
+
+    // clear all bookmarks
+    'clearStorage' : function () {
+        var _this = this;
+        _this.storage.clear();
+
+        _this.log(_this.name+'.clearStorage');
+    },
+
+    'saveStorageBookmark' : function (id) {
+
+        var _this = this;
+        var d = $.Deferred();
+
+        _this.storage.setItem('chromeBookmarks_'+id, JSON.stringify(_this.chromeBookmarks[id]));
+        d.resolve();
+
+        return d;
+    },
+
+    'removeStorageBookmark' : function (id) {
+        var _this = this;
+        var d = $.Deferred();
+
+        _this.storage.removeItem('chromeBookmarks_'+id);
+
+        return d;
+    },
+
+    'saveAllBookmarksData' : function () {
+
+        var _this = this;
+        var d = $.Deferred();
+
+        _this.storage.setItem('chromeBookmarksIds', JSON.stringify(_this.chromeBookmarksIds));
+        _this.storage.setItem('chromeBookmarksFolders', JSON.stringify(_this.chromeBookmarksFolders));
+        _this.storage.setItem('chromeBookmarksDuplicate', JSON.stringify(_this.chromeBookmarksDuplicate));
+        _this.storage.setItem('chromeBookmarksUrls', JSON.stringify(_this.chromeBookmarksUrls));
+        _this.storage.setItem('chromeBookmarksTags', JSON.stringify(_this.chromeBookmarksTags));
+        _this.storage.setItem('chromeBookmarksTagsIds', JSON.stringify(_this.chromeBookmarksTagsIds));
+
+        return d;
+    },
+
+    'saveAllChromeBookmarksAsArray' : function () {
+
+        var _this = this;
+        var d = $.Deferred();
+
+        var i = 0;
+        for(var id in _this.chromeBookmarks) {
+            i++;
+            if (typeof(chrome.browserAction) != 'undefined') {
+                chrome.browserAction.setBadgeText({text:""+i});
+            }
+
+            _this.chromeBookmarks[id] = _this.tagBk.setSpecificTagData(_this.chromeBookmarks[id]);
+
+            _this.saveStorageBookmark(id);
+            if (i == Object.keys(_this.chromeBookmarks).length) {
+                _this.saveAllBookmarksData();
+                console.log('chromeNativeBookmarker all bookmarks saved');
+                d.resolve();
+            }
+        }
+
+        return d;
+    },
+
+    /* INIT */
+    'init' : function () {
+        var _this = this;
+        if (!_this.initialized) {
+            _this.instantiate();
+        }
+        return _this;
+    }
+
+};
+
+var chromeLogsBookmarker = {
+
+    /* INSTANTIATE */
+    'instantiate' : function() {
+
+        this.initialized = true;
+        this.log(this.name+'.instantiate');
+    },
+
+     /* VAR */
+    'initialized' : false,
+    'name' : 'logs',
+
+    'logs' : {
+        'logs.default' : 'empty message, check your code',
+        'logs.instantiate' : 'chromeLogsBookmarker instantiated'
+    },
+
+    /* FUNCTIONS */
+    'log' : function (index) {
+
+        var mess = this.logs['logs.default']+' - index used : \''+index+'\'';
+
+        if(typeof index != 'undefined' && typeof this.logs[index] != 'undefined') {
+            mess = this.logs[index];
+        }
+
+        console.log(mess);
+    },
+
+    /* INIT */
+    'init' : function () {
+        var _this = this;
+        if (!_this.initialized) {
+            _this.instantiate();
+        }
+        return _this;
+    }
+
+};
+
+var chromeBookmarksBookmarker = {
+
+    /* INSTANTIATE */
+    'instantiate' : function() {
+
+        var _this = this;
+
+        _this = merge(_this, chromeLogsBookmarker.init());
+        _this.logs[_this.name+'.instantiate'] = 'chromeBookmarksBookmarker instantiate';
+        _this.logs[_this.name+'.clearBookmarks'] = 'chromeBookmarksBookmarker object cleared';
+
+        _this.initialized = true;
+        _this.log(_this.name+'.instantiate');
+
+    },
+
+    /* VAR */
+    'initialized' : false,
+    'name' : 'bookmarks',
+
+    'chromeBookmarks' : {},
+    'chromeBookmarksIds' : [],
+    'chromeBookmarksFolders' : [],
+    'chromeBookmarksDuplicate' : [],
+    'chromeBookmarksUrls' : {},
+    'chromeBookmarksTags' : [],
+    'chromeBookmarksTagsIds' : {},
+
+    /* FUNCTIONS */
+    'clearBookmarks' : function () {
+
+        this.chromeBookmarks = {};
+        this.chromeBookmarksIds = [];
+        this.chromeBookmarksFolders = [];
+        this.chromeBookmarksDuplicate = [];
+        this.chromeBookmarksUrls = {};
+        this.chromeBookmarksTags = [];
+        this.chromeBookmarksTagsIds = {};
+
+        this.log(this.name+'.clearBookmarks');
+
+    },
+
+    /* INIT */
+    'init' : function () {
+
+        var _this = this;
+
+        if (!_this.initialized) {
+            _this.instantiate();
+        }
+        return _this;
+    }
+
+};
+
+var chromeBookmarker = {
+
+    /* INSTANTIATE */
+    'instantiate' : function() {
+
+        var _this = this;
+        var d = $.Deferred();
+
+        _this = merge(_this, chromeLogsBookmarker.init());
+        _this.logs[_this.name+'.instantiate'] = 'chromeBookmarker instantiate';
+        _this.logs[this.name+'.clearAllBookmarks'] = 'chromeBookmarker object cleared';
+
+        if (typeof _this.tagBk['tagSep'] == 'undefined') {
+            _this.tagBk = new tagManagerBookmarker();
+        }
+
+        _this = merge(_this, chromeBadgeBookmarker.init());
+        _this = merge(_this, chromeStorageBookmarker.init());
+        _this = merge(_this, chromeBookmarksBookmarker.init());
+        _this = merge(_this, chromeNativeBookmarker.init());
+        _this = merge(_this, chromeMixedBookmarker.init());
+        _this = merge(_this, chromeTagsBookmarker.init());
+
+        if(typeof(_this.storage['chromeBookmarksIds']) == "undefined") {
+
+            _this.reInitAllBookmarksAsArray().then(function() {
+                d.resolve(_this);
+            });
+
+        } else {
+
+            _this.reLoadAllBookmarksAsArray().then(function(){
+                d.resolve(_this);
+            });
+
+        }
+
+        _this.log(_this.name+'.instantiate');
+
+        return d;
+
+    },
+
+    /* VAR */
+    'initialized' : false,
+    'name' : 'bookmarker',
+
+    'tagBk' : {},
+
+    /* FUNCTIONS */
+    'updateBookmarkObjectTitle' : function (bookmark) {
+
+        var _this = this;
+        var d = $.Deferred();
+
+        _this.chromeBookmarks[bookmark.id].title = bookmark.title;
+        d.resolve();
+
+        return d;
+    },
+
+    'updateBookmarkObjectUrl' : function (bookmark) {
+
+        var _this = this;
+        var d = $.Deferred();
+
+        _this.chromeBookmarks[bookmark.id].url = bookmark.url;
+        d.resolve();
+
+        return d;
+    },
+
+    'getAlternativePathsForUniqueBookmark' : function (id) {
 
         var _this = this;
         var d = $.Deferred();
@@ -458,9 +896,9 @@ class chromeNativeBookmarker {
         _this.chromeBookmarks[id].paths = paths;
 
         return d;
-    }
+    },
 
-    getBkPath (id) {
+    'getBkPath' : function (id) {
 
         var _this = this;
         var path = '';
@@ -475,9 +913,9 @@ class chromeNativeBookmarker {
 
         return path;
 
-    }
+    },
 
-    getParentTree (id) {
+    'getParentTree' : function (id) {
 
         var _this = this;
         var path = '/';
@@ -491,9 +929,9 @@ class chromeNativeBookmarker {
 
         return path;
 
-    }
+    },
 
-    getTreeLeeves (id) {
+    'getTreeLeeves' : function (id) {
 
         var _this = this;
         var paths = [];
@@ -506,9 +944,9 @@ class chromeNativeBookmarker {
 
         return paths;
 
-    }
+    },
 
-    getAlternativesTree (id) {
+    'getAlternativesTree' : function (id) {
 
         var _this = this;
         var paths = [];
@@ -523,9 +961,21 @@ class chromeNativeBookmarker {
 
         return paths;
 
+    },
+
+    /* INIT */
+    'init' : function () {
+
+        var _this = this;
+        var d = $.Deferred();
+
+        if (!_this.initialized) {
+            _this.instantiate().then(function(){
+                d.resolve(_this);
+            });
+        }
+        return d;
     }
 
-
-}
-
-console.log('dwl-bookmarker-storage.js loaded');
+};
+console.log('chrome-bookmarker.js loaded');

@@ -1,0 +1,7 @@
+<div ng-show="tab">
+    <b>tab</b>
+    id: {{tab.id}} - index: {{tab.index}} - windowId: {{tab.windowId}}<br/>
+    height: {{tab.height}} - width: {{tab.width}}<br/>
+    incognito: {{tab.incognito}} - status: {{tab.status}}<br/>
+    active: {{tab.active}} - audible: {{tab.audible}} - highlighted: {{tab.highlighted}}<span ng-repeat="(mutedIndex, mutedValue) in tab.mutedInfo"> - {{mutedIndex}}:{{mutedValue}}</span> - pinned: {{tab.pinned}} - selected: {{tab.selected}}<br/>
+</div>

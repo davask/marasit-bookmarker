@@ -1,0 +1,17 @@
+<div class="well">
+
+    <span class="glyphicon glyphicon-dwlfavicon" aria-hidden="true" data-lazy="{{tab.favicon}}"></span>
+
+    <b>{{tab.titleNoTag}}</b><br/>
+    <small>{{tab.title}}</small><br/>
+
+    <a ng-href="{{tab.url}}" target="_blank">
+        {{tab.safeUrl}}
+    </a>
+    <br/>
+
+    <div ng-include src="'/templates/views/tabdetails.html'"></div>
+    <button ng-click="createBookmark({'title':tab.title, 'url':tab.url})">add to bookmarks</button>
+
+</div>
+<hr/>

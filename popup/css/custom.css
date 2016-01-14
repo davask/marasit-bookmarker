@@ -12,6 +12,11 @@ body, section {         /* Change width and height to own preferences */
     font-size: 1.2rem;
 }
 
+section > .row {
+    border-bottom:1px solid #eeeeee;
+    margin-bottom:2px;
+    padding:5px 0;
+}
 
 /* Basic style tweaks */
 /*section { padding: 5px;}*/
@@ -55,9 +60,11 @@ body, section {         /* Change width and height to own preferences */
 
 .tagsDisplay ul {
     /*height: 534px;*/
-    height: 110px;
+    height: 454px;
     overflow-x: hidden;
     overflow-y: scroll;
+    margin: 0;
+    padding-right: 17px;
 }
 
 .tagsDisplay:first-child ul {
@@ -66,6 +73,7 @@ body, section {         /* Change width and height to own preferences */
 
 .tagsDisplay li {
     line-height: 1rem;
+    padding: 0;
 }
 
 .tagsDisplay li .btn input {
@@ -94,7 +102,6 @@ body, section {         /* Change width and height to own preferences */
 
 pre {
     padding: 0px 4px;
-    text-align: center;
 }
 
 .glyphicon {
@@ -136,4 +143,17 @@ pre {
 h1 {
     margin: 0;
     font-size: 2rem;
+}
+
+.editUrl {
+    width:100%;
+}
+
+.error {
+    text-decoration: line-through;
+    color:red;
+}
+
+.bkSummary {
+    text-align:left;
 }

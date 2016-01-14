@@ -1,0 +1,62 @@
+<div class="well">
+    <b>{{bookmark.titleNoTag}}</b>
+    <button ng-show="route == 'page' || route == 'duplicate'" ng-click="removeBookmark(bookmark.id)" class="pull-right">[X]</button>
+    <br/>
+    <small>{{bookmark.title}}</small><br/>
+    <a ng-href="{{bookmark.url}}" target="_blank" ng-if="bookmark.url">
+        <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>
+    </a>
+    <span ng-if="bookmark.duplicate.length > 1">(x{{bookmark.duplicate.length}}) - </span>
+    <input ng-model="bookmark.url" id="{{bookmark.id}}-url" class="editUrl" type="text" value="{{bookmark.url}}" ng-blur="editUrl($event)"/>
+    <br/>
+    <small>Weird ? <a ng-click="openChromeBookmarksPanel(bookmark.url)" title="Show me this url in the chrome bookmark manager" target="_blank">Show me the bookmark manager</a> - {{bookmark.id}}</small>
+    <span ng-repeat="tag in bookmark.storage.tagsBasedPaths">{{tag}}{{$last ? '' : ' > '}}</span>
+    <br/>
+<!--
+    <ul class="list-inline" id="tbp{{bookmark.id}}">
+        <li ng-repeat="tag in bookmark.storage.tagsBasedPaths track by $index" ng-show="tag">
+            <input id="tbp{{bookmark.id}}-{{$index}}" type="text" value="{{tag}}" ng-blur="editTag($event)" readonly/>
+        </li>
+    </ul>
+ -->
+    <ul class="list-inline" id="{{bookmark.id}}">
+        <li ng-repeat="(index,tag) in bookmark.tagsToDisplay" ng-show="tag">
+            <input ng-model="tag.tag" class="{{bookmark.id}}-tag" type="text" data-oldvalue="{{bookmark.tags[index]}}" value="{{tag.tag}}" ng-blur="editTag($event)"/>
+        </li>
+        <li ng-repeat-end>
+            <input class="{{bookmark.id}}-tag" class="newTag" type="text" data-oldvalue="{{null}}" value="{{null}}" ng-blur="editTag($event)"/>
+        </li>
+    </ul>
+    <hr>
+
+    <span ng-show="!bookmark.parentId">no&nbsp;</span>parent(s)<br/>
+    <small ng-if="chromeBookmarksDetails[bookmark.parentId].title">{{chromeBookmarksDetails[bookmark.parentId].title}}</small>
+    <small ng-if="!chromeBookmarksDetails[bookmark.parentId].title && chromeBookmarksDetails[bookmark.parentId].url">{{chromeBookmarksDetails[bookmark.parentId].url}}</small>
+    <small ng-if="!chromeBookmarksDetails[bookmark.parentId].title && !chromeBookmarksDetails[bookmark.parentId].url && chromeBookmarksDetails[bookmark.parentId].id">id : {{chromeBookmarksDetails[bookmark.parentId].id}}</small>
+    <hr>
+
+    <span ng-show="!bookmark.children">no&nbsp;</span>children<br/>
+    <span ng-repeat="childId in bookmark.children" class="list-inline list-unstyled" ng-show="bookmark.children">
+        <small ng-if="chromeBookmarksDetails[childId].title">{{chromeBookmarksDetails[childId].title}}</small>
+        <small ng-if="!chromeBookmarksDetails[childId].title && chromeBookmarksDetails[childId].url">{{chromeBookmarksDetails[childId].url}}</small>
+        <small ng-if="!chromeBookmarksDetails[childId].title && !chromeBookmarksDetails[childId].url && !chromeBookmarksDetails[childId].id">id : {{chromeBookmarksDetails[childId].id}}</small>
+        <span ng-show="!$last">|&nbsp;&nbsp;</span>
+    </span>
+    <hr>
+
+    <!-- <button data-toggle="collapse" data-target="#collapse{{bookmark.id}}_details" aria-expanded="false" aria-controls="collapse{{bookmark.id}}_details">details</button> -->
+    <div class="collapse" id="collapse{{bookmark.id}}_details">
+        <div>
+            {{bookmark.dateAdded}} - {{bookmark.id}} - {{bookmark.index}}<br/>
+            {{bookmark.storage}}
+        </div>
+        <pre>
+            {{bookmark | json}}
+        </pre>
+    </div>
+    <hr/>
+
+    <div ng-show="route == 'page' && bookmark.tab" ng-include src="'/templates/views/tabdetails.html'"></div>
+
+</div>
+<hr/>

@@ -15,18 +15,40 @@
 <body>
     <div id="container">
 
-        options<br/>
-        - add similar bookmarks feature based on dns search
-        - add automatic tag add & easy to update tag feature
-        - check http://mbenford.github.io/ngTagsInput/demos
-        - add popup on each web page to show timer
+        <h1>options</h1>
+        <b>
+            When reseting all bookmarks, the app will fully process 3 times all your bookmarks
+        </b>
+        <ol>
+            <li>retrieving all your bookmarks from chrome bookmarks</li>
+            <li>retrieve the ascendant directory structure of each of your bookmarks</li>
+            <li>Save all your bookmarks in storage for quick access</li>
+        </ol>
+        <button id="resetAll">reset all bookmarks (take time)</button>
+        <hr/>
+        <h2>futurs updates</h2>
+        <u>
+            <li>
+                add similar bookmarks feature based on dns search
+            </li>
+            <li>
+                add automatic tag add & easy to update tag feature
+            </li>
+            <li>
+                check http://mbenford.github.io/ngTagsInput/demos
+            </li>
+            <li>
+                add popup on each web page to show timer
+            </li>
+        </u>
+        <hr/>
 
     </div>
 
     <!-- Scripts -->
     <script src="../vendor/jquery-2.0.3/js/jquery-2.0.3.min.js"></script>
     <script src="../vendor/bootstrap-3.3.5/js/bootstrap-3.3.5.min.js"></script>
-    <script src="../js/bookmarks.js"></script>
+    <script src="../js/options.js"></script>
 
 </body>
 </html>

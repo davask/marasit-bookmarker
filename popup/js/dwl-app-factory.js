@@ -3,7 +3,7 @@ dwlApp.factory('chromeBkFactory', ['$q', function ($q){
     return function(){
 
         var deferred = $q.defer();
-        var chromeBk = new chromeNativeBookmarker();
+        var chromeBk = new chromeBookmarker();
 
         chromeBk.init().then(function(){
             deferred.resolve(chromeBk);

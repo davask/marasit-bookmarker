@@ -10,17 +10,16 @@ dwlApp.service('activityService', [function () {
 
     var _this = this;
 
-    _this.defaultActivities = {
-        'bookmark' : {
-            'name':'bookmark'
-        },
-        'todo' : {
-            'name':'todo'
-        },
-        'timer' : {
-            'name':'timer'
-        }
+    _this.defaultActivities = {};
+    _this.defaultActivities['bookmark'] = {
+        'name':'bookmark'
     };
+    // _this.defaultActivities['todo'] = {
+    //     'name':'todo'
+    // };
+    // _this.defaultActivities['timer'] = {
+    //     'name':'timer'
+    // };
 
     _this.getActivitiesOptions = function () {
 
@@ -70,11 +69,11 @@ dwlApp.service('routesService', [function () {
                 'name':'duplicate',
                 'path':'/duplicate',
                 'selected' : false
-            },
-            'untagged' : {
-                'name':'untagged',
-                'path':'/untagged',
-                'selected' : false
+            // },
+            // 'untagged' : {
+            //     'name':'untagged',
+            //     'path':'/untagged',
+            //     'selected' : false
             }
         },
         'todo' : {

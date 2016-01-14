@@ -25,10 +25,9 @@ _this.dwlShow = function(tbaId) {
 
 }
 
-var chromeBk = new chromeNativeBookmarker();
-var tagBk = new tagManagerBookmarker();
+chromeBookmarker.init().then(function(o){
 
-chromeBk.init().then(function(){
+    window.chromeBk = o;
 
     chrome.tabs.onActivated.addListener(function(evt){
         chrome.tabs.get(evt.tabId, function(tab){

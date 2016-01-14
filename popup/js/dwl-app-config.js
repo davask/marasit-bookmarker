@@ -1,3 +1,7 @@
+dwlApp.config(['$compileProvider',function($compileProvider){
+    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|chrome):/);
+}]);
+
 dwlApp.config(['$routeProvider', '$locationProvider', function config($routeProvider, $locationProvider) {
     $routeProvider
         /* bookmarks */
@@ -46,7 +50,7 @@ dwlApp.config(['$routeProvider', '$locationProvider', function config($routeProv
         })
 
         .otherwise({
-            redirectTo: '/unique'
+            redirectTo: '/page'
         });
         $locationProvider.html5Mode(true);
 }]);

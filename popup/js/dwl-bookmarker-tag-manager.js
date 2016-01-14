@@ -44,6 +44,19 @@ class tagManagerBookmarker {
             '§'
         ];
 
+        _this.regex = '^https?:\\/\\/?[\\da-z\\.-]+\\.[a-z\\.]{2,6}';
+        _this.regexUrl = '^https?:\\/\\/?[\\da-z\\.-]+\\.[a-z\\.]{2,6}.*$';
+        _this.regexTitle = function(s) {
+            return '^(?:\\[(?:(?:['+s+']?[^\\]'+s+')]*)*)\\]\\s?)(.*)$';
+        };
+        _this.regexAllTags = function(s) {
+            return '^\\[((?:['+s+']?[^\\]'+s+')]*)*)\\]\\s?';
+        };
+        _this.regexEachTags = function(s) {
+            return '\\s?['+s+']?[^\\]\\s'+s+']*';
+        };
+        _this.regexCleanTag = '\\s|,';
+
         console.log('tagManagerBookmarker initialized');
 
     }
@@ -54,9 +67,8 @@ class tagManagerBookmarker {
 
         var favicon = '';
         var faviconArray = [];
-        var regex = '^https?:\\/\\/?[\\da-z\\.-]+\\.[a-z\\.]{2,6}';
 
-        faviconArray = url.match(regex);
+        faviconArray = url.match(_this.regex);
 
         if (faviconArray != null && faviconArray.length > 0) {
             favicon = faviconArray[0]+'/favicon.ico';
@@ -72,9 +84,8 @@ class tagManagerBookmarker {
 
         var safeUrl = '';
         var safeUrlArray = [];
-        var regex = '^https?:\\/\\/?[\\da-z\\.-]+\\.[a-z\\.]{2,6}.*$';
 
-        safeUrlArray = url.match(regex);
+        safeUrlArray = url.match(_this.regexUrl);
 
         if (safeUrlArray != null && safeUrlArray.length > 0) {
             safeUrl = url;
@@ -94,18 +105,15 @@ class tagManagerBookmarker {
         var tagsArray = [];
         var allTags = [];
 
-        var regexAllTags = '^\\[((?:['+s+']?[^\\]'+s+')]*)*)\\]\\s?';
-        var regexEachTags = '\\s?['+s+']?[^\\]\\s'+s+']*';
-        var regexCleanTag = '\\s|,';
-
-        allTags = title.match(regexAllTags);
+        allTags = title.match(_this.regexAllTags(s));
         if (allTags != null && allTags.length > 0) {
-            tagsArray = allTags[1].match(new RegExp(regexEachTags,'g')).clean("");
+            tagsArray = allTags[1].match(new RegExp(_this.regexEachTags(s),'g'));
+            tagsArray.clean("");
         }
 
         if (tagsArray != null && tagsArray.length > 0) {
             for (var i = 0; i < tagsArray.length; i++) {
-                tags.push((tagsArray[i].trim().replace(new RegExp(regexCleanTag,'g'),'_')));
+                tags.push((tagsArray[i].trim().replace(new RegExp(_this.regexCleanTag,'g'),'_')));
             }
         }
 
@@ -123,8 +131,7 @@ class tagManagerBookmarker {
         var titleNoTag = "";
         var titleNoTagArray = [];
 
-        var regex = '^(?:\\[(?:(?:['+s+']?[^\\]'+s+')]*)*)\\]\\s?)(.*)$';
-        titleNoTagArray = title.match(regex);
+        titleNoTagArray = title.match(_this.regexTitle(s));
 
         if (titleNoTagArray != null && titleNoTagArray.length > 0) {
             titleNoTag = titleNoTagArray[1];
@@ -158,11 +165,37 @@ class tagManagerBookmarker {
 
         var _this = this;
 
-        bookmark['safeUrl'] = _this.getSafeUrl(bookmark.url);
-        bookmark['favicon'] = _this.getFavicon(bookmark.safeUrl);
-        bookmark['tags'] = _this.getBookmarkTags(bookmark.title);
-        bookmark['titleNoTag'] = _this.getTitleNoTag(bookmark.title);
+        bookmark['safeUrl'] = '';
+        bookmark['favicon'] = '';
+        bookmark['tags'] = [];
+        bookmark['tagsToDisplay'] = [];
+        bookmark['titleNoTag'] = '';
 
+        if(typeof(bookmark.url) != 'undefined' && bookmark.url != '') {
+            bookmark['safeUrl'] = _this.getSafeUrl(bookmark.url);
+            bookmark['favicon'] = _this.getFavicon(bookmark.safeUrl);
+        }
+
+        if(typeof(bookmark.title) != 'undefined' && bookmark.title != '') {
+            bookmark['tags'] = _this.getBookmarkTags(bookmark.title);
+            for (var i = 0; i < bookmark.tags.length; i++) {
+                bookmark['tagsToDisplay'].push({ 'tag': bookmark.tags[i] });
+            };
+            bookmark['titleNoTag'] = _this.getTitleNoTag(bookmark.title);
+        }
+
+        return bookmark;
+
+    }
+
+    setTitleBasedOnTag (bookmark) {
+        var _this = this;
+
+        if(bookmark.tags.length > 0) {
+            bookmark.title = '['+bookmark.tags.join(' ')+'] '+_this.getTitleNoTag(bookmark.title);
+        } else {
+            bookmark.title =_this.getTitleNoTag(bookmark.title)
+        }
         return bookmark;
 
     }
