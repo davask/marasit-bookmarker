@@ -3,7 +3,7 @@
     "manifest_version": 2,
     "minimum_chrome_version": "42",
 
-    "version": "1.7",
+    "version": "1.7.1",
     "version_name": "1.7 alpha",
 
     "name": "multitask manager [alpha]",

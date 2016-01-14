@@ -22,7 +22,6 @@ dwlApp.filter('bkType', function() {
         if (typeof(type) != "undefined" && type =="folder") {
 
             for (var i = 0; i < input.length; i++){
-                console.log();
                 if (typeof(input[i].url) == "undefined" || input[i].url == "") {
                     out.push(input[i]);
                 }

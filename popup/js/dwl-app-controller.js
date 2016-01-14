@@ -133,7 +133,7 @@ dwlApp.controller("dwlCommonCtrl", ['$route', '$routeParams', '$location','$root
 
     $scope.removeBookmark = function(id){
         _this.chromeBk.removeChromeBookmarks(id).then(function(){
-            $scope.generateBookmark();
+            // $scope.generateBookmark();
         });
     };
 
@@ -268,8 +268,6 @@ dwlApp.controller("dwlCommonCtrl", ['$route', '$routeParams', '$location','$root
             updateTags = true;
 
         }
-
-        console.log(b.tags);
 
         b.tags = _this.tagBk.getBookmarkTags('['+b.tags.join(' ')+'] '+b.titleNoTag);
 
