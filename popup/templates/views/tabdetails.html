@@ -1,7 +1,7 @@
-<div ng-show="tab">
+<div ng-show="dwlBk.tab">
     <b>tab</b>
-    id: {{tab.id}} - index: {{tab.index}} - windowId: {{tab.windowId}}<br/>
-    height: {{tab.height}} - width: {{tab.width}}<br/>
-    incognito: {{tab.incognito}} - status: {{tab.status}}<br/>
-    active: {{tab.active}} - audible: {{tab.audible}} - highlighted: {{tab.highlighted}}<span ng-repeat="(mutedIndex, mutedValue) in tab.mutedInfo"> - {{mutedIndex}}:{{mutedValue}}</span> - pinned: {{tab.pinned}} - selected: {{tab.selected}}<br/>
+    id: {{tabdwlBk.tabid}} - index: {{dwlBk.tab.index}} - windowId: {{dwlBk.tab.windowId}}<br/>
+    height: {{dwlBk.tab.height}} - width: {{dwlBk.tab.width}}<br/>
+    incognito: {{dwlBk.tab.incognito}} - status: {{dwlBk.tab.status}}<br/>
+    active: {{dwlBk.tab.active}} - audible: {{dwlBk.tab.audible}} - highlighted: {{dwlBk.tab.highlighted}}<span ng-repeat="(mutedIndex, mutedValue) in dwlBk.tab.mutedInfo"> - {{mutedIndex}}:{{mutedValue}}</span> - pinned: {{dwlBk.tab.pinned}} - selected: {{dwlBk.tab.selected}}<br/>
 </div>

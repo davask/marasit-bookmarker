@@ -1,17 +1,17 @@
 <div class="well">
 
-    <span class="glyphicon glyphicon-dwlfavicon" aria-hidden="true" data-lazy="{{tab.favicon}}"></span>
+    <span class="glyphicon glyphicon-dwlfavicon" aria-hidden="true" data-lazy="{{dwlBk.tab.favicon}}"></span>
 
-    <b>{{tab.titleNoTag}}</b><br/>
-    <small>{{tab.title}}</small><br/>
+    <b>{{dwlBk.tab.titleNoTag}}</b><br/>
+    <small>{{dwlBk.tab.title}}</small><br/>
 
-    <a ng-href="{{tab.url}}" target="_blank">
-        {{tab.safeUrl}}
+    <a ng-href="{{dwlBk.tab.url}}" target="_blank">
+        {{dwlBk.tab.safeUrl}}
     </a>
     <br/>
 
     <div ng-include src="'/templates/views/tabdetails.html'"></div>
-    <button ng-click="createBookmark({'title':tab.title, 'url':tab.url})">add to bookmarks</button>
+    <button ng-click="createBookmark({'title':dwlBk.tab.title, 'url':dwlBk.tab.url})">add to bookmarks</button>
 
 </div>
 <hr/>

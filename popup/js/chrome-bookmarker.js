@@ -13,6 +13,75 @@
 }
 
 */
+var chromeExtensionBookmarker = {
+
+    /* INSTANTIATE */
+    'instantiate' : function() {
+
+        var _this = this;
+
+        _this = merge(_this, chromeLogsBookmarker.init());
+        _this.logs[_this.name+'.instantiate'] = 'chromeExtensionBookmarker instantiated';
+        _this.logs[_this.name+'.notab'] = 'no tab have been selected...';
+
+        _this.initialized = true;
+        _this.log(_this.name+'.instantiate');
+
+    },
+
+    /* VAR */
+   'initialized' : false,
+   'name' : 'extension',
+
+    'setIcon' : function (tabId, bookmarks) {
+        var nb =0;
+        if (bookmarks.length > 1) {
+            nb = bookmarks.length;
+            chrome.browserAction.setIcon({
+                'tabId': tabId,
+                'path': 'img/icon-black16.png'
+            });
+        } else if (bookmarks.length == 1) {
+            /*
+            chrome.browserAction.setIcon({
+                'tabId': tabId,
+                'path': 'img/icon16.png'
+            });
+            */
+        } else {
+            chrome.browserAction.setIcon({
+                'tabId': tabId,
+                'path': 'img/icon-white16.png'
+            });
+        }
+        return nb;
+    },
+
+    'getTab' : function(tabId) {
+        var _this = this;
+        var d = $.Deferred();
+
+        if(tabId >= 0) {
+            chrome.tabs.get(tabId,function(tab){
+                d.resolve(tab);
+            });
+        } else {
+            _this.log(_this.name+'.notab');
+            d.resolve([]);
+        }
+        return d;
+    },
+
+    /* INIT */
+    'init' : function () {
+        var _this = this;
+        if (!_this.initialized) {
+            _this.instantiate();
+        }
+        return _this;
+    }
+
+}
 var chromeNativeBookmarker = {
 
     /* INSTANTIATE */
@@ -50,13 +119,24 @@ var chromeNativeBookmarker = {
         return d;
     },
 
-    /* FUNCTIONS */
     'clearBookmarksOriginal' : function () {
 
         this.chromeBookmarksOriginal = {};
 
         this.log(this.name+'.clearBookmarksOriginal');
 
+    },
+
+    'searchChromeBookmark' : function (search) {
+
+        var _this = this;
+        var d = $.Deferred();
+
+        chrome.bookmarks.search(search, function(bookmarks){
+            d.resolve(bookmarks);
+        });
+
+        return d;
     },
 
     /* INIT */
@@ -384,6 +464,10 @@ var chromeMixedBookmarker = {
                 _this.addTags(thisTags[i], bookmark.id);
             };
 
+            if(thisTags.length == 0) {
+                _this.addTags('no-tag', bookmark.id);
+            }
+
         }
 
         bookmark.children = [];
@@ -435,10 +519,9 @@ var chromeMixedBookmarker = {
         return d;
     },
 
-    'searchChromeBookmark' : function (search, type) {
+    'searchObjectBookmark' : function (search, type) {
 
         var _this = this;
-        var b = _this.bookmarks;
         var d = $.Deferred();
 
         _this.chromeBookmarksIds = JSON.parse(_this.storage['chromeBookmarksIds']);
@@ -453,8 +536,7 @@ var chromeMixedBookmarker = {
             var bkObject = 'chromeBookmarksUrls';
         }
 
-        chrome.bookmarks.search(search, function(bookmarks){
-
+        _this.searchChromeBookmark(search).then(function(bookmarks){
             for (var i = 0; i < bookmarks.length; i++) {
 
                 if (typeof(bookmarks[i][bkType]) != "undefined" && jQuery.inArray(bookmarks[i].id,_this.chromeBookmarksIds)) {
@@ -464,10 +546,62 @@ var chromeMixedBookmarker = {
             };
 
             d.resolve(bks);
-
         });
 
         return d;
+    },
+
+    /* INIT */
+    'init' : function () {
+        var _this = this;
+        if (!_this.initialized) {
+            _this.instantiate();
+        }
+        return _this;
+    }
+
+};
+
+var chromeObjectBookmarker = {
+
+    /* INSTANTIATE */
+    'instantiate' : function() {
+
+        var _this = this;
+
+        _this = merge(_this, chromeLogsBookmarker.init());
+        _this.logs[_this.name+'.instantiate'] = 'chromeObjectBookmarker instantiated';
+
+        _this.initialized = true;
+        _this.log(_this.name+'.instantiate');
+
+    },
+
+    /* VAR */
+   'initialized' : false,
+   'name' : 'object',
+
+    /* FUNCTIONS */
+    'setUpBookmark' : function(bookmark){
+
+        var _this = this;
+
+        bookmark = _this.tagBk.setSpecificTagData(bookmark);
+
+        bookmark['storage'] = {};
+        if (typeof(_this.storage['chromeBookmarks_'+bookmark.id]) != 'undefined') {
+           bookmark['storage'] = JSON.parse(_this.storage['chromeBookmarks_'+bookmark.id]);
+        }
+
+        bookmark.storage['tagsBasedPaths'] = [];
+        if (typeof(bookmark.storage.paths) != "undefined") {
+            bookmark.storage['tagsBasedPaths'] = _this.tagBk.setTagsBasedOnPaths(bookmark.storage.paths);
+        }
+
+        _this.chromeBookmarks[bookmark.id] = bookmark;
+
+        return bookmark;
+
     },
 
     /* INIT */
@@ -574,8 +708,6 @@ var chromeTagsBookmarker = {
 
 // };
 
-
-
 var chromeBadgeBookmarker = {
 
     /* INSTANTIATE */
@@ -621,6 +753,7 @@ var chromeStorageBookmarker = {
         _this.storage = _this.getStorage();
 
         _this = merge(_this, chromeLogsBookmarker.init());
+        _this.logs[_this.name+'.allBkSaved'] = 'chromeNativeBookmarker all bookmarks saved';
         _this.logs[_this.name+'.clearStorage'] = 'chromeStorageBookmarker storage cleared';
         _this.logs[_this.name+'.instantiate'] = 'chromeStorageBookmarker instantiated';
 
@@ -699,7 +832,7 @@ var chromeStorageBookmarker = {
             _this.saveStorageBookmark(id);
             if (i == Object.keys(_this.chromeBookmarks).length) {
                 _this.saveAllBookmarksData();
-                console.log('chromeNativeBookmarker all bookmarks saved');
+                _this.log(_this.name+'.allBkSaved');
                 d.resolve();
             }
         }
@@ -834,6 +967,8 @@ var chromeBookmarker = {
         _this = merge(_this, chromeBadgeBookmarker.init());
         _this = merge(_this, chromeStorageBookmarker.init());
         _this = merge(_this, chromeBookmarksBookmarker.init());
+        _this = merge(_this, chromeObjectBookmarker.init());
+        _this = merge(_this, chromeExtensionBookmarker.init());
         _this = merge(_this, chromeNativeBookmarker.init());
         _this = merge(_this, chromeMixedBookmarker.init());
         _this = merge(_this, chromeTagsBookmarker.init());

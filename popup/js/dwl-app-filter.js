@@ -1,4 +1,4 @@
-dwlApp.filter('startFrom', function startFrom() {
+dwlApp.filter('startFrom', function () {
 
     return function (input, start) {
 
@@ -45,30 +45,31 @@ dwlApp.filter('bkType', function() {
 
 });
 
-dwlApp.filter('regex', function regex() {
+dwlApp.filter('noTag', function() {
 
-    return function(input, field, regex) {
+    return function (input, string) {
 
-        if (typeof(input) != "undefined" ) {
+        var out = [];
 
-            var patt = new RegExp(regex);
-            var out = [];
+        if (typeof(string) != "undefined" && string == "no-tag") {
 
             for (var i = 0; i < input.length; i++){
-                if(patt.test(input[i][field])) {
+                if (typeof(input[i].tags) == "undefined" || input[i].tags.length == 0) {
                     out.push(input[i]);
                 }
             }
 
-            return out;
-
+        } else {
+            out = input;
         }
+
+        return out;
 
     };
 
 });
 
-dwlApp.filter('list', function list() {
+dwlApp.filter('list', function () {
 
     return function(input, ids) {
 

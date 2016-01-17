@@ -1,24 +1,25 @@
-<div ng-show="bookmarks">
+<div ng-show="dwlBk.bookmarks">
     <div>
-        {{bookmarks.length}} bookmark(s)
+        {{dwlBk.bookmarks.length}} bookmark(s)
     </div>
     <div>
-        <div ng-repeat="bookmark in bookmarks">
+        <div ng-repeat="bookmark in dwlBk.bookmarks">
             <div ng-include src="'/templates/views/bookmarkdetails.html'"></div>
         </div>
     </div>
 </div>
-<div ng-show="tab">
+<div ng-if="dwlBk.tab.url">
+    <hr/>
     <div>
         new bookmark<br/>
-        <!-- bookmark.parentId -->
-        <!-- bookmark.index -->
-        <!-- bookmark.title -->
-        <!-- bookmark.url -->
+        <!-- tab.parentId -->
+        <!-- tab.index -->
+        <!-- tab.title -->
     </div>
 
     <div>
-        <div ng-include src="'/templates/views/tab.html'"></div>
+        <div ng-if="dwlBk.tab.url" ng-include src="'/templates/views/tab.html'"></div>
+        <strong ng-if="dwlBk.bookmarks.length == 0 && !dwlBk.tab.url">The url is not authorized</strong>
     </div>
 </div>
 

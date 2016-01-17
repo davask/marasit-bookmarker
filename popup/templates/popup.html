@@ -20,7 +20,7 @@
 
         <section>
 
-            <div class="row" ng-controller="dwlInitCtrl as dwlInit">
+            <div class="row" ng-controller="dwlInitCtrl as dwlInit" ng-clock>
                 <div class="col-sm-3">
                     <select ng-model="activity" class="col-xs-12" ng-change="updateActivity()" ng-show="activities.length > 1">
                         <option ng-repeat="option in activities" value="{{option.name}}">{{option.name}}</option>
@@ -50,7 +50,8 @@
                 <div class="col-sm-3">
                     <div class="col-xs-12" ng-show="activity == 'bookmark' && route != 'page'">
                         Filter bookmark :<br/>
-                        <input type="text" id="filterQuery" ng-model="query" ng-focus="query = '';" placeholder="Search bookmark">
+                        <input type="text" id="filterQuery" ng-model="query" ng-focus="query = '';" placeholder="Search bookmark"><button ng-click="query = '';queryNoTag = '';">X</button>
+                        <input type="hidden" id="filterQueryNoTag" ng-model="queryNoTag">
                     </div>
 <!--
                     <button ng-click="filterBookmarks()" ng-show="query != ''">Search</button>
@@ -60,11 +61,11 @@
                     <div class="tagsDisplay" ng-show="activity == 'bookmark' && route == 'unique'">
                         <div class="col-xs-12">
                             Filter tags :<br/>
-                            <input type="text" id="filterTag" ng-model="queryTag" ng-focus="queryTag = '';" placeholder="Search tags">
+                            <input type="text" id="filterTag" ng-model="queryTag" ng-focus="queryTag = '';" placeholder="Search tags"><button ng-click="queryTag = '';">X</button>
                         </div>
                         <ul class="list-unstyled list-inline">
                             <li ng-repeat="(key, value) in (allTags | filter:queryTag | orderBy : value) track by $index">
-                                <a class="btn" ng-click="$parent.query = value" ng-class="!allTagsIds[value] ? 'error' : ''">
+                                <a class="btn" ng-click="filterTag(value)">
                                     {{value}}
                                     <small ng-if="allTagsIds[value]">&nbsp;({{allTagsIds[value].length}})</small>
                                 </a>

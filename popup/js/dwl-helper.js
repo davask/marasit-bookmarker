@@ -57,7 +57,7 @@ if (typeof(Array.prototype.unique) != 'function') {
 /* REGEX */
 if (typeof RegExp.escape != 'function') {
     RegExp.escape = function(text) {
-      return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+        return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
     };
 };
 

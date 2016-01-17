@@ -1,6 +1,8 @@
 <div class="well">
-    <b>{{bookmark.titleNoTag}}</b>
-    <button ng-show="route == 'page' || route == 'duplicate'" ng-click="removeBookmark(bookmark.id)" class="pull-right">[X]</button>
+    <b>
+        <input ng-model="bookmark.titleNoTag" id="{{bookmark.id}}-titlenotag" class="editTitleNoTag" type="text" value="{{bookmark.titleNoTag}}" ng-blur="editTitleNoTag($event)"/>
+    </b>
+    <button ng-show="route == 'page' || route == 'duplicate' || route == 'unique'" ng-click="removeBookmark(bookmark.id)" class="pull-right">[X]</button>
     <br/>
     <small>{{bookmark.title}}</small><br/>
     <a ng-href="{{bookmark.url}}" target="_blank" ng-if="bookmark.url">
@@ -59,4 +61,3 @@
     <div ng-show="route == 'page' && bookmark.tab" ng-include src="'/templates/views/tabdetails.html'"></div>
 
 </div>
-<hr/>

@@ -3,7 +3,7 @@
     "manifest_version": 2,
     "minimum_chrome_version": "42",
 
-    "version": "1.7.1",
+    "version": "1.7.2",
     "version_name": "1.7 alpha",
 
     "name": "multitask manager [alpha]",
@@ -64,6 +64,7 @@
             "js/content.js"
         ],
         "css": [
+            "css/isolate.css",
             "css/content.css"
         ],
         "run_at": "document_end"

@@ -1,7 +1,8 @@
 jQuery('#resetAll').click(function () {
-    chrome.extension.getBackgroundPage().chromeBk.reInitAllBookmarksAsArray();
     chrome.tabs.getCurrent(function(tab){
-        chrome.tabs.remove(tab.id);
+        chrome.tabs.remove(tab.id, function(){
+            chrome.extension.getBackgroundPage().dwlBk.chromeBk.reInitAllBookmarksAsArray();
+        });
     })
 });
 

@@ -200,4 +200,16 @@ class tagManagerBookmarker {
 
     }
 
+    setTitleBasedTitleNoTag (bookmark) {
+        var _this = this;
+
+        if(bookmark.tags.length > 0) {
+            bookmark.title = '['+bookmark.tags.join(' ')+'] '+ bookmark.titleNoTag;
+        } else {
+            bookmark.title =bookmark.titleNoTag;
+        }
+        return bookmark;
+
+    }
+
 }

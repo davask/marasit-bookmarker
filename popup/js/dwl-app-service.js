@@ -169,18 +169,6 @@ dwlApp.service('bookmarkService', [function () {
 
     };
 
-    _this.search = function (search) {
-
-        var _this = this;
-        var d = $.Deferred();
-
-        chrome.bookmarks.search(search, function(bookmarks){
-            d.resolve(bookmarks.length);
-        });
-
-        return d;
-    };
-
     return _this;
 
 }]);
