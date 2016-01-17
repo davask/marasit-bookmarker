@@ -61,7 +61,7 @@
                     <div class="tagsDisplay" ng-show="activity == 'bookmark' && route == 'unique'">
                         <div class="col-xs-12">
                             Filter tags :<br/>
-                            <input type="text" id="filterTag" ng-model="queryTag" ng-focus="queryTag = '';" placeholder="Search tags"><button ng-click="queryTag = '';">X</button>
+                            <input type="text" id="filterTag" ng-model="queryTag" ng-focus="queryTag = '';" placeholder="Search tags"><button ng-click="queryTag = '';queryNoTag = '';">X</button><button ng-click="query = '';queryNoTag = 'no-tag';">No tag</button>
                         </div>
                         <ul class="list-unstyled list-inline">
                             <li ng-repeat="(key, value) in (allTags | filter:queryTag | orderBy : value) track by $index">

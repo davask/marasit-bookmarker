@@ -1,4 +1,4 @@
-<div ng-repeat="bookmark in bookmarks = ( chromeBookmarks | filter:query | noTag:queryNoTag | orderBy:'titleNoTag') | startFrom:currentPage*pageSize | limitTo:pageSize track by $index">
+<div ng-repeat="bookmark in bookmarks = ( chromeBookmarks | filter:query | noTag:queryNoTag | orderBy:'titleNoTag') | startFrom:currentPage*pageSize | limitTo:pageSize">
     <div ng-include src="'/templates/views/bookmark.html'"></div>
 </div>
 <button ng-disabled="currentPage == 0" ng-click="currentPage=currentPage-1">

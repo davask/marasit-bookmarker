@@ -190,19 +190,8 @@ dwlApp.controller("dwlCommonCtrl", ['$route', '$routeParams', '$location','$root
 
         $rootScope.dwlBk.chromeBk.removeChromeBookmarks(id).then(function(){
 
-            $rootScope.refreshAllBookmarks().then(function(){
+            $scope.refreshDisplayBookmarks();
 
-                if ($rootScope.route == 'duplicate') {
-                    $scope.bkToWatch = $rootScope.dwlBk.chromeBk.chromeBookmarksDuplicate;
-                } else if ($rootScope.route == 'unique') {
-                    $scope.bkToWatch = $rootScope.dwlBk.chromeBk.chromeBookmarksUrls;
-                } else {
-                    $scope.generateBookmark();
-                }
-
-                $rootScope.resetBookmarksCount();
-
-            });
         });
     };
 
@@ -249,8 +238,11 @@ dwlApp.controller("dwlCommonCtrl", ['$route', '$routeParams', '$location','$root
             allValues.clean("");
 
             for (var i = 0; i < allValues.length; i++) {
-                if (jQuery.inArray(allValues[i], b.tags) < 0) {
+                if (jQuery.inArray(allValues[i], b.tags) >= 0) {
                     b.tags[tagIndex] = allValues[i];
+                    $rootScope.dwlBk.chromeBk.addTags(allValues[i], b.id);
+                } else {
+                    b.tags.push(allValues[i]);
                     $rootScope.dwlBk.chromeBk.addTags(allValues[i], b.id);
                 }
             };
@@ -293,6 +285,8 @@ dwlApp.controller("dwlCommonCtrl", ['$route', '$routeParams', '$location','$root
             jQuery('#'+id+' [ng-repeat-end] input').val('').attr({'data-oldvalue':''});
         });
 
+        // $scope.refreshDisplayBookmarks();
+
         // clean latest tag input
 
     };
@@ -326,6 +320,25 @@ dwlApp.controller("dwlCommonCtrl", ['$route', '$routeParams', '$location','$root
 
         $scope.generateBookmark();
 
+    };
+
+    $scope.refreshDisplayBookmarks = function(){
+        var deferred = $q.defer();
+
+        $rootScope.refreshAllBookmarks().then(function(){
+
+            if ($rootScope.route == 'duplicate') {
+                $scope.bkToWatch = $rootScope.dwlBk.chromeBk.chromeBookmarksDuplicate;
+            } else if ($rootScope.route == 'unique') {
+                $scope.bkToWatch = $rootScope.dwlBk.chromeBk.chromeBookmarksUrls;
+            } else {
+                $scope.generateBookmark();
+            }
+            $rootScope.resetBookmarksCount();
+            deferred.resolve();
+        });
+
+        return deferred.promise;
     };
 
     $scope.openChromeBookmarksPanel = function (string) {
@@ -515,7 +528,6 @@ dwlApp.controller("dwlPageCtrl", ['$controller', '$rootScope', '$scope',
             $scope.generateBookmark();
         });
     };
-    console.log('page');
     $scope.generateBookmark();
 
 }]);
