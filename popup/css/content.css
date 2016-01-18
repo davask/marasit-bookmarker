@@ -1,17 +1,50 @@
 #dwl-bk {
-    min-height: 20px;
-    max-height: 50%;
-    min-width: 20px;
+    min-width: 13px;
+    min-height: 17px;
     max-width:33%;
+    max-height: 50%;
     overflow-y: scroll;
     max-width: 50%;
     position: fixed;
     bottom: 0;
     right: 0;
-    border: 1px solid #f1f1f1;
     background: #f1f1f1;
     color: #333333;
-    padding: 0 5px;
+    border-top: 1px solid #aaaaaa;
+    border-left: 1px solid #aaaaaa;
+    border-right: none;
+    border-bottom: none;
+    padding: 5px 10px;
     z-index: 10000;
     word-wrap: break-word;
+}
+
+#dwl-bk.closed {
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
+#dwl-bk.closed .row {
+    display: none;
+}
+
+#dwl-bk .col-xs-6 {
+    width: 50%;
+    display: block;
+    float: left;
+}
+#dwl-bk .col-xs-12 {
+    width:100%;
+    display: block;
+    float: left;
+}
+#dwl-bk button {
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding: 5px;
+    border-left: 1px solid #aaaaaa;
+    border-bottom: 1px solid #aaaaaa;
+    border-right: 1px solid #aaaaaa;
+    background: #ffffff;
 }
