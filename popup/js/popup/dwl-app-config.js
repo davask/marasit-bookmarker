@@ -8,6 +8,11 @@ dwlPopup.config(['$routeProvider', '$locationProvider', function config($routePr
         controller: 'dwlIndexCtrl',
         bodyClass: 'index'
     });
+    $routeProvider.when('/search', {
+        templateUrl: '../templates/views/search.html',
+        controller: 'dwlsearchCtrl',
+        bodyClass: 'search'
+    });
         /* bookmark */
     $routeProvider.when('/page', {
         templateUrl: '../templates/views/page.html',

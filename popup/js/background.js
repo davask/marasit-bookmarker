@@ -102,7 +102,7 @@ var dwlBk = {
 
     contentResponse : function(element){
         if (typeof(element) !== 'undefined') {
-            console.log(element);
+            // console.log(element);
         }
     },
 

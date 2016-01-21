@@ -40,6 +40,10 @@ dwlBg.service("bgSer", ['$q', function ($q) {
         return bg.dwlBk.bookmarker;
     };
 
+    _this.updateBookmark = function(bookmark, type) {
+        return bg.dwlBk.updateBookmark(bookmark, type);
+    };
+
     return _this;
 
 }]);

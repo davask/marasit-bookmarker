@@ -102,29 +102,40 @@ if (typeof getLength != 'function') {
 /* inspired by : http://www.abeautifulsite.net/parsing-urls-in-javascript/ */
 if (typeof parseURL != 'function') {
     var parseURL = function parseURL(url) {
-        var parser = document.createElement('a'),
-            searchObject = {},
-            queries, split, i;
-        // Let the browser do the work
-        parser.href = url;
-        // Convert query string to object
-        queries = parser.search.replace(/^\?/, '').split('&');
-        for( i = 0; i < queries.length; i++ ) {
-            split = queries[i].split('=');
-            searchObject[split[0]] = split[1];
+
+        var parsedUrl = {};
+
+        if(typeof(url) !== 'undefined') {
+
+            var parser = document.createElement('a'),
+                searchObject = {},
+                queries, split, i;
+
+            // Let the browser do the work
+            parser.href = url;
+
+            // Convert query string to object
+            queries = parser.search.replace(/^\?/, '').split('&');
+
+            for( i = 0; i < queries.length; i++ ) {
+                split = queries[i].split('=');
+                searchObject[split[0]] = split[1];
+            }
+            parsedUrl = {
+                safe: parser.protocol + '//' + parser.hostname + parser.pathname,
+                protocol: parser.protocol,
+                host: parser.host,
+                hostname: parser.hostname,
+                port: parser.port,
+                pathname: parser.pathname,
+                search: parser.search,
+                searchObject: searchObject,
+                hash: parser.hash,
+                length:url.length
+            }
         }
-        return {
-            safe: parser.protocol + '//' + parser.hostname + parser.pathname,
-            protocol: parser.protocol,
-            host: parser.host,
-            hostname: parser.hostname,
-            port: parser.port,
-            pathname: parser.pathname,
-            search: parser.search,
-            searchObject: searchObject,
-            hash: parser.hash,
-            length:url.length
-        };
+
+        return parsedUrl;
     };
 };
 

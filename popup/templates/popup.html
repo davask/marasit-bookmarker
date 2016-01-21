@@ -20,15 +20,15 @@
     <body ng-model="$route" class="{{$route.current.$$route.bodyClass}}">
         <section class="container">
             <div class="row header" ng-include="'/templates/snippets/header.html'"></div>
-            <div class="row">
+            <div class="row content">
                 <div class="col-xs-12 view-animate-container tab-content">
                     <div ng-view class="view-animate"></div>
                 </div>
+                <img src="../img/spinner.gif" alt="loading" class="dwlLoading"/>
             </div>
             <div class="row" ng-show="debug.get().debug" ng-include="'/templates/debug/debug.html'"></div>
         </section>
 
-        <img src="../img/spinner.gif" alt="loading" class="dwlLoading"/>
 
         <!-- javascripts -->
         <script src="../vendor/jquery-2.0.3/js/jquery-2.0.3.min.js"></script>

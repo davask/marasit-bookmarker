@@ -6,11 +6,14 @@
     <!-- <label><input type="checkbox" val="{{bookmark.url}}">&nbsp;</label> -->
     <a ng-href="{{bookmark.url}}" target="_blank"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span></a>
     <span class="glyphicon glyphicon-dwlfavicon" aria-hidden="true" data-lazy="{{bookmark.favicon}}"></span>
-
+    <button ng-show="$parent.$parent.$route.current.$$route.bodyClass === 'search'" class="btn btn-link btn-xs" ng-click="$parent.$parent.query = bookmark.parsedUrl.hostname;searchBookmark();">same source</button>
+    <br/>
     <!-- URL -->
-    <b>{{bookmark.parsedUrl.safe}}</b>
-    <small><input ng-model="bookmark.url" ng-readonly="!bookmark.edit"></small>
-    <small ng-if="bookmark.parsedUrl.safe !== bookmark.url">{{bookmark.url | limitTo:'100'}}</small><br/>
+    <b>{{bookmark.parsedUrl.safe | limitTo:'40'}}</b>
+
+    <br/>
+    <small ng-show="bookmark.edit"><input ng-model="bookmark.url" ng-readonly="!bookmark.edit"></small>
+    <small ng-show="!bookmark.edit">{{bookmark.url | limitTo:'40'}}</small><br/>
     <small><b>id : </b>{{bookmark.id}}</span><br/>
 
     <button ng-if="bookmark.type === 'tab'" ng-click="createBookmark({'title':bookmark.title, 'url':bookmark.url})">add</button>
