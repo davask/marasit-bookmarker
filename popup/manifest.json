@@ -3,18 +3,18 @@
     "manifest_version": 2,
     "minimum_chrome_version": "42",
 
-    "version": "1.7.2",
-    "version_name": "1.7 alpha",
+    "version": "1.8.0",
+    "version_name": "1.8",
 
-    "name": "multitask manager [alpha]",
-    "short_name": "multitask manager [alpha]",
+    "name": "multitask manager",
+    "short_name": "multitask manager",
 
     "author": "david asquiedge - davaskweblimited.com",
 
     "default_locale": "en",
     "current_locale": "en",
 
-    "description": "My missing multitask manager [alpha]",
+    "description": "My missing multitask manager",
 
     "icons": {
         "16": "img/icon16.png",
@@ -26,17 +26,13 @@
        "persistent": true,
        "scripts": [
           "vendor/jquery-2.0.3/js/jquery-2.0.3.min.js",
-          "vendor/angular-1.4.7/js/angular.min.js",
-          "vendor/angular-timer-master/dist/assets/js/angular-timer-all.min.js",
-          "js/dwl-helper.js",
-          "js/dwl-bookmarker-tag-manager.js",
-          "js/chrome-bookmarker.js",
-          "js/dwl-omnibox.js",
+          "js/library/dwl-helper.js",
+          "js/library/chrome-log.js",
+          "js/library/chrome-extension.js",
+          "js/library/chrome-bookmarker.js",
+          "js/dwl-bookmarker.js",
           "js/background.js"
        ]
-   },
-   "omnibox": {
-       "keyword" : "dwlm"
    },
 
     "browser_action": {
@@ -44,16 +40,9 @@
             "19": "img/icon48.png",
             "38": "img/icon48.png"
         },
-        "default_title": "multitask [alpha]",
+        "default_title": "multitask",
         "default_popup": "templates/popup.html"
     },
-
-
-   "chrome_url_overrides": {
-   },
-
-   "options_page": "templates/options.html",
-   "devtools_page": "templates/devtools.html",
 
    "content_scripts": [{
         "matches": [
@@ -61,11 +50,12 @@
         ],
         "js": [
             "vendor/jquery-2.0.3/js/jquery-2.0.3.min.js",
+            "js/library/dwl-helper.js",
             "js/content.js"
         ],
         "css": [
-            "css/isolate.css",
-            "css/content.css"
+            "css/dwlbk-isolation.css",
+            "css/dwlbk-content.css"
         ],
         "run_at": "document_end"
     }],

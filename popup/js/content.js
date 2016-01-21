@@ -1,96 +1,71 @@
 window.jQuery || document.write('<script src="../vendor/jquery-2.0.3/js/jquery-2.0.3.min.js"><\/script>');
 
-var _this = this;
-
-_this.dwlBk = {};
-_this.r = false;
-_this.popup = null;
+dwlPopup = {
+    'dwlBk':{},
+    'popup':null,
+    'html' : ''
+};
 
 chrome.runtime.onMessage.addListener(function(bgJsMsg, sender, sendResponse) {
 
-    _this.r = false;
+    dwlPopup.html = '';
     // see https://developer.chrome.com/extensions/content_scripts
-    _this.dwlBk = {};
+    dwlPopup.dwlBk = {};
     if (typeof(bgJsMsg.dwlBk) != 'undefined') {
-        _this.dwlBk = bgJsMsg.dwlBk;
-        _this.r = true;
+        dwlPopup.dwlBk = bgJsMsg.dwlBk;
     }
 
-    console.log(bgJsMsg, _this.dwlBk);
+    console.log(dwlPopup.dwlBk);
 
-    _this.html = '';
-    if(_this.dwlBk.bookmarks.length > 0) {
-        var b = _this.dwlBk.bookmarks[0];
+    if(dwlPopup.dwlBk.bookmarks.length > 0) {
+        var b = dwlPopup.dwlBk.bookmarks[0];
     } else {
-        // _this.html += '<button onclick="createBookmark(chromeBk,{\'title\':'+tab.title+', \'url\':'+tab.url+'})">add to bookmarks</button>';
-        var b = _this.dwlBk.tab;
+        var b = dwlPopup.dwlBk.tab;
     }
 
-    _this.html += '<div class="row">';
-    _this.html += '<div class="col-xs-6">';
+    dwlPopup.html += '<div class="row">';
+    dwlPopup.html += '<div class="col-xs-12">';
 
-    if (typeof b.titleNoTag != 'undefined' && b.titleNoTag != '') {
-        _this.html += 'titleNoTag : ' + b.titleNoTag;
+    dwlPopup.html += 'type : ' + b.type + '<br/>';
+    dwlPopup.html += 'title : ' + b.title + '<br/>';
+    dwlPopup.html += 'url : ' + b.url + '<br/>';
+
+    dwlPopup.html += '</div>';
+    dwlPopup.html += '<div class="col-xs-12">';
+
+     dwlPopup.html += ' (';
+    if (typeof(b.dateAdded) != 'undefined') {
+        dwlPopup.html += ' added : ' + convertToDate(b.dateAdded);
     } else {
-        _this.html += 'title : ' + b.title;
-    }
-    _this.html += '<br/>';
-
-   if (typeof b.safeUrl != 'undefined' && b.safeUrl != '') {
-    _this.html += 'safeUrl : ' + b.safeUrl;
-    } else {
-        _this.html += 'url : ' + b.url;
-    }
-    _this.html += '<br/>';
-
-    _this.html += '</div>';
-    _this.html += '<div class="col-xs-6">';
-
-    if (typeof b.tags != 'undefined') {
-        _this.html += 'tags : ' + b.tags.join(', ');
-    } else {
-        _this.html += 'no tags.';
-    }
-    _this.html += '<br/>';
-
-    if (typeof b.storage != 'undefined' && typeof b.storage.tagsBasedPaths != 'undefined') {
-        _this.html += 'storage tagsBasedPaths : ' + b.storage.tagsBasedPaths.join(', ');
-    } else {
-        _this.html += 'no storage tagsBasedPaths.';
-    }
-    _this.html += '<br/>';
-
-    _this.html += '</div>';
-    _this.html += '<div class="col-xs-12">';
-
-     _this.html += ' (';
-    if (typeof b.dateAdded != 'undefined') {
-        _this.html += ' added : ' + convertToDate(b.dateAdded);
-    } else {
-        _this.html += ' not added';
+        dwlPopup.html += ' not added';
     }
     if (typeof b.id != 'undefined') {
-        _this.html += ' - id : ' + b.id;
+        dwlPopup.html += ' - id : ' + b.id;
     } else {
-        _this.html += ' - no id';
+        dwlPopup.html += ' - no id';
     }
-    _this.html += ' )';
+    dwlPopup.html += ' )';
 
-    _this.html += '</div>';
-    _this.html += '</div>';
+    dwlPopup.html += '</div>';
+    dwlPopup.html += '</div>';
 
-    _this.popup = jQuery('#dwl-bk');
-    if (_this.popup.length > 0) {
-        _this.popup.remove();
+    /* build the content popup */
+    dwlPopup.popup = jQuery('#dwl-bk');
+    if (dwlPopup.popup.length > 0) {
+        dwlPopup.popup.remove();
     }
 
-    _this.popup = jQuery('<div></div>').attr('id','dwl-bk').addClass('container closed');
-    _this.html += '<button>dwl</button>';
+    dwlPopup.popup = jQuery('<div></div>');
+    dwlPopup.popup.attr('id','dwl-bk');
+    dwlPopup.popup.addClass('container');
+    dwlPopup.popup.addClass('closed');
+    dwlPopup.html += '<button class="open"><</button>';
+    dwlPopup.html += '<button class="close">X</button>';
 
-    _this.popup.html(_this.html);
-    // _this.popup.hide();
+    dwlPopup.popup.html(dwlPopup.html);
+    // dwlPopup.popup.hide();
 
-    _this.popup.appendTo('body');
+    dwlPopup.popup.appendTo('body');
 
     jQuery('#dwl-bk button').click(function(){
         if(jQuery('#dwl-bk.closed').length > 0) {
@@ -100,6 +75,6 @@ chrome.runtime.onMessage.addListener(function(bgJsMsg, sender, sendResponse) {
         }
     });
 
-    sendResponse(_this.r);
+    sendResponse(dwlPopup.html.length > 0 ? true : false);
 
 });

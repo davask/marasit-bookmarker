@@ -1,0 +1,116 @@
+<!doctype html>
+<html xmlns:ng="http://angularjs.org" ng-app="dwlApp">
+    <head ng-controller="appCtrl as app">
+
+        <meta charset="utf-8">
+        <meta name="description" content="{{app.title}}">
+        <meta name="author" content="{{app.author}}">
+
+        <title>{{app.title}}</title>
+
+        <base href="/">
+
+        <!-- Cascading Style Sheets -->
+        <link href="../vendor/bootstrap-3.3.5/css/bootstrap-3.3.5.min.css" rel="stylesheet" media="screen">
+        <link href="../css/custom.css" rel="stylesheet" media="screen">
+
+    </head>
+
+    <body>
+
+        <section>
+
+            <div class="row" ng-controller="dwlInitCtrl as dwlInit" ng-clock>
+                <div class="col-sm-3">
+                    <select ng-model="activity" class="col-xs-12" ng-change="updateActivity()" ng-show="activities.length > 1">
+                        <option ng-repeat="option in activities" value="{{option.name}}">{{option.name}}</option>
+                    </select>
+                    <select ng-model="route" class="col-xs-12" ng-change="updateRouting()" ng-show="activity == 'bookmark'">
+                        <option ng-repeat="option in routes" value="{{option.name}}">{{option.name}} - {{count[option.name]}}</option>
+                    </select>
+                    <select ng-model="route" class="col-xs-12" ng-change="updateRouting()" ng-show="activity == 'todo'">
+                        <option ng-repeat="option in routes" value="{{option.name}}">{{option.name}}</option>
+                    </select>
+                </div>
+                <!-- Top Nav -->
+                <div class="col-sm-9">
+                    <h1>activity : {{activity}} - type : {{route}}</h1>
+                </div>
+                <!-- Nav tabs -->
+<!--
+                <ul class="nav nav-tabs col-sm-9">
+                    <li ng-class="{active:route == tabs.name}" ng-repeat="tabs in routes" ng-click="updateRoute(tabs.name)">
+                        <a href="{{tabs.path}}" ng-show="activity == 'bookmark'">{{tabs.name}} ({{count[tabs.name]}})</a>
+                        <a href="{{tabs.path}}" ng-show="activity == 'todo'">{{tabs.name}}</a>
+                    </li>
+                </ul>
+  -->
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="col-xs-12" ng-show="activity == 'bookmark' && route != 'page'">
+                        Filter bookmark :<br/>
+                        <input type="text" id="filterQuery" ng-model="query" ng-focus="query = '';" placeholder="Search bookmark"><button ng-click="query = '';queryNoTag = '';">X</button>
+                        <input type="hidden" id="filterQueryNoTag" ng-model="queryNoTag">
+                    </div>
+<!--
+                    <button ng-click="filterBookmarks()" ng-show="query != ''">Search</button>
+                    <button ng-click="clearFilter()" ng-show="query != ''">clear search</button>
+ -->
+                    <br/>
+                    <div class="tagsDisplay" ng-show="activity == 'bookmark' && route == 'unique'">
+                        <div class="col-xs-12">
+                            Filter tags :<br/>
+                            <input type="text" id="filterTag" ng-model="queryTag" ng-focus="queryTag = '';" placeholder="Search tags"><button ng-click="queryTag = '';queryNoTag = '';">X</button><button ng-click="query = '';queryNoTag = 'no-tag';">No tag</button>
+                        </div>
+                        <ul class="list-unstyled list-inline">
+                            <li ng-repeat="(key, value) in (allTags | filter:queryTag | orderBy : value) track by $index">
+                                <a class="btn" ng-click="filterTag(value)">
+                                    {{value}}
+                                    <small ng-if="allTagsIds[value]">&nbsp;({{allTagsIds[value].length}})</small>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-xs-9 scrollable displayArea">
+                    <!-- Tab panes -->
+                    <div class="view-animate-container tab-content row">
+                        <div ng-view class="view-animate"></div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <img src="../img/spinner.gif" alt="loading" class="dwlLoading"/>
+
+        <!-- javascripts -->
+        <script src="../vendor/jquery-2.0.3/js/jquery-2.0.3.min.js"></script>
+        <script src="../vendor/bootstrap-3.3.5/js/bootstrap-3.3.5.min.js"></script>
+        <script src="../vendor/angular-1.4.7/js/angular.min.js"></script>
+        <script src="../vendor/angular-1.4.7/js/angular-route.min.js"></script>
+        <script src="../vendor/angular-1.4.7/js/angular-animate.min.js"></script>
+        <script src="../vendor/ui-bootstrap-0.13.4/js/ui-bootstrap-tpls-0.13.4.min.js"></script>
+        <script src="../vendor/angular-timer-master/dist/assets/js/angular-timer-bower.js"></script>
+        <script src="../vendor/angular-timer-master/dist/assets/js/angular-timer-all.min.js"></script>
+
+        <!-- scripts -->
+        <script src="../js/dwl-helper.js"></script>
+        <script src="../js/chrome-bookmarker.js"></script>
+        <script src="../js/dwl-omnibox.js"></script>
+
+        <script src="../js/dwl-app.js"></script>
+        <script src="../js/dwl-app-config.js"></script>
+        <script src="../js/dwl-app-constant.js"></script>
+        <script src="../js/dwl-app-value.js"></script>
+        <script src="../js/dwl-app-service.js"></script>
+        <script src="../js/dwl-app-factory.js"></script>
+        <script src="../js/dwl-app-directive.js"></script>
+        <script src="../js/dwl-app-filter.js"></script>
+        <script src="../js/dwl-app-controller.js"></script>
+
+        <script src="../js/popup.js"></script>
+
+    </body>
+</html>

@@ -1,0 +1,65 @@
+#dwl-bk {
+    min-width: 19px;
+    min-height: 25px;
+    max-width:33%;
+    max-height: 50%;
+    overflow-y: scroll;
+    max-width: 50%;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    background: #f1f1f1;
+    color: #333333;
+    border-top: 1px solid #aaaaaa;
+    border-left: 1px solid #aaaaaa;
+    border-right: none;
+    border-bottom: none;
+    padding: 5px 10px;
+    z-index: 10000;
+    word-wrap: break-word;
+}
+
+#dwl-bk.closed {
+    overflow-x: hidden;
+    overflow-y: hidden;
+    padding: 0;
+    right: -1px;
+}
+
+#dwl-bk.closed .row {
+    display: none;
+}
+
+#dwl-bk .col-xs-6 {
+    width: 50%;
+    display: block;
+    float: left;
+}
+#dwl-bk .col-xs-12 {
+    width:100%;
+    display: block;
+    float: left;
+}
+#dwl-bk button {
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding: 5px;
+    border-left: 1px solid #aaaaaa;
+    border-bottom: 1px solid #aaaaaa;
+    border-right: 1px solid #aaaaaa;
+    background: #ffffff;
+}
+
+#dwl-bk button.open {
+    display: none;
+}
+#dwl-bk button.close {
+    display: block;
+}
+#dwl-bk.closed button.open {
+    display: block;
+}
+#dwl-bk.closed button.close {
+    display: none;
+}

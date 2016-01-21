@@ -13,143 +13,6 @@
 }
 
 */
-var chromeExtensionBookmarker = {
-
-    /* INSTANTIATE */
-    'instantiate' : function() {
-
-        var _this = this;
-
-        _this = merge(_this, chromeLogsBookmarker.init());
-        _this.logs[_this.name+'.instantiate'] = 'chromeExtensionBookmarker instantiated';
-        _this.logs[_this.name+'.notab'] = 'no tab have been selected...';
-
-        _this.initialized = true;
-        _this.log(_this.name+'.instantiate');
-
-    },
-
-    /* VAR */
-   'initialized' : false,
-   'name' : 'extension',
-
-    'setIcon' : function (tabId, bookmarks) {
-        var nb =0;
-        if (bookmarks.length > 1) {
-            nb = bookmarks.length;
-            chrome.browserAction.setIcon({
-                'tabId': tabId,
-                'path': 'img/icon-black16.png'
-            });
-        } else if (bookmarks.length == 1) {
-            /*
-            chrome.browserAction.setIcon({
-                'tabId': tabId,
-                'path': 'img/icon16.png'
-            });
-            */
-        } else {
-            chrome.browserAction.setIcon({
-                'tabId': tabId,
-                'path': 'img/icon-white16.png'
-            });
-        }
-        return nb;
-    },
-
-    'getTab' : function(tabId) {
-        var _this = this;
-        var d = $.Deferred();
-
-        if(tabId >= 0) {
-            chrome.tabs.get(tabId,function(tab){
-                d.resolve(tab);
-            });
-        } else {
-            _this.log(_this.name+'.notab');
-            d.resolve([]);
-        }
-        return d;
-    },
-
-    /* INIT */
-    'init' : function () {
-        var _this = this;
-        if (!_this.initialized) {
-            _this.instantiate();
-        }
-        return _this;
-    }
-
-}
-var chromeNativeBookmarker = {
-
-    /* INSTANTIATE */
-    'instantiate' : function() {
-
-        var _this = this;
-
-        _this = merge(_this, chromeLogsBookmarker.init());
-        _this.logs[_this.name+'.instantiate'] = 'chromeNativeBookmarker instantiated';
-        _this.logs[_this.name+'.clearBookmarksOriginal'] = 'chromeNativeBookmarker object cleared';
-
-        _this.initialized = true;
-        _this.log(_this.name+'.instantiate');
-
-    },
-
-    /* VAR */
-   'initialized' : false,
-   'name' : 'native',
-
-   'chromeBookmarksOriginal' : {},
-
-    /* FUNCTIONS */
-    'getAllChromeBookmarks' : function () {
-        var _this = this;
-        var d = $.Deferred();
-
-        chrome.bookmarks.getTree(function(bookmarksTree){
-            bookmarksTree.forEach(function(bookmark){
-                _this.chromeBookmarksOriginal = bookmark;
-            });
-            d.resolve();
-        });
-
-        return d;
-    },
-
-    'clearBookmarksOriginal' : function () {
-
-        this.chromeBookmarksOriginal = {};
-
-        this.log(this.name+'.clearBookmarksOriginal');
-
-    },
-
-    'searchChromeBookmark' : function (search) {
-
-        var _this = this;
-        var d = $.Deferred();
-
-        chrome.bookmarks.search(search, function(bookmarks){
-            d.resolve(bookmarks);
-        });
-
-        return d;
-    },
-
-    /* INIT */
-    'init' : function () {
-        var _this = this;
-        if (!_this.initialized) {
-            _this.instantiate();
-        }
-        return _this;
-    }
-
-}
-
 var chromeMixedBookmarker = {
 
     /* INSTANTIATE */
@@ -157,7 +20,7 @@ var chromeMixedBookmarker = {
 
         var _this = this;
 
-        _this = merge(_this, chromeLogsBookmarker.init());
+        _this = merge(_this, chromeLog.init());
         _this.logs[_this.name+'.instantiate'] = 'chromeMixedBookmarker instantiated';
         _this.logs[_this.name+'.reLoadAllBookmarksAsArray'] = 'All bookmarks reloaded as array';
         _this.logs['storage'+'.reLoadAllBookmarksAsArray'] = 'chromeNativeBookmarker no storage available';
@@ -281,93 +144,6 @@ var chromeMixedBookmarker = {
 
         return d;
 
-    },
-
-    'createChromeBookmarks' : function (bookmark) {
-        var _this = this;
-        var d = $.Deferred();
-
-        // bookmark.parentId
-        // bookmark.index
-        // bookmark.title
-        // bookmark.url
-
-        chrome.bookmarks.create(bookmark, function (chromeBk){
-
-            // dateAdded: 1450866936952
-            // id: "173442"
-            // index: 101
-            // parentId: "2"
-            // title: "New Tab"
-            // url: "chrome://newtab/"
-
-            _this.addBookmarkToObject(chromeBk).then(function(){
-                _this.saveStorageBookmark(chromeBk.id).then(function(){
-                    chrome.browserAction.setBadgeText({text:""+Object.keys(_this.chromeBookmarksUrls).length});
-                    d.resolve();
-                });
-            });
-        });
-
-        return d;
-    },
-
-    'updateChromeBookmarksTitle' : function (bookmark) {
-        var _this = this;
-        var d = $.Deferred();
-
-        var chromeBk = {};
-        chromeBk['title']= bookmark.title;
-        chromeBk['url']= bookmark.url;
-
-        chrome.bookmarks.update(bookmark.id, chromeBk, function (bk) {
-
-            _this.updateBookmarkObjectTitle(bookmark).then(function(){
-                _this.saveStorageBookmark(bookmark.id).then(function(){
-                    d.resolve();
-                });
-            });
-        });
-
-        return d;
-    },
-
-    'updateChromeBookmarksUrl' : function (bookmark) {
-
-        var _this = this;
-        var d = $.Deferred();
-
-        var chromeBk = {};
-        chromeBk['title']= bookmark.title;
-        chromeBk['url']= bookmark.url;
-
-
-        chrome.bookmarks.update(bookmark.id, chromeBk, function (bk) {
-
-            _this.updateBookmarkObjectUrl(bookmark).then(function(){
-                _this.saveStorageBookmark(bookmark.id).then(function(){
-                    d.resolve();
-                });
-            });
-        });
-
-        return d;
-    },
-
-    'removeChromeBookmarks' : function (id) {
-        var _this = this;
-        var d = $.Deferred();
-
-        chrome.bookmarks.remove(id, function (){
-            _this.removeObjectBookmark(id);
-            _this.removeStorageBookmark(id);
-
-            chrome.browserAction.setBadgeText({text:""+Object.keys(_this.chromeBookmarksUrls).length});
-
-            d.resolve();
-        });
-
-        return d;
     },
 
     'getAllChromeBookmarksAsArray' : function () {
@@ -569,7 +345,7 @@ var chromeObjectBookmarker = {
 
         var _this = this;
 
-        _this = merge(_this, chromeLogsBookmarker.init());
+        _this = merge(_this, chromeLog.init());
         _this.logs[_this.name+'.instantiate'] = 'chromeObjectBookmarker instantiated';
 
         _this.initialized = true;
@@ -622,7 +398,7 @@ var chromeTagsBookmarker = {
 
         var _this = this;
 
-        _this = merge(_this, chromeLogsBookmarker.init());
+        _this = merge(_this, chromeLog.init());
         _this.logs[_this.name+'.instantiate'] = 'chromeTagsBookmarker instantiated';
 
         _this.initialized = true;
@@ -713,7 +489,7 @@ var chromeBadgeBookmarker = {
     /* INSTANTIATE */
     'instantiate' : function() {
         var _this = this;
-        _this = merge(_this, chromeLogsBookmarker.init());
+        _this = merge(_this, chromeLog.init());
         _this.logs[_this.name+'.instantiate'] = 'chromeBadgeBookmarker instantiated';
 
         _this.initialized = true;
@@ -752,7 +528,7 @@ var chromeStorageBookmarker = {
         var _this = this;
         _this.storage = _this.getStorage();
 
-        _this = merge(_this, chromeLogsBookmarker.init());
+        _this = merge(_this, chromeLog.init());
         _this.logs[_this.name+'.allBkSaved'] = 'chromeNativeBookmarker all bookmarks saved';
         _this.logs[_this.name+'.clearStorage'] = 'chromeStorageBookmarker storage cleared';
         _this.logs[_this.name+'.instantiate'] = 'chromeStorageBookmarker instantiated';
@@ -851,47 +627,6 @@ var chromeStorageBookmarker = {
 
 };
 
-var chromeLogsBookmarker = {
-
-    /* INSTANTIATE */
-    'instantiate' : function() {
-
-        this.initialized = true;
-        this.log(this.name+'.instantiate');
-    },
-
-     /* VAR */
-    'initialized' : false,
-    'name' : 'logs',
-
-    'logs' : {
-        'logs.default' : 'empty message, check your code',
-        'logs.instantiate' : 'chromeLogsBookmarker instantiated'
-    },
-
-    /* FUNCTIONS */
-    'log' : function (index) {
-
-        var mess = this.logs['logs.default']+' - index used : \''+index+'\'';
-
-        if(typeof index != 'undefined' && typeof this.logs[index] != 'undefined') {
-            mess = this.logs[index];
-        }
-
-        console.log(mess);
-    },
-
-    /* INIT */
-    'init' : function () {
-        var _this = this;
-        if (!_this.initialized) {
-            _this.instantiate();
-        }
-        return _this;
-    }
-
-};
-
 var chromeBookmarksBookmarker = {
 
     /* INSTANTIATE */
@@ -899,7 +634,7 @@ var chromeBookmarksBookmarker = {
 
         var _this = this;
 
-        _this = merge(_this, chromeLogsBookmarker.init());
+        _this = merge(_this, chromeLog.init());
         _this.logs[_this.name+'.instantiate'] = 'chromeBookmarksBookmarker instantiate';
         _this.logs[_this.name+'.clearBookmarks'] = 'chromeBookmarksBookmarker object cleared';
 
@@ -956,7 +691,7 @@ var chromeBookmarker = {
         var _this = this;
         var d = $.Deferred();
 
-        _this = merge(_this, chromeLogsBookmarker.init());
+        _this = merge(_this, chromeLog.init());
         _this.logs[_this.name+'.instantiate'] = 'chromeBookmarker instantiate';
         _this.logs[this.name+'.clearAllBookmarks'] = 'chromeBookmarker object cleared';
 

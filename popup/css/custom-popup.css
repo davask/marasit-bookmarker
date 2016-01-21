@@ -1,0 +1,47 @@
+/**
+ * Chrome Extension dwl bookmarker
+ * Author CSS
+ *
+ */
+
+/* loading */
+.dwlLoading {
+    display:none;
+    position: absolute;
+    top: 23px;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.5;
+}
+
+/* structure */
+.header {
+    background: #8BAFD3;
+    color: #ffffff;
+}
+
+/* title */
+h1 {
+  font-size: 19px;
+  margin: 0;
+}
+
+/* page */
+body.page section {
+    overflow-y: auto;
+}
+
+/* bookmark snippet */
+.bookmark input {
+    width:100%;
+}
+
+.bookmark input[readonly] {
+    border-color:transparent;
+}
+
+/* nav */
+.active {
+    font-weight:bold;
+}

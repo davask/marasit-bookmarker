@@ -1,59 +1,144 @@
-var _this = this;
+/* content process */
+var popup = [];
+var isPopupOpen = function () {
 
-window.dwlBk = {
+    popup = chrome.extension.getViews({ type: "popup" });
+
+    var isOpen = false;
+    if(popup.length === 1) {
+        isOpen = true;
+    } else {
+        popup = [];
+    }
+
+    return isOpen;
+};
+
+var reloadBg = function() {
+    var d = $.Deferred();
+
+    chrome.tabs.query({ active: true }, function(tabs) {
+        if(tabs[0].id > -1) {
+            dwlBk.update(tabs[0].id).then(function(show){
+                d.resolve(show);
+            });
+        }
+    });
+    return d;
+};
+
+var dwlBk = {
     'tab' : {},
     'bookmarks' : [],
-    'chromeBk' : {},
-    'refreshChromeBk' : function () {
-        var _this = this;
-        chromeBookmarker.init().then(function(chromeBk){
-            _this.chromeBk = chromeBk;
-        });
-    },
-    'show' : function(tabId, force) {
+    'bookmarker' : {},
+    'search' : '',
+    'isLoaded' : false,
+
+    'show' : function(tabId) {
 
         var _this = this;
         var d = $.Deferred();
 
-        if (typeof force == "undefined") {
-            force = false;
-        } else {
-            force = true;
-        }
+        _this.tab = {};
+        _this.bookmarks = [];
+        _this.search = '';
 
-        if(_this.bookmarks.length == 0 || force) {
+        _this.bookmarker.getTab(tabId).then(function(tab){
 
-            _this.tab = {};
-            _this.bookmarks = [];
+            if (tab.id > -1) {
 
-            _this.chromeBk.getTab(tabId).then(function(tab){
-                if (tab.id > -1) {
-                    tab = _this.chromeBk.tagBk.setSpecificTagData(tab);
+                _this.tab = _this.updateBookmark(tab,'tab');
 
-
-                    _this.chromeBk.searchChromeBookmark(tab.url).then(function(bookmarks){
-
-                        for (var i = 0; i < bookmarks.length; i++) {
-                            bookmarks[i] = _this.chromeBk.setUpBookmark(bookmarks[i]);
-                        };
-
-                        if (bookmarks.length > 0 && tab.titleNoTag == bookmarks[0].titleNoTag) {
-                            bookmarks[0]['tab'] = tab;
-                        } else {
-                            _this.tab = tab;
-                        }
-
-                        _this.bookmarks = bookmarks;
-                        _this.chromeBk.setIcon(tab.id, bookmarks);
-
-                        d.resolve(_this);
-                    });
+                if(_this.tab.title != '') {
+                    _this.search = _this.tab.title;
                 }
 
-            });
-        } else {
-            d.resolve(_this);
+                if(_this.tab.url != '') {
+                    _this.search = _this.tab.url;
+                }
+
+                if(_this.search != '') {
+
+                    _this.bookmarker.searchChromeBookmark(_this.search).then(function(bookmarks){
+
+                        for (var i = 0; i < bookmarks.length; i++) {
+                            if (bookmarks[i].url == _this.tab.url || bookmarks[i].title == _this.tab.title) {
+                                _this.bookmarks.push(_this.updateBookmark(bookmarks[i],'bookmark'));
+                            }
+                        }
+
+                        _this.bookmarker.setIcon(_this.tab.id, _this.bookmarks.length);
+                        d.resolve(true);
+
+                    });
+
+                } else {
+
+                    _this.bookmarker.setIcon(-1, 'error');
+                    console.log('Something went wrong with this tab', _this.tab)
+                    d.resolve(null);
+
+                }
+
+            } else {
+
+                d.resolve(false);
+
+            }
+
+        });
+
+        return d;
+
+    },
+
+    updateBookmark : function(bookmark, type){
+        bookmark['type'] = type;
+        bookmark['edit'] = false;
+        bookmark['parsedUrl'] = parseURL(bookmark.url);
+
+        return bookmark;
+    },
+
+    contentResponse : function(element){
+        if (typeof(element) !== 'undefined') {
+            console.log(element);
         }
+    },
+
+    update : function(tabid) {
+
+        var _this = this;
+        var d = $.Deferred();
+
+        _this.show(tabid).then(function(status){
+            var show = status;
+            if(show === false) {
+
+                reloadBg().then(function(status){
+                    show = status;
+                });
+
+
+                chrome.tabs.query({ active: true }, function(tabs) {
+                    if(tabs[0].id > -1) {
+                        _this.show(tabs[0].id).then(function(status){
+                            show = status;
+                        });
+                    }
+                });
+
+            }
+
+            if(show === false) {
+                _this.bookmarker.setIcon(-1, 'error');
+            } else {
+                _this.isLoaded = true;
+                chrome.tabs.sendMessage(tabid, {'dwlBk' : dwlBk}, dwlBk.contentResponse);
+            }
+
+            d.resolve(show);
+        });
 
         return d;
 
@@ -61,38 +146,23 @@ window.dwlBk = {
 
 };
 
-chromeBookmarker.init().then(function(chromeBk){
-    window.dwlBk.chromeBk = chromeBk;
+dwlBk.bookmarker = dwlBookmarker.init();
+
+chrome.tabs.getSelected(null, function(tab) {
+    // console.log('getSelected',tab);
+    dwlBk.update(tab.id);
 });
 
-chrome.tabs.onActivated.addListener(function(evt){
-    window.dwlBk.show(evt.tabId, true).then(function(){
-        chrome.tabs.sendMessage(evt.tabId, {'dwlBk' : window.dwlBk}, function(element){
-            console.log(element);
-        });
-    });
+chrome.tabs.onActivated.addListener(function(evt) {
+    dwlBk.update(evt.tabId);
 });
 
 chrome.tabs.onCreated.addListener(function(tab) {
-    window.dwlBk.show(tab.id, true).then(function(){
-        chrome.tabs.sendMessage(tab.id, {'dwlBk' : window.dwlBk}, function(element){
-            console.log(element);
-        });
-    });
+    dwlBk.update(tab.id);
 });
 
-chrome.tabs.onUpdated.addListener(function(tab) {
-    window.dwlBk.show(tab.id, true).then(function(){
-        chrome.tabs.sendMessage(tab.id, {'dwlBk' : window.dwlBk}, function(element){
-            console.log(element);
-        });
-    });
-});
-
-chrome.tabs.getSelected(null, function(tab) {
-    window.dwlBk.show(tab.id).then(function(){
-        chrome.tabs.sendMessage(tab.id, {'dwlBk' : window.dwlBk}, function(element){
-            console.log(element);
-        });
-    });
+chrome.tabs.onUpdated.addListener(function(tabId) {
+    if(typeof(dwlBk.tab.id) !== 'undefined' && dwlBk.tab.id === tabId) {
+        dwlBk.update(tabId);
+    }
 });

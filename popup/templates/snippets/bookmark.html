@@ -1,0 +1,24 @@
+<div id="{{bookmark.id}}" class="bookmark">
+    <!-- TITLE -->
+    <b><input ng-model="bookmark.title" ng-readonly="!bookmark.edit"></b>
+
+    <!-- ICONS -->
+    <!-- <label><input type="checkbox" val="{{bookmark.url}}">&nbsp;</label> -->
+    <a ng-href="{{bookmark.url}}" target="_blank"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span></a>
+    <span class="glyphicon glyphicon-dwlfavicon" aria-hidden="true" data-lazy="{{bookmark.favicon}}"></span>
+
+    <!-- URL -->
+    <b>{{bookmark.parsedUrl.safe}}</b>
+    <small><input ng-model="bookmark.url" ng-readonly="!bookmark.edit"></small>
+    <small ng-if="bookmark.parsedUrl.safe !== bookmark.url">{{bookmark.url | limitTo:'100'}}</small><br/>
+    <small><b>id : </b>{{bookmark.id}}</span><br/>
+
+    <button ng-if="bookmark.type === 'tab'" ng-click="createBookmark({'title':bookmark.title, 'url':bookmark.url})">add</button>
+    <button ng-if="bookmark.type === 'bookmark'" ng-init="bookmark.edit = $parent.$parent.edit;" ng-click="switchEditing(); bookmark.edit = $parent.$parent.edit;">
+        {{ bookmark.edit ? 'save' : 'edit' }}
+    </button>
+    <button ng-if="bookmark.type === 'bookmark'" ng-click="removeBookmark(bookmark.id)">delete</button>
+
+</div>
+<div ng-if="debug.get().url" ng-include src="'/templates/debug/url.html'"></div>
+<div ng-if="debug.get().bookmark" ng-include src="'/templates/debug/bookmark.html'"></div>
