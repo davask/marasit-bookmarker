@@ -1,5 +1,11 @@
-dwlPopup.controller("dwlPopupCtrl", ['$scope', '$route','$location','$routeParams','$q','debugSer','bgSer','TITLE','AUTHOR',
-                                                 function ($scope, $route, $location, $routeParams, $q, debugSer, bgSer, TITLE, AUTHOR) {
+dwlPopup.controller("dwlPopupCtrl", ['$scope', '$route','$location','$routeParams','$q','debugSer','bgSer','ajaxSer','TITLE','AUTHOR',
+                                                 function ($scope, $route, $location, $routeParams, $q, debugSer, bgSer, ajaxSer, TITLE, AUTHOR) {
+
+    $scope.name = 'common';
+
+    $scope.$route = $route;
+    $scope.$location = $location;
+    $scope.$routeParams = $routeParams;
 
     $scope.title = TITLE;
     $scope.author = AUTHOR;
@@ -7,19 +13,88 @@ dwlPopup.controller("dwlPopupCtrl", ['$scope', '$route','$location','$routeParam
     $scope.debug = debugSer;
 
     $scope.bg = bgSer;
-    $scope.debug.merge({'bg':false});
-    // $scope.debug.merge({'url':false});
 
-    $scope['source'] = {};
+    $scope.bg.assign().then(function(o){
+        $scope.bookmarker = o.bookmarker;
+        $scope.dwlBk = o.dwlBk;
+    });
 
-    $scope.$route = $route;
-    $scope.$location = $location;
-    $scope.$routeParams = $routeParams;
-    $scope.debug.merge({'route':false});
+    $scope.ajax = ajaxSer;
+
+    $scope.query = '';
+    $scope.queryType = 'query';
 
     $scope.edit = false;
-    $scope.switchEditing = function () {
-        $scope.edit = !$scope.edit;
+    $scope.switchEditing = function (check) {
+        if(typeof(check) === 'undefined') {
+            check = false;
+        }
+        if(check) {
+            if(!$scope.edit) {
+                $scope.edit = !$scope.edit;
+            }
+        } else {
+            $scope.edit = !$scope.edit;
+        }
+    };
+
+    $scope.getLiveHtml = function (bookmark) {
+        var deferred = $q.defer();
+
+        $scope.ajax.getLiveHtml(bookmark).then(function(bookmark){
+            deferred.resolve();
+        });
+
+        return deferred.promise;
+    };
+
+    $scope.openTab = function (url) {
+        $scope.bookmarker.openTab(url);
+    };
+
+    $scope.refresh = {};
+    $scope.refresh.common = function() {
+        $scope.bg.reload().then(function(){
+            $scope.refresh[$scope.$route.current.locals.$scope.name]();
+        });
+    };
+
+    $scope.createBookmark = function(bookmark,scope) {
+        jQuery('.dwlLoading').show();
+        $scope.bookmarker.createChromeBookmarks(bookmark).then(function(bk){
+            $scope.refresh.common();
+        });
+    }
+
+    $scope.removeBookmark = function(id) {
+        jQuery('.dwlLoading').show();
+        $scope.bookmarker.removeChromeBookmarks(id).then(function(){
+            $scope.refresh.common();
+        }, function(){
+            $scope.refresh.common();
+        });
+    }
+
+    $scope.updateBookmark = function(newBookmark, oldBookmark) {
+        if(
+          oldBookmark.id === newBookmark.id
+           && (
+               oldBookmark.title !== newBookmark.title
+               ||
+               oldBookmark.url !== newBookmark.url
+           )
+        ) {
+            jQuery('.dwlLoading').show();
+            var b = {
+                'id' : newBookmark.id,
+                'title' : newBookmark.title,
+                'url' : newBookmark.url
+            };
+            console.log(b);
+            $scope.bookmarker.updateChromeBookmark(b).then(function(bk){
+                $scope.refresh.common();
+            });
+        }
     };
 
 }]);
@@ -27,7 +102,11 @@ dwlPopup.controller("dwlPopupCtrl", ['$scope', '$route','$location','$routeParam
 dwlPopup.controller("dwlIndexCtrl", ['$scope',
                                                  function ($scope) {
 
-    $scope.debug.merge({'index':false});
+    $scope.name = 'index';
+
+    $scope.refresh.index = function() {
+        jQuery('.dwlLoading').hide();
+    };
 
 }]);
 
@@ -36,193 +115,124 @@ dwlPopup.controller("dwlIndexCtrl", ['$scope',
 /* -------------------------------------- */
 dwlPopup.controller("dwlPageCtrl", ['$scope','$timeout','$q',function ($scope,$timeout,$q) {
 
-    $scope.debug.merge({'bookmark':false});
-    $scope.debug.merge({'dwlbk':false});
+    $scope.name = 'page';
 
-    $scope['page'] = {};
-    $scope.page.tab = {};
-    $scope.page.bookmarks = [];
+    $scope.page = {};
 
-    $scope.refresh = function() {
-        $scope.bg.refresh().then(function(isRefreshed){
-            $scope.init().then(function(){
-                jQuery('.dwlLoading').hide();
-            });
+    $scope.refresh.page = function() {
+        $scope.init().then(function(){
+            jQuery('.dwlLoading').hide();
         });
     };
 
-    $scope.createBookmark = function(bookmark) {
-        jQuery('.dwlLoading').show();
-        $scope.bookmarker.createChromeBookmarks(bookmark).then(function(bk){
-            $scope.refresh();
-        });
-    }
-
-    $scope.removeBookmark = function(id) {
-        jQuery('.dwlLoading').show();
-        $scope.bookmarker.removeChromeBookmarks(id).then(function(){
-            $scope.refresh();
-        }, function(){
-            $scope.refresh();
-        });
-    }
-
     $scope.init = function() {
-
         var deferred = $q.defer();
 
-        $scope.source = {};
-        $scope.page.tab = {};
-        $scope.page.bookmarks = [];
-        $scope.query = '';
-
-        $scope.bg.init().then(function(){
-            $scope.bookmarker = $scope.bg.getBookmarker();
-
-            $scope.source['tab'] = $scope.bg.get().tab;
-            $scope.source['bookmarks'] = $scope.bg.get().bookmarks;
-            $scope.query = $scope.bg.get().search;
-
-            angular.copy($scope.source.tab, $scope.page.tab);
-            angular.copy($scope.source.bookmarks, $scope.page.bookmarks);
-
+        $scope.bg.assign().then(function(o){
+            $scope.dwlBk = o.dwlBk;
+            angular.copy(o.dwlBk, $scope.page);
+            $scope.query = '';
+            if(o.dwlBk.similar.length > 0) {
+                $scope.query = o.dwlBk.tab.parsedUrl.tld;
+            }
             deferred.resolve();
         });
 
         return deferred.promise;
-
     };
 
     $scope.$watch(function(){
         return $scope.edit;
     },function(newValue, oldValue){
-        if(!newValue && typeof ($scope.source.bookmarks) !== "undefined") {
-            for (var i = 0; i < $scope.source.bookmarks.length; i++) {
-                if(    $scope.source.bookmarks[i].id === $scope.page.bookmarks[i].id &&
-                      (
-                           $scope.source.bookmarks[i].title !== $scope.page.bookmarks[i].title
-                       ||
-                           $scope.source.bookmarks[i].url !== $scope.page.bookmarks[i].url
-                       )
-                  ) {
-                    var b = {
-                        'id' : $scope.page.bookmarks[i].id,
-                        'title' : $scope.page.bookmarks[i].title,
-                        'url' : $scope.page.bookmarks[i].url
-                    };
-                    $scope.bookmarker.updateChromeBookmark(b).then(function(bk){
-                        $scope.refresh();
-                    });
+        if(!newValue && typeof ($scope.dwlBk.bookmarks) !== "undefined" && typeof ($scope.page.bookmarks) !== "undefined") {
+            for (var i = 0; i < $scope.dwlBk.bookmarks.length; i++) {
+                if(typeof ($scope.page.bookmarks[i]) !== 'undefined') {
+                    $scope.page.bookmarks[i] = $scope.bookmarker.updateTitle($scope.page.bookmarks[i]);
+                    $scope.updateBookmark($scope.page.bookmarks[i], $scope.dwlBk.bookmarks[i]);
                 }
             };
         }
     },true);
 
-    $scope.init().then(function(){
-        $scope.refresh();
-    });
+    $scope.refresh.common();
 
 }]);
 
 /* -------------------------------------- */
 /* -----------SEARCH ------------ */
 /* -------------------------------------- */
-dwlPopup.controller("dwlsearchCtrl", ['$scope','$q',function ($scope,$q) {
+dwlPopup.controller("dwlsearchCtrl", ['$scope','$routeParams','$q',function ($scope,$routeParams,$q) {
 
-    $scope.debug.merge({'search':false});
+    $scope.name = 'search';
 
-    $scope['search'] = {};
-    $scope.search.bookmarks = [];
-
-    $scope.query = '';
-    $scope.debug.merge({'search':false});
-
-    $scope.refresh = function() {
-        $scope.bg.refresh().then(function(isRefreshed){
-            $scope.searchBookmark()
-        });
+    $scope.search = {
+        'results' : [],
+        'live' : []
     };
 
-    $scope.searchBookmark = function() {
-        jQuery('.dwlLoading').show();
-        $scope.search.bookmarks = [];
-        $scope.source['bookmarks'] = [];
-
-        $scope.bookmarker.searchChromeBookmark($scope.query).then(function(bk){
-            for (var i = 0; i < bk.length; i++) {
-                $scope.search.bookmarks.push($scope.bg.updateBookmark(bk[i],'bookmark'));
-            };
-            angular.copy($scope.search.bookmarks, $scope.source.bookmarks);
-
-            $scope.$apply();
-            jQuery('.dwlLoading').hide();
-        });
-    }
-
-    $scope.createBookmark = function(bookmark) {
-        jQuery('.dwlLoading').show();
-        $scope.bookmarker.createChromeBookmarks(bookmark).then(function(bk){
-            $scope.refresh();
-        });
-    }
-
-    $scope.removeBookmark = function(id) {
-        jQuery('.dwlLoading').show();
-        $scope.bookmarker.removeChromeBookmarks(id).then(function(){
-            $scope.refresh();
-        }, function(){
-            $scope.refresh();
-        });
-    }
+    $scope.refresh.search = function() {
+        $scope.searchBookmark();
+    };
 
     $scope.init = function() {
-
         var deferred = $q.defer();
 
-        $scope.source = {};
-        $scope.search.bookmarks = [];
-        $scope.query = 'davask web limited';
+        $scope.bg.assign().then(function(o){
+            $scope.dwlBk = o.dwlBk;
+            $scope.query = '';
 
-        $scope.bg.init().then(function(){
+            if(typeof($routeParams.query) !== 'undefined') {
+                $scope.query = atob($routeParams.query);
+            }
+            if(typeof($routeParams.queryType) !== 'undefined') {
+                $scope.queryType = $routeParams.queryType;
+            }
 
-            $scope.bookmarker = $scope.bg.getBookmarker();
-            $scope.source['tab'] = $scope.bg.get().tab;
+            if($scope.query === '') {
+                $scope.query = o.dwlBk.query;
+                $scope.queryType = 'query';
+            }
 
-            $scope.query = $scope.bg.get().search;
             $scope.searchBookmark();
 
             deferred.resolve();
         });
 
         return deferred.promise;
-
     };
+
+    $scope.searchBookmark = function() {
+        jQuery('.dwlLoading').show();
+
+        $scope.search = {
+            'results' : [],
+            'live' : []
+        };
+
+        $scope.bookmarker.searchChromeBookmark($scope.query, $scope.queryType).then(function(bk){
+            for (var i = 0; i < bk.length; i++) {
+                bk[i] = $scope.bg.upgradeBookmark(bk[i],'bookmark');
+                $scope.search.results.push(bk[i]);
+            };
+            angular.copy($scope.search.results,$scope.search.live);
+            $scope.$apply();
+            jQuery('.dwlLoading').hide();
+        });
+    }
 
     $scope.$watch(function(){
         return $scope.edit;
     },function(newValue, oldValue){
-        if(!newValue && typeof ($scope.source.bookmarks) !== "undefined") {
-            for (var i = 0; i < $scope.source.bookmarks.length; i++) {
-                if(    $scope.source.bookmarks[i].id === $scope.search.bookmarks[i].id &&
-                      (
-                           $scope.source.bookmarks[i].title !== $scope.search.bookmarks[i].title
-                       ||
-                           $scope.source.bookmarks[i].url !== $scope.search.bookmarks[i].url
-                       )
-                  ) {
-                    var b = {
-                        'id' : $scope.search.bookmarks[i].id,
-                        'title' : $scope.search.bookmarks[i].title,
-                        'url' : $scope.search.bookmarks[i].url
-                    };
-                    $scope.bookmarker.updateChromeBookmark(b).then(function(bk){
-                        $scope.refresh();
-                    });
+        if(!newValue && typeof ($scope.search.results) !== "undefined" && typeof ($scope.search.live) !== "undefined") {
+            for (var i = 0; i < $scope.search.results.length; i++) {
+                if(typeof ($scope.search.live[i]) !== 'undefined') {
+                    $scope.search.live[i] = $scope.bookmarker.updateTitle($scope.search.live[i]);
+                    console.log($scope.search.live[i]);
+                    $scope.updateBookmark($scope.search.live[i], $scope.search.results[i]);
                 }
             };
         }
     },true);
-
 
     $scope.init();
 

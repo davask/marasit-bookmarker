@@ -67,13 +67,17 @@ var chromeExtension = {
         return d;
     },
 
+    'openTab' : function(newURL) {
+        chrome.tabs.create({ url: newURL });
+    },
+
     'bgReload' : function() {
         var _this = this;
         var d = $.Deferred();
 
-        chrome.extension.getBackgroundPage().reloadBg();
-        _this.isBgReload().then(function(isReload){
-            if(isReload) {
+        chrome.extension.getBackgroundPage().bgReload();
+        _this.isBgReloaded().then(function(isReloaded){
+            if(isReloaded) {
                 d.resolve(true);
             } else {
                 d.resolve(false);
@@ -83,7 +87,7 @@ var chromeExtension = {
         return d;
     },
 
-    'isBgReload' : function() {
+    'isBgReloaded' : function() {
         var _this = this;
         var d = $.Deferred();
         var ct = 0;

@@ -17,19 +17,19 @@ var chromeBookmarker = {
    // 'chromeBookmarksOriginal' : {},
 
     /* FUNCTIONS */
-    'getAllChromeBookmarks' : function () {
-        var _this = this;
-        var d = $.Deferred();
+    // 'getAllChromeBookmarks' : function () {
+    //     var _this = this;
+    //     var d = $.Deferred();
 
-        chrome.bookmarks.getTree(function(bookmarksTree){
-            bookmarksTree.forEach(function(bookmark){
-                _this.chromeBookmarksOriginal = bookmark;
-            });
-            d.resolve();
-        });
+    //     chrome.bookmarks.getTree(function(bookmarksTree){
+    //         bookmarksTree.forEach(function(bookmark){
+    //             _this.chromeBookmarksOriginal = bookmark;
+    //         });
+    //         d.resolve();
+    //     });
 
-        return d;
-    },
+    //     return d;
+    // },
 
     // 'clearBookmarksOriginal' : function () {
 
@@ -39,12 +39,18 @@ var chromeBookmarker = {
 
     // },
 
-    'searchChromeBookmark' : function (search) {
+    'searchChromeBookmark' : function (search, type) {
 
         var _this = this;
         var d = $.Deferred();
 
-        chrome.bookmarks.search(search, function(bookmarks){
+        if(typeof(type) === 'undefined') {
+            type = 'query';
+        }
+        var s = {};
+        s[type] = search;
+
+        chrome.bookmarks.search(s, function(bookmarks){
             d.resolve(bookmarks);
         });
 

@@ -1,3 +1,7 @@
+dwlPopup.filter('btoa', function() {
+    return btoa;
+});
+
 // dwlPopup.filter('parseURL', function() {
 //     return parseURL
 // });

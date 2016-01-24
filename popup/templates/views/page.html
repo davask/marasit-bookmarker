@@ -1,5 +1,5 @@
-<div ng-show="page.bookmarks.length > 0" ng-repeat="bookmark in page.bookmarks" ng-include src="'/templates/snippets/bookmark.html'"></div>
-<div ng-show="page.bookmarks.length == 0 && page.tab" ng-init="bookmark = page.tab" ng-include src="'/templates/snippets/bookmark.html'"></div>
-<div ng-show="page.bookmarks.length == 0 && !page.tab">
+<div ng-if="page.bookmarks.length > 0" ng-repeat="bookmark in page.bookmarks" ng-include src="'/templates/snippets/bookmark.html'"></div>
+<div ng-if="page.bookmarks.length == 0 && page.tab" ng-repeat="bookmark in [page.tab]" ng-include src="'/templates/snippets/bookmark.html'"></div>
+<div ng-if="page.bookmarks.length == 0 && !page.tab">
     No Bookmarks / Tab
 </div>

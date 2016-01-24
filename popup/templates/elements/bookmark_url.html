@@ -1,0 +1,13 @@
+<b class="editable">
+    <input
+        ng-model="bookmark.url"
+        ng-show="bookmark.edit"
+        ng-readonly="!bookmark.edit"
+     >
+    <span
+        ng-show="!bookmark.edit"
+        ng-click="switchEditing(); bookmark.edit = edit;"
+    >
+        {{bookmark.url | limitTo:'40'}}
+    </span>
+</b>

@@ -1,27 +1,20 @@
-<div id="{{bookmark.id}}" class="bookmark">
-    <!-- TITLE -->
-    <b><input ng-model="bookmark.title" ng-readonly="!bookmark.edit"></b>
-
-    <!-- ICONS -->
-    <!-- <label><input type="checkbox" val="{{bookmark.url}}">&nbsp;</label> -->
-    <a ng-href="{{bookmark.url}}" target="_blank"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span></a>
-    <span class="glyphicon glyphicon-dwlfavicon" aria-hidden="true" data-lazy="{{bookmark.favicon}}"></span>
-    <button ng-show="$parent.$parent.$route.current.$$route.bodyClass === 'search'" class="btn btn-link btn-xs" ng-click="$parent.$parent.query = bookmark.parsedUrl.hostname;searchBookmark();">same source</button>
-    <br/>
-    <!-- URL -->
-    <b>{{bookmark.parsedUrl.safe | limitTo:'40'}}</b>
-
-    <br/>
-    <small ng-show="bookmark.edit"><input ng-model="bookmark.url" ng-readonly="!bookmark.edit"></small>
-    <small ng-show="!bookmark.edit">{{bookmark.url | limitTo:'40'}}</small><br/>
-    <small><b>id : </b>{{bookmark.id}}</span><br/>
-
-    <button ng-if="bookmark.type === 'tab'" ng-click="createBookmark({'title':bookmark.title, 'url':bookmark.url})">add</button>
-    <button ng-if="bookmark.type === 'bookmark'" ng-init="bookmark.edit = $parent.$parent.edit;" ng-click="switchEditing(); bookmark.edit = $parent.$parent.edit;">
-        {{ bookmark.edit ? 'save' : 'edit' }}
-    </button>
-    <button ng-if="bookmark.type === 'bookmark'" ng-click="removeBookmark(bookmark.id)">delete</button>
-
+<div id="{{bookmark.id}}" class="bookmark" ng-init="getLiveHtml(bookmark)">
+    <div class="row">
+        <div class="col-xs-10">
+            <div ng-include src="'/templates/snippets/bookmark_title.html'"></div>
+            <div ng-include src="'/templates/snippets/bookmark_url.html'"></div>
+            <div ng-include src="'/templates/snippets/bookmark_tags.html'"></div>
+            <div ng-include src="'/templates/snippets/bookmark_details.html'"></div>
+            <button
+                class="btn btn-xs btn-link"
+                ng-if="bookmark.titleNoTag !== bookmark.liveTitle"
+                ng-click="switchEditing(); bookmark.edit = edit;bookmarker.updateTitle(bookmark, true)"
+            >
+                update title : {{bookmark.liveTitle}}
+            </button>
+        </div>
+        <div class="col-xs-2 text-center">
+            <div ng-include src="'/templates/snippets/bookmark_btn.html'"></div>
+        </div>
+    </div>
 </div>
-<div ng-if="debug.get().url" ng-include src="'/templates/debug/url.html'"></div>
-<div ng-if="debug.get().bookmark" ng-include src="'/templates/debug/bookmark.html'"></div>

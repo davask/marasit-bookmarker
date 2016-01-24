@@ -1,10 +1,15 @@
-<input ng-model="query">
-<button class="btn btn-primary btn-xs" ng-click="searchBookmark();">search</button>
-<button class="btn btn-link btn-xs" ng-click="query='';search.bookmarks=[];">clear</button>
-<br/>
-<small>results : {{search.bookmarks.length}}</small>
-<div class="row results" ng-show="search.bookmarks.length > 0">
-    <div class="col-xs-12">
-        <div ng-repeat="bookmark in search.bookmarks" ng-include src="'/templates/snippets/bookmark.html'"></div>
+<div class="row">
+    <div class="col-xs-6">
+        <input ng-model="query" placeholder="search bookmarks">
+        <button class="btn btn-primary btn-xs" ng-click="queryFilter='';searchBookmark();">search</button>
+        <button class="btn btn-link btn-xs" ng-click="query='';queryFilter='';search.live=[];">clear</button>
     </div>
+    <div class="col-xs-6">
+        <input ng-model="queryFilter" placeholder="filter results">
+        <small>results : {{(filteredBookmarks | filter:queryFilter).length}}</small>
+    </div>
+</div>
+<hr class="row"/>
+<div class="results" ng-show="search.live.length > 0">
+    <div ng-repeat="bookmark in filteredBookmarks = (search.live | filter:queryFilter)" ng-include src="'/templates/snippets/bookmark.html'"></div>
 </div>

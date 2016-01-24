@@ -3,7 +3,7 @@
     "manifest_version": 2,
     "minimum_chrome_version": "42",
 
-    "version": "1.8.1",
+    "version": "1.8.2",
     "version_name": "1.8",
 
     "name": "multitask manager",
@@ -30,6 +30,7 @@
           "js/library/chrome-log.js",
           "js/library/chrome-extension.js",
           "js/library/chrome-bookmarker.js",
+          "js/library/dwl-tag-manager.js",
           "js/dwl-bookmarker.js",
           "js/background.js"
        ]
@@ -60,7 +61,9 @@
         "run_at": "document_end"
     }],
 
-    "content_security_policy": "default-src 'self' 'unsafe-eval'; img-src 'self' data: *; media-src *; style-src 'self' 'unsafe-inline';" ,
+   "options_page": "templates/options.html",
+
+    "content_security_policy": "default-src 'self' 'unsafe-eval'; connect-src *; img-src 'self' data: *; media-src *; style-src 'self' 'unsafe-inline';" ,
 
    "permissions": [
       "activeTab",
@@ -79,6 +82,30 @@
     "web_accessible_resources": [
         "img/icon128.png"
     ],
+
+    "commands": {
+        "_execute_browser_action": {
+            "description": "Open popup",
+            "suggested_key": {
+                "default": "Ctrl+D",
+                "mac": "Command+D"
+            }
+        },
+        "Ctrl+S": {
+            "description": "Save bookmark edition",
+            "suggested_key": {
+                // "mac": "Command+Shift+S",
+                "default": "Ctrl+S"
+            }
+        // },
+        // "Ctrl+Shift+Z": {
+        //     "description": "Ctrl+Shift+Z",
+        //     "suggested_key": {
+        //         // "mac": "Command+Shift+Z",
+        //         "default": "Ctrl+Shift+Z"
+        //     }
+        }
+    },
 
     "offline_enabled": true
 

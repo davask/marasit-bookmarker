@@ -14,7 +14,7 @@ var isPopupOpen = function () {
     return isOpen;
 };
 
-var reloadBg = function() {
+var bgReload = function() {
     var d = $.Deferred();
 
     chrome.tabs.query({ active: true }, function(tabs) {
@@ -30,8 +30,8 @@ var reloadBg = function() {
 var dwlBk = {
     'tab' : {},
     'bookmarks' : [],
-    'bookmarker' : {},
-    'search' : '',
+    'similar' : [],
+    'query' : '',
     'isLoaded' : false,
 
     'show' : function(tabId) {
@@ -41,58 +41,87 @@ var dwlBk = {
 
         _this.tab = {};
         _this.bookmarks = [];
-        _this.search = '';
+        _this.similar = [];
+        _this.query = '';
+        var type = 'query';
 
-        _this.bookmarker.getTab(tabId).then(function(tab){
+        if(typeof(bookmarker) !== 'undefined' && bookmarker.initialized) {
 
-            if (tab.id > -1) {
+            bookmarker.getTab(tabId).then(function(tab){
 
-                _this.tab = _this.updateBookmark(tab,'tab');
+                if (tab.id > -1) {
 
-                if(_this.tab.title != '') {
-                    _this.search = _this.tab.title;
-                }
+                    _this.tab = _this.upgradeBookmark(tab,'tab');
 
-                if(_this.tab.url != '') {
-                    _this.search = _this.tab.url;
-                }
+                    if(_this.tab.title != '') {
+                        _this.query = _this.tab.title;
+                        type = 'title';
+                    }
 
-                if(_this.search != '') {
+                    if(_this.tab.url != '') {
+                        _this.query = _this.tab.url;
+                        type = 'url';
+                    }
 
-                    _this.bookmarker.searchChromeBookmark(_this.search).then(function(bookmarks){
+                    if(_this.tab.parsedUrl.dns != '') {
+                        _this.query = _this.tab.parsedUrl.dns;
+                        type = 'query';
+                    }
 
-                        for (var i = 0; i < bookmarks.length; i++) {
-                            if (bookmarks[i].url == _this.tab.url || bookmarks[i].title == _this.tab.title) {
-                                _this.bookmarks.push(_this.updateBookmark(bookmarks[i],'bookmark'));
+                    if(_this.tab.parsedUrl.tld != '') {
+                        _this.query = _this.tab.parsedUrl.tld;
+                        type = 'query';
+                    }
+
+                    if(_this.query != '') {
+
+                        bookmarker.searchChromeBookmark(_this.query, type).then(function(bookmarks){
+
+                            for (var i = 0; i < bookmarks.length; i++) {
+                                bookmarks[i] = _this.upgradeBookmark(bookmarks[i],'bookmark');
+                                if (bookmarks[i].url === _this.tab.url) {
+                                    _this.bookmarks.push(bookmarks[i]);
+                                } else if (bookmarks[i].parsedUrl.tld === _this.tab.parsedUrl.tld) {
+                                    _this.similar.push(bookmarks[i]);
+                                }
                             }
-                        }
 
-                        _this.bookmarker.setIcon(_this.tab.id, _this.bookmarks.length);
-                        d.resolve(true);
+                            bookmarker.setIcon(_this.tab.id, _this.bookmarks.length + _this.similar.length);
+                            d.resolve(true);
 
-                    });
+                        });
+
+                    } else {
+
+                        bookmarker.setIcon(-1, 'error');
+                        console.log('Something went wrong with this tab', _this.tab)
+                        d.resolve(null);
+
+                    }
 
                 } else {
 
-                    _this.bookmarker.setIcon(-1, 'error');
-                    console.log('Something went wrong with this tab', _this.tab)
-                    d.resolve(null);
+                    d.resolve(false);
 
                 }
 
-            } else {
+            });
 
-                d.resolve(false);
+        } else {
 
-            }
+            bookmarker.setIcon(-1, 'error');
+            console.log('bookmarker is not initialized', bookmarker)
+            d.resolve(null);
 
-        });
+        }
 
         return d;
-
     },
 
-    updateBookmark : function(bookmark, type){
+    upgradeBookmark : function(bookmark, type){
+
+        bookmark = bookmarker.setSpecificTagData(bookmark);
+        bookmark['liveTitle'] = '';
         bookmark['type'] = type;
         bookmark['edit'] = false;
         bookmark['parsedUrl'] = parseURL(bookmark.url);
@@ -106,12 +135,12 @@ var dwlBk = {
         }
     },
 
-    update : function(tabid) {
+    update : function(tabId) {
 
         var _this = this;
         var d = $.Deferred();
 
-        _this.show(tabid).then(function(status){
+        _this.show(tabId).then(function(status){
             var show = status;
             if(show === false) {
 
@@ -131,10 +160,10 @@ var dwlBk = {
             }
 
             if(show === false) {
-                _this.bookmarker.setIcon(-1, 'error');
+                bookmarker.setIcon(-1, 'error');
             } else {
                 _this.isLoaded = true;
-                chrome.tabs.sendMessage(tabid, {'dwlBk' : dwlBk}, dwlBk.contentResponse);
+                chrome.tabs.sendMessage(tabId, {'dwlBk' : dwlBk}, dwlBk.contentResponse);
             }
 
             d.resolve(show);
@@ -146,7 +175,7 @@ var dwlBk = {
 
 };
 
-dwlBk.bookmarker = dwlBookmarker.init();
+var bookmarker = dwlBookmarker.init();
 
 chrome.tabs.getSelected(null, function(tab) {
     // console.log('getSelected',tab);
@@ -166,3 +195,14 @@ chrome.tabs.onUpdated.addListener(function(tabId) {
         dwlBk.update(tabId);
     }
 });
+
+chrome.commands.onCommand.addListener(function(command){
+    console.log(command);
+    if(command === 'Ctrl+D' && !isPopupOpen()) {
+        console.log('opening');
+    }
+    if(command === 'Ctrl+D' && isPopupOpen()) {
+        console.log(popup.window.close());
+    }
+});
+

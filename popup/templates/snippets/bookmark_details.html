@@ -1,0 +1,12 @@
+<small>
+    <!-- <img src="{{bookmark.favicon}}" alt="{{bookmark.titleNoTag}}" class="favicon"> -->
+    <b>id : </b>{{bookmark.id}}
+    <!-- <b>status : </b>{{bookmark.status}} -->
+    <span class="similar" ng-show="dwlBk.similar.length === 0">
+        {{dwlBk.similar.length}} similar bookmarks
+    </span>
+    <a class="similar" ng-show="dwlBk.similar.length > 0" class="btn btn-link btn-xs" href="/search/query/{{dwlBk.tab.parsedUrl.tld | btoa}}">
+        {{dwlBk.similar.length}} similar bookmarks
+    </a>
+</small>
+<br/>

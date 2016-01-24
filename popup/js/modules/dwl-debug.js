@@ -33,7 +33,19 @@ dwlDebug.service("debugSer", [function () {
     };
 
     debug['debug'] = false;
-    // _this.active('debug');
+
+    _this.merge({
+        'bg':true,
+        'bookmarker':false,
+        'tab':false,
+        'bookmark':false,
+        'similar':false,
+        'route':false,
+        'ajax':false,
+        'index':false,
+        'page':false,
+        'search':false
+    });
 
     return _this;
 

@@ -103,12 +103,26 @@ if (typeof getLength != 'function') {
 if (typeof parseURL != 'function') {
     var parseURL = function parseURL(url) {
 
-        var parsedUrl = {};
+        var parsedUrl = {
+            tld: '',
+            safe: '',
+            protocol: '',
+            host: '',
+            hostname: '',
+            dns: '',
+            port: '',
+            pathname: '',
+            search: '',
+            searchObject: '',
+            hash: '',
+            length: 0
+        };
 
-        if(typeof(url) !== 'undefined') {
+        if(typeof(url) !== 'undefined' && url !== '') {
 
             var parser = document.createElement('a'),
                 searchObject = {},
+                dns = '',
                 queries, split, i;
 
             // Let the browser do the work
@@ -120,23 +134,40 @@ if (typeof parseURL != 'function') {
             for( i = 0; i < queries.length; i++ ) {
                 split = queries[i].split('=');
                 searchObject[split[0]] = split[1];
-            }
+            };
+            var matches = parser.hostname.match(/[^\.]+\.?[^\.]+$/);
+            if(matches !== null && matches.length > 0) {
+                dns = matches[0];
+            };
             parsedUrl = {
+                tld: parser.protocol + '//' + parser.hostname,
                 safe: parser.protocol + '//' + parser.hostname + parser.pathname,
                 protocol: parser.protocol,
                 host: parser.host,
                 hostname: parser.hostname,
+                dns: dns,
                 port: parser.port,
                 pathname: parser.pathname,
                 search: parser.search,
                 searchObject: searchObject,
                 hash: parser.hash,
                 length:url.length
-            }
+            };
         }
 
         return parsedUrl;
     };
+};
+
+if (typeof clone != 'function') {
+    var clone = function (obj) {
+        if (null == obj || "object" != typeof obj) return obj;
+        var copy = obj.constructor();
+        for (var attr in obj) {
+            if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+        }
+        return copy;
+    }
 };
 
 if (typeof merge != 'function') {

@@ -1,18 +1,15 @@
 var dwlModules = [];
 dwlModules.push('ui.bootstrap');
+// dwlModules.push('ui.router');
 dwlModules.push('ngRoute');
 dwlModules.push('ngAnimate');
+dwlModules.push('ngTagsInput');
 // dwlModules.push('timer');
 dwlModules.push('dwlDebug');
 dwlModules.push('dwlBg');
+dwlModules.push('dwlAjax');
 
 var dwlPopup = angular.module('dwlPopup', dwlModules);
-
-dwlPopup.run(function($rootScope) {
-   $rootScope.$on('$routeChangeError', function(event, current, previous, rejection) {
-      console.log(event, current, previous, rejection)
-   })
-});
 
 /*
 All the providers are instantiated only once. That means that they are all singletons.

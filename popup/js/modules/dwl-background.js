@@ -8,19 +8,29 @@ dwlBg.service("bgSer", ['$q', function ($q) {
 
     bg = {};
 
-    _this.init = function() {
+    _this.assign = function() {
+
         var deferred = $q.defer();
+
+        var o = {
+            'bookmarker' : {},
+            'dwlBk' : {}
+        };
+
         chrome.runtime.getBackgroundPage(function(chromeBg){
             bg = chromeBg;
-            deferred.resolve();
+            o.bookmarker = _this.getBookmarker();
+            o.dwlBk = _this.get();
+
+            deferred.resolve(o);
         });
         return deferred.promise;
     };
 
-    _this.refresh = function() {
+    _this.reload = function() {
         var deferred = $q.defer();
 
-        bg.dwlBk.bookmarker.bgReload().then(function(isRefreshed){
+        bg.bookmarker.bgReload().then(function(isRefreshed){
             deferred.resolve(isRefreshed);
         });
 
@@ -32,16 +42,17 @@ dwlBg.service("bgSer", ['$q', function ($q) {
         return {
             'tab' : bg.dwlBk.tab,
             'bookmarks' : bg.dwlBk.bookmarks,
-            'search' : bg.dwlBk.search
+            'similar' : bg.dwlBk.similar,
+            'query' : bg.dwlBk.query
         };
     };
 
     _this.getBookmarker = function() {
-        return bg.dwlBk.bookmarker;
+        return bg.bookmarker;
     };
 
-    _this.updateBookmark = function(bookmark, type) {
-        return bg.dwlBk.updateBookmark(bookmark, type);
+    _this.upgradeBookmark = function(bookmark, type) {
+        return bg.dwlBk.upgradeBookmark(bookmark, type);
     };
 
     return _this;
