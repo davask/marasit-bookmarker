@@ -6,10 +6,24 @@
     </div>
     <div class="col-xs-6">
         <input ng-model="queryFilter" placeholder="filter results">
-        <small>results : {{(filteredBookmarks | filter:queryFilter).length}}</small>
+        <small>results : {{filteredBookmarks.length}}</small>
+        <button class="btn btn-xs btn-primary" ng-disabled="currentPage == 0" ng-click="currentPage=currentPage-1">
+            Previous
+        </button>
+        {{currentPage+1}}/{{nbPages}}
+        <button class="btn btn-xs btn-primary" ng-disabled="currentPage >= data.length/pageSize - 1" ng-click="currentPage=currentPage+1">
+            Next
+        </button>
     </div>
 </div>
 <hr class="row"/>
-<div class="results" ng-show="search.live.length > 0">
-    <div ng-repeat="bookmark in filteredBookmarks = (search.live | filter:queryFilter)" ng-include src="'/templates/snippets/bookmark.html'"></div>
+<div class="results" ng-show="filteredBookmarks.length > 0">
+    <div
+        ng-init="numberOfPages()"
+        ng-repeat="bookmark in filteredBookmarks = (search.live | filter:'bookmark':type | filter:queryFilter | orderBy : '-dateAdded') | startFrom:currentPage*pageSize | limitTo:pageSize"
+        ng-include src="'/templates/blocks/bookmark.html'"
+    ></div>
+</div>
+<div class="results" ng-show="filteredBookmarks.length === 0">
+    {{dwlLoading ? 'Loading ...' : 'No results'}}
 </div>

@@ -43,8 +43,17 @@ dwlBg.service("bgSer", ['$q', function ($q) {
             'tab' : bg.dwlBk.tab,
             'bookmarks' : bg.dwlBk.bookmarks,
             'similar' : bg.dwlBk.similar,
-            'query' : bg.dwlBk.query
+            'query' : bg.dwlBk.query,
+            'rules' : bg.dwlTags.rules,
+            'tags' : bg.dwlTags.tags,
+            'tagsToDisplay' : bg.dwlTags.tagsToDisplay,
+            'grps' : bg.dwlTags.grps,
+            'categories' : bg.dwlTags.categories,
+            'trees' : bg.dwlTags.trees,
+            'folders' : bg.dwlTags.folders,
+            'icons' : bg.dwlBk.icons
         };
+
     };
 
     _this.getBookmarker = function() {

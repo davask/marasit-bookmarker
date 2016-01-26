@@ -1,0 +1,9 @@
+<!-- TITLE -->
+<div ng-include src="'/templates/elements/bookmark_title.html'"></div>
+<button
+    class="btn btn-xs btn-link"
+    ng-if="bookmark.titleNoTag !== bookmark.liveTitle && bookmark.status === 200 && bookmark.liveTitle !== ''"
+    ng-click="bookmark.titleNoTag = bookmark.liveTitle; switchEditing(); bookmark.edit = !bookmark.edit;"
+>
+    update title : {{bookmark.liveTitle}}
+</button>

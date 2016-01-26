@@ -35,7 +35,7 @@ dwlDebug.service("debugSer", [function () {
     debug['debug'] = false;
 
     _this.merge({
-        'bg':true,
+        'bg':false,
         'bookmarker':false,
         'tab':false,
         'bookmark':false,

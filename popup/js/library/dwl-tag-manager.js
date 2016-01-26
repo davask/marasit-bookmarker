@@ -9,19 +9,119 @@ var dwlTagsManager = {
      /* VAR */
     'initialized' : false,
     'name' : 'tags',
-
     'tagGlue' : ' ',
+    'errorGrp' : '_',
+    'browserFolderGrp' : '§',
 
-    'tagRegexSep' : ['\\s','!','\\/','#','@','$','§'],
+    'rules' : {
+        '/' : {
+            'example' : '/<word>',
+            'title' : 'folder',
+            'title_canonical' : 'folder',
+            'description' : ''
+        },
+        // '§' : {
+        //     'example' : '/<word>',
+        //     'title' : 'obsolete folder',
+        //     'title_canonical' : 'folder',
+        //     'description' : ''
+        // },
+        '#' : {
+            'example' : '#<word>',
+            'title' : 'tag',
+            'title_canonical' : 'tag',
+            'description' : ''
+        },
+        '@' : {
+            'example' : '@<username>',
+            'title' : 'person',
+            'title_canonical' : 'person',
+            'description' : 'person to share with'
+        },
+        '$' : {
+            'example' : '$<word>',
+            'title' : 'alias',
+            'title_canonical' : 'alias',
+            'description' : ''
+        },
+        // '' : {
+        //     'example' : '<word>',
+        //     'title' : 'obsolete alias',
+        //     'title_canonical' : 'alias',
+        //     'description' : ''
+        // },
+        '~' : {
+            'example' : '!<word>',
+            'title' : 'article',
+            'title_canonical' : 'article',
+            'description' : ''
+        },
+        // '!' : {
+        //     'example' : '!<word>',
+        //     'title' : 'obsolete article',
+        //     'title_canonical' : 'article',
+        //     'description' : ''
+        // },
+        '()' : {
+            'example' : '(<flag>)',
+            'title' : 'bookmark flag',
+            'title_canonical' : 'bookmark-flag',
+            'description' : ''
+        },
+        'I' : {
+            'example' : 'I',
+            'title' : 'important',
+            'title_canonical' : 'important',
+            'description' : ''
+        },
+        'D' : {
+            'example' : 'D',
+            'title' : 'duplicated',
+            'title_canonical' : 'duplicated',
+            'description' : ''
+        },
+        'R' : {
+            'example' : 'R',
+            'title' : 'removed',
+            'title_canonical' : 'removed',
+            'description' : ''
+        },
+        'T' : {
+            'example' : 'T',
+            'title' : 'trash',
+            'title_canonical' : 'trash',
+            'description' : ''
+        },
+        'E' : {
+            'example' : 'E',
+            'title' : 'empty title',
+            'title_canonical' : 'empty-title',
+            'description' : 'empty title (except tag)'
+        },
+        'N' : {
+            'example' : 'N',
+            'title' : 'not tagged',
+            'title_canonical' : 'not-tagged',
+            'description' : ''
+        },
+        'S' : {
+            'example' : 'S',
+            'title' : 'stared',
+            'title_canonical' : 'stared',
+            'description' : ''
+        }
+    },
 
-    'tagRegexCleaner' : ['\\s',','],
+    'tagRegexSep' : ['\\s','~','\\/','#','@','$','§'],
+    'tagSep' : [' ','~','/','#','@','$','§'],
 
-    'tagSep' : [' ','!','/','#','@','$','§'],
+    'tagRegexDisplay' : ['\\s',','],
+    'tagDisplay' : ['_'],
 
-    'regexFavicon' : '^https?:\\/\\/?[\\da-z\\.-]+\\.[a-z\\.]{2,6}',
+
     'regexUrl' : '^https?:\\/\\/?[\\da-z\\.-]+\\.[a-z\\.]{2,6}.*$',
+    'regexFavicon' : '^https?:\\/\\/?[\\da-z\\.-]+\\.[a-z\\.]{2,6}',
 
-    'regexCleanTag' : '\\s|,',
 
     'logs' : {
         'logs.instantiate' : 'dwlTagsManager instantiated'
@@ -36,6 +136,9 @@ var dwlTagsManager = {
     },
     'regexEachTags' : function(s) {
         return '\\s?['+s+']?[^\\]\\s'+s+']*';
+    },
+    'tagRegexCleaner' : function(s){
+        return '['+s+']';
     },
 
     'setSpecificTagData' : function(bookmark) {
@@ -63,11 +166,7 @@ var dwlTagsManager = {
 
         }
 
-        for (var i = 0; i < bookmark.tags.length; i++) {
-            bookmark.tagsToDisplay.push({
-                'tag' : bookmark.tags[i]
-            });
-        };
+        bookmark.tagsToDisplay = _this.getTagsToDisplay(bookmark.tags).tagsToDisplay;
 
         return bookmark;
 
@@ -111,7 +210,7 @@ var dwlTagsManager = {
 
         var _this = this;
         var s = _this.tagRegexSep.join('');
-        var c = _this.tagRegexCleaner.join('');
+        var c = _this.tagRegexDisplay.join('');
 
         var tags = [];
         var tagsArray = [];
@@ -125,14 +224,52 @@ var dwlTagsManager = {
 
         if (tagsArray != null && tagsArray.length > 0) {
             for (var i = 0; i < tagsArray.length; i++) {
-                tags.push((tagsArray[i].trim().replace(new RegExp(_this.regexCleanTag,'g'),'_')));
+                tags.push((tagsArray[i].trim().replace(new RegExp(_this.tagRegexCleaner(c),'g'),'_')));
             }
         }
 
-        tags = tags.unique();
+        tags = tags.unique().sort();
 
         return tags;
 
+    },
+
+    'getTagsToDisplay' : function(tags){
+
+        var _this = this;
+        var s = _this.tagRegexSep.join('');
+        var c = _this.tagDisplay.join('');
+        var tagsToDisplay = [];
+        var grps = [];
+        var categories = [];
+        for (var i = 0; i < tags.length; i++) {
+
+            var tag = tags[i].trim();
+
+            var tagNoCat = tag.trim().replace(new RegExp(_this.tagRegexCleaner(s),'g'),'')
+            var cat = tag.replace(tagNoCat,'');
+            categories.push(cat);
+
+            var title = tagNoCat.replace(new RegExp(_this.tagRegexCleaner(c),'g'),' ').toLowerCase();
+
+            var grp = title.charAt(0);
+            if(grp === '' || grp === '!') {
+                grp = _this.errorGrp;
+            }
+            grps.push(grp);
+
+            tagsToDisplay.push({
+                tag : tag,
+                title : title,
+                grp : grp,
+                cat : cat
+            });
+        };
+        return {
+            'tagsToDisplay' : tagsToDisplay,
+            'grps' : grps.unique().sort(),
+            'categories' : categories.unique().sort()
+        };
     },
 
     'getTitleNoTag' : function(title){

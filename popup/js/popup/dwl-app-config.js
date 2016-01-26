@@ -3,26 +3,34 @@ dwlPopup.config(['$compileProvider',function($compileProvider){
 }]);
 
 dwlPopup.config(['$routeProvider', '$locationProvider', function config($routeProvider, $locationProvider) {
+    /* index */
     $routeProvider.when('/', {
         templateUrl: '../templates/views/index.html',
         controller: 'dwlIndexCtrl',
         bodyClass: 'index'
     });
-    $routeProvider.when('/search/:type/:query', {
-        templateUrl: '../templates/views/search.html',
-        controller: 'dwlsearchCtrl',
-        bodyClass: 'search'
-    });
-    $routeProvider.when('/search', {
-        templateUrl: '../templates/views/search.html',
-        controller: 'dwlsearchCtrl',
-        bodyClass: 'search'
-    });
-        /* bookmark */
+    /* bookmark */
     $routeProvider.when('/page', {
         templateUrl: '../templates/views/page.html',
         controller: 'dwlPageCtrl',
         bodyClass: 'page'
+    });
+    /* bookmark search */
+    $routeProvider.when('/search', {
+        templateUrl: '../templates/views/search.html',
+        controller: 'dwlSearchCtrl',
+        bodyClass: 'search'
+    });
+    $routeProvider.when('/search/:type/:query', {
+        templateUrl: '../templates/views/search.html',
+        controller: 'dwlSearchCtrl',
+        bodyClass: 'search'
+    });
+    /* bookmark tags */
+    $routeProvider.when('/tags', {
+        templateUrl: '../templates/views/tags.html',
+        controller: 'dwlTagsCtrl',
+        bodyClass: 'tags'
     });
     $routeProvider.otherwise({
         redirectTo: '/page'

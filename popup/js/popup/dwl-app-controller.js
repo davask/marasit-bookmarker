@@ -9,11 +9,13 @@ dwlPopup.controller("dwlPopupCtrl", ['$scope', '$route','$location','$routeParam
 
     $scope.title = TITLE;
     $scope.author = AUTHOR;
+    $scope.dwlLoading = false;
 
     $scope.debug = debugSer;
 
     $scope.bg = bgSer;
 
+    /* refactorize as $scope.init.common */
     $scope.bg.assign().then(function(o){
         $scope.bookmarker = o.bookmarker;
         $scope.dwlBk = o.dwlBk;
@@ -54,20 +56,22 @@ dwlPopup.controller("dwlPopupCtrl", ['$scope', '$route','$location','$routeParam
 
     $scope.refresh = {};
     $scope.refresh.common = function() {
+        $scope.dwlLoading = true;
         $scope.bg.reload().then(function(){
             $scope.refresh[$scope.$route.current.locals.$scope.name]();
+            $scope.edit = false;
         });
     };
 
     $scope.createBookmark = function(bookmark,scope) {
-        jQuery('.dwlLoading').show();
+        $scope.dwlLoading = true;
         $scope.bookmarker.createChromeBookmarks(bookmark).then(function(bk){
             $scope.refresh.common();
         });
     }
 
     $scope.removeBookmark = function(id) {
-        jQuery('.dwlLoading').show();
+        $scope.dwlLoading = true;
         $scope.bookmarker.removeChromeBookmarks(id).then(function(){
             $scope.refresh.common();
         }, function(){
@@ -84,13 +88,12 @@ dwlPopup.controller("dwlPopupCtrl", ['$scope', '$route','$location','$routeParam
                oldBookmark.url !== newBookmark.url
            )
         ) {
-            jQuery('.dwlLoading').show();
+            $scope.dwlLoading = true;
             var b = {
                 'id' : newBookmark.id,
                 'title' : newBookmark.title,
                 'url' : newBookmark.url
             };
-            console.log(b);
             $scope.bookmarker.updateChromeBookmark(b).then(function(bk){
                 $scope.refresh.common();
             });
@@ -105,7 +108,7 @@ dwlPopup.controller("dwlIndexCtrl", ['$scope',
     $scope.name = 'index';
 
     $scope.refresh.index = function() {
-        jQuery('.dwlLoading').hide();
+        $scope.dwlLoading = false;
     };
 
 }]);
@@ -121,7 +124,7 @@ dwlPopup.controller("dwlPageCtrl", ['$scope','$timeout','$q',function ($scope,$t
 
     $scope.refresh.page = function() {
         $scope.init().then(function(){
-            jQuery('.dwlLoading').hide();
+            $scope.dwlLoading = false;
         });
     };
 
@@ -141,6 +144,7 @@ dwlPopup.controller("dwlPageCtrl", ['$scope','$timeout','$q',function ($scope,$t
         return deferred.promise;
     };
 
+    /* refactorize as $scope.watch.common */
     $scope.$watch(function(){
         return $scope.edit;
     },function(newValue, oldValue){
@@ -152,7 +156,7 @@ dwlPopup.controller("dwlPageCtrl", ['$scope','$timeout','$q',function ($scope,$t
                 }
             };
         }
-    },true);
+    });
 
     $scope.refresh.common();
 
@@ -161,13 +165,21 @@ dwlPopup.controller("dwlPageCtrl", ['$scope','$timeout','$q',function ($scope,$t
 /* -------------------------------------- */
 /* -----------SEARCH ------------ */
 /* -------------------------------------- */
-dwlPopup.controller("dwlsearchCtrl", ['$scope','$routeParams','$q',function ($scope,$routeParams,$q) {
+dwlPopup.controller("dwlSearchCtrl", ['$scope','$routeParams','$q','$filter',function ($scope, $routeParams, $q, $filter) {
 
     $scope.name = 'search';
 
     $scope.search = {
         'results' : [],
         'live' : []
+    };
+
+    $scope.pageSize = 5;
+    $scope.currentPage = 0;
+    $scope.nbPages = 1;
+    $scope.filteredBookmarks = [];
+    $scope.numberOfPages = function(){
+        $scope.nbPages = Math.ceil($scope.filteredBookmarks.length/$scope.pageSize);
     };
 
     $scope.refresh.search = function() {
@@ -182,7 +194,7 @@ dwlPopup.controller("dwlsearchCtrl", ['$scope','$routeParams','$q',function ($sc
             $scope.query = '';
 
             if(typeof($routeParams.query) !== 'undefined') {
-                $scope.query = atob($routeParams.query);
+                $scope.query = $filter('atob')($routeParams.query);
             }
             if(typeof($routeParams.queryType) !== 'undefined') {
                 $scope.queryType = $routeParams.queryType;
@@ -202,7 +214,7 @@ dwlPopup.controller("dwlsearchCtrl", ['$scope','$routeParams','$q',function ($sc
     };
 
     $scope.searchBookmark = function() {
-        jQuery('.dwlLoading').show();
+        $scope.dwlLoading = true;
 
         $scope.search = {
             'results' : [],
@@ -216,7 +228,7 @@ dwlPopup.controller("dwlsearchCtrl", ['$scope','$routeParams','$q',function ($sc
             };
             angular.copy($scope.search.results,$scope.search.live);
             $scope.$apply();
-            jQuery('.dwlLoading').hide();
+            $scope.dwlLoading = false;
         });
     }
 
@@ -227,12 +239,50 @@ dwlPopup.controller("dwlsearchCtrl", ['$scope','$routeParams','$q',function ($sc
             for (var i = 0; i < $scope.search.results.length; i++) {
                 if(typeof ($scope.search.live[i]) !== 'undefined') {
                     $scope.search.live[i] = $scope.bookmarker.updateTitle($scope.search.live[i]);
-                    console.log($scope.search.live[i]);
                     $scope.updateBookmark($scope.search.live[i], $scope.search.results[i]);
                 }
             };
         }
-    },true);
+    });
+
+    $scope.init();
+
+}]);
+
+/* -------------------------------------- */
+/* -----------TAGS ----------------- */
+/* -------------------------------------- */
+dwlPopup.controller("dwlTagsCtrl", ['$scope','$q',function ($scope,$q) {
+
+    $scope.name = 'tags';
+
+    $scope.refresh.tags = function() {
+    };
+
+    $scope.pageSize = 200;
+    $scope.currentPage = 0;
+    $scope.nbPages = 0;
+    $scope.tagsFiltered = [];
+    $scope.numberOfPages = function(){
+        $scope.nbPages = Math.ceil($scope.tagsFiltered.length/$scope.pageSize);
+    };
+
+    $scope.init = function() {
+        var deferred = $q.defer();
+
+        $scope.bg.assign().then(function(o){
+            $scope.dwlBk = o.dwlBk;
+            deferred.resolve();
+        });
+
+        return deferred.promise;
+    };
+
+    $scope.$watch(function(){
+        return $scope.tagsFiltered.length;
+    },function(newValue, oldValue){
+        $scope.numberOfPages();
+    });
 
     $scope.init();
 

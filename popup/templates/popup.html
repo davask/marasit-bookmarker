@@ -20,12 +20,11 @@
 
     <body ng-model="$route" class="{{$route.current.$$route.bodyClass}}" ng-class="{true:'editing'}[edit]">
         <section>
-            <div class="header clearfix" ng-include="'/templates/snippets/header.html'"></div>
+            <div class="header clearfix" ng-include="'/templates/structure/header.html'"></div>
             <div class="col-xs-12 content">
                 <div class="view-animate-container tab-content">
                     <div ng-view class="view-animate"></div>
                 </div>
-                <img src="../img/spinner.gif" alt="loading" class="dwlLoading"/>
             </div>
             <div class="row" ng-show="debug.get().debug" ng-include="'/templates/debug/debug.html'"></div>
         </section>

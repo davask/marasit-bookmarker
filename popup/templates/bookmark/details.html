@@ -1,0 +1,15 @@
+<small>
+    <img src="{{bookmark.favicon}}" alt="{{bookmark.titleNoTag}}" class="favicon">
+    <img ng-show="bookmark.status === 200" ng-src="{{dwlBk.icons.valid}}" alt="valid" class="favicon">
+    <img ng-show="bookmark.status !== 200 && bookmark.status !== ''" ng-src="{{dwlBk.icons.warning}}" alt="warning" class="favicon">
+    <b>id : </b>{{bookmark.id}}
+    <b>status : </b>{{bookmark.status}}
+    <span class="similar" ng-if="dwlBk.similar.length === 0">
+        {{dwlBk.similar.length}} similar bookmarks
+    </span>
+    <a class="similar" ng-if="dwlBk.similar.length > 0" class="btn btn-link btn-xs" href="/search/query/{{dwlBk.tab.parsedUrl.tld | btoa}}">
+        {{dwlBk.similar.length}} similar bookmarks
+    </a>
+    <span>added on : {{bookmark.dateAdded | date : 'yyyy-MM-dd HH:mm:ss'}}</span>
+</small>
+<br/>

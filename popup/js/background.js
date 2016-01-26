@@ -14,7 +14,7 @@ var isPopupOpen = function () {
     return isOpen;
 };
 
-var bgReload = function() {
+var getActiveTab = function() {
     var d = $.Deferred();
 
     chrome.tabs.query({ active: true }, function(tabs) {
@@ -27,12 +27,94 @@ var bgReload = function() {
     return d;
 };
 
+var dwlTags = {
+    'tags' : [],
+    'tagsToDisplay' : [],
+    'grps' : [],
+    'categories' : [],
+    'chromeTree' : [],
+    'trees' : {},
+    'folders' : [],
+    'rules' : {},
+
+    'getTags' : function(tree, params){
+        var _this = this;
+
+        if(typeof(params) === 'undefined') {
+            params = {};
+        }
+
+        if(typeof(params.depth) === 'undefined' || params.depth == null) {
+            params.depth = -1;
+        }
+        params.depth++;
+
+        if(typeof(params.limit) !== 'undefined') {
+            level = params.limit;
+        }
+
+        tags = [];
+        _.each(tree, function(element, index, list) {
+            tags = tags.concat(bookmarker.getBookmarkTags(element.title));
+             if(typeof(element.children) !== 'undefined' && element.children.length > 0 && (typeof(level) === 'undefined' || level > depth)) {
+                 tags = tags.concat(_this.getTags(element.children, params));
+             }
+        },tags);
+
+        return tags.unique();
+
+    },
+
+    'addTree' : function(tree){
+        var _this = this;
+        _this.trees[tree.title] = {
+            'id' : tree.id,
+            'title' : tree.title,
+            'children' : tree.children.length
+        };
+    },
+
+    'init' : function() {
+        var _this = this;
+        var d = $.Deferred();
+
+
+        if(typeof(bookmarker) !== 'undefined' && bookmarker.initialized) {
+
+            _this.rules = bookmarker.rules;
+            bookmarker.getChromeTrees().then(function(trees){
+                _this.chromeTree = trees;
+                var root = _this.chromeTree[0];
+                root.title = 'root';
+                _this.addTree(root);
+
+                for (var i = 0; i < root.children.length; i++) {
+                    _this.addTree(root.children[i]);
+                    _this.folders.push({title : root.children[i].title});
+                };
+                _this.tags = _this.getTags(_this.chromeTree);
+                var tagsToDisplayDetails = bookmarker.getTagsToDisplay(_this.tags);
+                _this.tagsToDisplay = tagsToDisplayDetails.tagsToDisplay
+                _this.grps = tagsToDisplayDetails.grps
+                _this.categories = tagsToDisplayDetails.categories
+                d.resolve(true);
+            });
+
+        } else {
+            d.resolve(true);
+        }
+
+        return d;
+    }
+};
+
 var dwlBk = {
     'tab' : {},
     'bookmarks' : [],
     'similar' : [],
     'query' : '',
     'isLoaded' : false,
+    'icons' : dwlDefault.icons,
 
     'show' : function(tabId) {
 
@@ -47,61 +129,61 @@ var dwlBk = {
 
         if(typeof(bookmarker) !== 'undefined' && bookmarker.initialized) {
 
+            _this.rules = bookmarker.rules;
             bookmarker.getTab(tabId).then(function(tab){
 
-                if (tab.id > -1) {
+                if(typeof(tab.id) === 'undefined') {
+                    _this.tab = {id : null,title : '',url : ''};
+                }
+                _this.tab = _this.upgradeBookmark(tab,'tab');
 
-                    _this.tab = _this.upgradeBookmark(tab,'tab');
+                if(_this.tab.title != '') {
+                    _this.query = _this.tab.title;
+                    type = 'title';
+                }
 
-                    if(_this.tab.title != '') {
-                        _this.query = _this.tab.title;
-                        type = 'title';
-                    }
+                if(_this.tab.url != '') {
+                    _this.query = _this.tab.url;
+                    type = 'url';
+                }
 
-                    if(_this.tab.url != '') {
-                        _this.query = _this.tab.url;
-                        type = 'url';
-                    }
+                if(_this.tab.parsedUrl.dns != '') {
+                    _this.query = _this.tab.parsedUrl.dns;
+                    type = 'query';
+                }
 
-                    if(_this.tab.parsedUrl.dns != '') {
-                        _this.query = _this.tab.parsedUrl.dns;
-                        type = 'query';
-                    }
+                if(_this.tab.parsedUrl.tld != '') {
+                    _this.query = _this.tab.parsedUrl.tld;
+                    type = 'url';
+                }
 
-                    if(_this.tab.parsedUrl.tld != '') {
-                        _this.query = _this.tab.parsedUrl.tld;
-                        type = 'query';
-                    }
+                if(_this.query != '') {
 
-                    if(_this.query != '') {
+                    bookmarker.searchChromeBookmark(_this.query, type).then(function(bookmarks){
 
-                        bookmarker.searchChromeBookmark(_this.query, type).then(function(bookmarks){
-
-                            for (var i = 0; i < bookmarks.length; i++) {
-                                bookmarks[i] = _this.upgradeBookmark(bookmarks[i],'bookmark');
-                                if (bookmarks[i].url === _this.tab.url) {
+                        for (var i = 0; i < bookmarks.length; i++) {
+                            bookmarks[i] = _this.upgradeBookmark(bookmarks[i],'bookmark');
+                            if (bookmarks[i].url === _this.tab.url) {
+                                _this.bookmarks.unshift(bookmarks[i]);
+                            } else if (typeof(_this.tab.parsedUrl) !== 'undefined' && typeof(bookmarks[i].parsedUrl) !== 'undefined') {
+                                if(bookmarks[i].parsedUrl.dns === _this.tab.parsedUrl.dns && bookmarks[i].parsedUrl.pathname === _this.tab.parsedUrl.pathname) {
                                     _this.bookmarks.push(bookmarks[i]);
-                                } else if (bookmarks[i].parsedUrl.tld === _this.tab.parsedUrl.tld) {
+                                } else  if (bookmarks[i].parsedUrl.tdl === _this.tab.parsedUrl.tdl) {
                                     _this.similar.push(bookmarks[i]);
                                 }
                             }
+                        }
 
-                            bookmarker.setIcon(_this.tab.id, _this.bookmarks.length + _this.similar.length);
-                            d.resolve(true);
+                        bookmarker.setIcon(_this.tab.id, _this.bookmarks.length + _this.similar.length);
+                        d.resolve(true);
 
-                        });
-
-                    } else {
-
-                        bookmarker.setIcon(-1, 'error');
-                        console.log('Something went wrong with this tab', _this.tab)
-                        d.resolve(null);
-
-                    }
+                    });
 
                 } else {
 
-                    d.resolve(false);
+                    bookmarker.setIcon(-1, 'error');
+                    console.log('Something went wrong with this tab', _this.tab)
+                    d.resolve(null);
 
                 }
 
@@ -144,10 +226,10 @@ var dwlBk = {
             var show = status;
             if(show === false) {
 
-                reloadBg().then(function(status){
+                getActiveTab().then(function(status){
                     show = status;
+                    console.log('Active tab used');
                 });
-
 
                 chrome.tabs.query({ active: true }, function(tabs) {
                     if(tabs[0].id > -1) {
@@ -177,6 +259,8 @@ var dwlBk = {
 
 var bookmarker = dwlBookmarker.init();
 
+dwlTags.init();
+
 chrome.tabs.getSelected(null, function(tab) {
     // console.log('getSelected',tab);
     dwlBk.update(tab.id);
@@ -197,7 +281,7 @@ chrome.tabs.onUpdated.addListener(function(tabId) {
 });
 
 chrome.commands.onCommand.addListener(function(command){
-    console.log(command);
+    // console.log(command);
     if(command === 'Ctrl+D' && !isPopupOpen()) {
         console.log('opening');
     }

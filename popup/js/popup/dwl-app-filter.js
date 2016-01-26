@@ -1,5 +1,15 @@
 dwlPopup.filter('btoa', function() {
-    return btoa;
+    return function (input) {
+        return window.btoa(encodeURIComponent(input));
+    };
+});
+
+dwlPopup.filter('atob', function() {
+
+    return function (input) {
+        return decodeURIComponent(window.atob(input));
+    };
+
 });
 
 // dwlPopup.filter('parseURL', function() {
@@ -10,20 +20,20 @@ dwlPopup.filter('btoa', function() {
 //     return getLength
 // });
 
-// dwlPopup.filter('startFrom', function () {
+dwlPopup.filter('startFrom', function () {
 
-//     return function (input, start) {
+    return function (input, start) {
 
-//         if (input && input.length > 0) {
-//             start = +start;
-//             return input.slice(start);
-//         }
+        if (input && input.length > 0) {
+            start = +start;
+            return input.slice(start);
+        }
 
-//         return [];
+        return [];
 
-//     };
+    };
 
-// });
+});
 
 // dwlPopup.filter('bkType', function() {
 

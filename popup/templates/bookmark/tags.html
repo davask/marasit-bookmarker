@@ -1,0 +1,18 @@
+<tags-input
+    ng-model="bookmark.tagsToDisplay"
+    display-property="tag"
+    placeholder="Add a tag"
+    replace-spaces-with-dashes="false"
+    template="/templates/tags/tag.html"
+     ng-focus="switchEditing(true); bookmark.edit = !bookmark.edit;"
+>
+
+<!--     <auto-complete source="loadTags($query)"
+        min-length="0"
+        load-on-focus="true"
+        load-on-empty="true"
+        max-results-to-show="32"
+        template="/templates/tags/autocomplete.html"
+    ></auto-complete>
+ -->
+    </tags-input>

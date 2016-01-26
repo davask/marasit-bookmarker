@@ -75,7 +75,7 @@ var chromeExtension = {
         var _this = this;
         var d = $.Deferred();
 
-        chrome.extension.getBackgroundPage().bgReload();
+        chrome.extension.getBackgroundPage().getActiveTab();
         _this.isBgReloaded().then(function(isReloaded){
             if(isReloaded) {
                 d.resolve(true);

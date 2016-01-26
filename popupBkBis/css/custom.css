@@ -64,48 +64,6 @@ section > .row {
     border-bottom:1px solid #eeeeee;
 }
 
-.tagsDisplay ul {
-    /*height: 534px;*/
-    height: 454px;
-    overflow-x: hidden;
-    overflow-y: scroll;
-    margin: 0;
-    padding-right: 17px;
-}
-
-.tagsDisplay:first-child ul {
-    height: 158px;
-}
-
-.tagsDisplay li {
-    line-height: 1rem;
-    padding: 0;
-}
-
-.tagsDisplay li .btn input {
-    border: none;
-    color: #fff;
-    background-color: transparent;
-}
-
-.tagsDisplay li .btn:hover input {
-    color: #333333;
-}
-
-.tagsDisplay .btn {
-    font-size: 1rem;
-    line-height: 1rem;
-    padding: 0 4px;
-    margin-bottom: 1px;
-}
-
-.tagsDisplay .btn:hover {
-    background-color: #eee;
-    border: 1px solid #000;
-    color: #999;
-    text-decoration: none;
-}
-
 pre {
     padding: 0px 4px;
 }

@@ -3,8 +3,8 @@
     "manifest_version": 2,
     "minimum_chrome_version": "42",
 
-    "version": "1.8.2",
-    "version_name": "1.8",
+    "version": "1.8.4",
+    "version_name": "1.8.4",
 
     "name": "multitask manager",
     "short_name": "multitask manager",
@@ -25,6 +25,7 @@
    "background": {
        "persistent": true,
        "scripts": [
+          "vendor/underscore/js/underscore-min.js",
           "vendor/jquery-2.0.3/js/jquery-2.0.3.min.js",
           "js/library/dwl-helper.js",
           "js/library/chrome-log.js",
@@ -94,16 +95,8 @@
         "Ctrl+S": {
             "description": "Save bookmark edition",
             "suggested_key": {
-                // "mac": "Command+Shift+S",
                 "default": "Ctrl+S"
             }
-        // },
-        // "Ctrl+Shift+Z": {
-        //     "description": "Ctrl+Shift+Z",
-        //     "suggested_key": {
-        //         // "mac": "Command+Shift+Z",
-        //         "default": "Ctrl+Shift+Z"
-        //     }
         }
     },
 
