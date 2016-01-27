@@ -7,3 +7,14 @@
 //         }
 //     });
 // });
+
+var options = {};
+chrome.storage.sync.get({
+    'dwl.options.route': 'page',
+    'dwl.options.init': false
+}, function(o) {
+    options = o;
+    angular.element(document).ready(function() {
+        angular.bootstrap(document, ['dwlPopup']);
+    });
+});

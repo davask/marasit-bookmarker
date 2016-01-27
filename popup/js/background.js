@@ -154,7 +154,7 @@ var dwlBk = {
 
                 if(_this.tab.parsedUrl.tld != '') {
                     _this.query = _this.tab.parsedUrl.tld;
-                    type = 'url';
+                    type = 'query';
                 }
 
                 if(_this.query != '') {
@@ -163,11 +163,13 @@ var dwlBk = {
 
                         for (var i = 0; i < bookmarks.length; i++) {
                             bookmarks[i] = _this.upgradeBookmark(bookmarks[i],'bookmark');
+
                             if (bookmarks[i].url === _this.tab.url) {
                                 _this.bookmarks.unshift(bookmarks[i]);
                             } else if (typeof(_this.tab.parsedUrl) !== 'undefined' && typeof(bookmarks[i].parsedUrl) !== 'undefined') {
-                                if(bookmarks[i].parsedUrl.dns === _this.tab.parsedUrl.dns && bookmarks[i].parsedUrl.pathname === _this.tab.parsedUrl.pathname) {
-                                    _this.bookmarks.push(bookmarks[i]);
+                                if(bookmarks[i].parsedUrl.hostname === _this.tab.parsedUrl.hostname && bookmarks[i].parsedUrl.pathname === _this.tab.parsedUrl.pathname) {
+                                    _this.similar.push(bookmarks[i]);
+                                    // _this.bookmarks.push(bookmarks[i]);
                                 } else  if (bookmarks[i].parsedUrl.tdl === _this.tab.parsedUrl.tdl) {
                                     _this.similar.push(bookmarks[i]);
                                 }
@@ -223,6 +225,7 @@ var dwlBk = {
         var d = $.Deferred();
 
         _this.show(tabId).then(function(status){
+
             var show = status;
             if(show === false) {
 
@@ -258,7 +261,6 @@ var dwlBk = {
 };
 
 var bookmarker = dwlBookmarker.init();
-
 dwlTags.init();
 
 chrome.tabs.getSelected(null, function(tab) {

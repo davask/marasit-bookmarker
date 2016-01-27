@@ -3,6 +3,7 @@ dwlPopup.config(['$compileProvider',function($compileProvider){
 }]);
 
 dwlPopup.config(['$routeProvider', '$locationProvider', function config($routeProvider, $locationProvider) {
+
     /* index */
     $routeProvider.when('/', {
         templateUrl: '../templates/views/index.html',

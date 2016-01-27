@@ -119,6 +119,7 @@ body.search .similar {
     border-bottom: 1px solid #F2D03B;
     margin-bottom: 5px;
     padding-bottom: 5px;
+    word-wrap: break-word;
 }
 
 .bookmark input {

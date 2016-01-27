@@ -15,6 +15,16 @@ dwlPopup.controller("dwlPopupCtrl", ['$scope', '$route','$location','$routeParam
 
     $scope.bg = bgSer;
 
+    $scope.checkOptions = function(){
+         if(!options['dwl.options.init']) {
+             console.log('init user options');
+             options['dwl.options.init'] = true;
+             if('/'+options['dwl.options.route'] !== $route.current.$$route.originalPath){
+                 $location.path('/'+options['dwl.options.route']);
+             }
+         }
+    };
+
     /* refactorize as $scope.init.common */
     $scope.bg.assign().then(function(o){
         $scope.bookmarker = o.bookmarker;
@@ -111,12 +121,14 @@ dwlPopup.controller("dwlIndexCtrl", ['$scope',
         $scope.dwlLoading = false;
     };
 
+    $scope.checkOptions();
+
 }]);
 
 /* -------------------------------------- */
 /* -----------PAGE ----------------- */
 /* -------------------------------------- */
-dwlPopup.controller("dwlPageCtrl", ['$scope','$timeout','$q',function ($scope,$timeout,$q) {
+dwlPopup.controller("dwlPageCtrl", ['$scope','$timeout','$q','$location', function ($scope,$timeout,$q,$location) {
 
     $scope.name = 'page';
 
@@ -158,6 +170,7 @@ dwlPopup.controller("dwlPageCtrl", ['$scope','$timeout','$q',function ($scope,$t
         }
     });
 
+    $scope.checkOptions();
     $scope.refresh.common();
 
 }]);
@@ -227,8 +240,8 @@ dwlPopup.controller("dwlSearchCtrl", ['$scope','$routeParams','$q','$filter',fun
                 $scope.search.results.push(bk[i]);
             };
             angular.copy($scope.search.results,$scope.search.live);
-            $scope.$apply();
             $scope.dwlLoading = false;
+            $scope.$apply();
         });
     }
 
@@ -245,6 +258,7 @@ dwlPopup.controller("dwlSearchCtrl", ['$scope','$routeParams','$q','$filter',fun
         }
     });
 
+    $scope.checkOptions();
     $scope.init();
 
 }]);
