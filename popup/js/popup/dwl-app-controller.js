@@ -302,3 +302,73 @@ dwlPopup.controller("dwlTagsCtrl", ['$scope','$q',function ($scope,$q) {
 
 }]);
 
+// I control the root of the application.
+dwlPopup.controller("dwlTimerCtrl", ['$scope',function ($scope) {
+
+    $scope.name = "timer";
+
+    $scope.refresh.timer = function() {
+    };
+
+    $scope.timerRunning = false;
+
+    $scope.startTimer = function (){
+        $scope.$broadcast('timer-start');
+        $scope.timerRunning = true;
+    };
+
+    $scope.resumeTimer = function (){
+        $scope.$broadcast('timer-resume');
+        $scope.timerRunning = true;
+    };
+
+    $scope.pauseTimer = function (){
+        $scope.$broadcast('timer-pause');
+        $scope.timerRunning = false;
+    };
+
+    $scope.stopTimer = function (){
+        $scope.$broadcast('timer-stop');
+        $scope.timerRunning = false;
+    };
+
+    $scope.timer = {
+        'start': 0,
+        'pause': [],
+        'stop': 0,
+        'inPause': false
+    }
+
+    $scope.$on('timer-start', function (event, args) {
+        $scope.timer.start = new Date();
+        $scope.timer.inPause = false;
+        console.log('timer-start = ', $scope.timer);
+    });
+
+    $scope.$on('timer-pause', function (event, args) {
+        if(!$scope.timer.inPause) {
+            $scope.timer.pause.push({'start':new Date(), 'stop' : 0 });
+        }
+        $scope.timer.inPause = true;
+        console.log('timer-pause = ', $scope.timer);
+    });
+    $scope.$on('timer-resume', function (event, args) {
+        if($scope.timer.inPause) {
+            $scope.timer.pause[$scope.timer.pause.length-1].stop = new Date();
+        }
+        $scope.timer.inPause = false;
+        console.log('timer-resume = ', $scope.timer);
+    });
+    $scope.$on('timer-stopped', function (event, args) {
+        $scope.timer.stop = new Date();
+        if($scope.timer.inPause) {
+            $scope.timer.pause[$scope.timer.pause.length-1].stop = $scope.timer.stop;
+        }
+        $scope.timer.inPause = false;
+        console.log('timer-stop = ', $scope.timer, 'timer-stopped args = ', args);
+    });
+    $scope.$on('timer-tick', function (event, args) {
+        $scope.timerConsole += $scope.timerType  + ' - event.name = '+ event.name + ', timeoutId = ' + args.timeoutId + ', millis = ' + args.millis +'\n';
+    });
+
+}]);

@@ -1,0 +1,7 @@
+<div id="auto-start-false-timer">
+    <timer autostart="false" interval="1000" language="en">{{yearUnit}}</timer>
+    <button ng-click="startTimer()" ng-disabled="timerRunning">Start Timers</button>
+    <button ng-click="resumeTimer()" ng-disabled="timerRunning">Resume Timers</button>
+    <button ng-click="pauseTimer()" ng-disabled="!timerRunning">Pause Timers</button>
+    <button ng-click="stopTimer()" ng-disabled="!timerRunning">Stop Timers</button>
+</div>

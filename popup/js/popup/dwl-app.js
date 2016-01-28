@@ -4,7 +4,7 @@ dwlModules.push('ui.bootstrap');
 dwlModules.push('ngRoute');
 dwlModules.push('ngAnimate');
 dwlModules.push('ngTagsInput');
-// dwlModules.push('timer');
+dwlModules.push('timer');
 dwlModules.push('dwlDebug');
 dwlModules.push('dwlBg');
 dwlModules.push('dwlAjax');
