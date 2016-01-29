@@ -244,7 +244,7 @@ var dwlBk = {
 
             }
 
-            if(show === false) {
+            if(show === false || tabId < 0) {
                 bookmarker.setIcon(-1, 'error');
             } else {
                 _this.isLoaded = true;

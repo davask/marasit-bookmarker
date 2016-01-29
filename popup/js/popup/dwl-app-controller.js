@@ -17,10 +17,9 @@ dwlPopup.controller("dwlPopupCtrl", ['$scope', '$route','$location','$routeParam
 
     $scope.checkOptions = function(){
          if(!options['dwl.options.init']) {
-             console.log('init user options');
              options['dwl.options.init'] = true;
-             if('/'+options['dwl.options.route'] !== $route.current.$$route.originalPath){
-                 $location.path('/'+options['dwl.options.route']);
+             if('/'+options['dwl.options.route'].path !== $route.current.$$route.originalPath){
+                 $location.path('/'+options['dwl.options.route'].path);
              }
          }
     };
@@ -302,8 +301,31 @@ dwlPopup.controller("dwlTagsCtrl", ['$scope','$q',function ($scope,$q) {
 
 }]);
 
+/* --------------------------------------- */
+/* -----------TIMER ----------------- */
+/* --------------------------------------- */
 // I control the root of the application.
 dwlPopup.controller("dwlTimerCtrl", ['$scope',function ($scope) {
+
+    var _this = this;
+     _this.timer = {
+        'start': '',
+        'pause': {'start' : '', 'stop' : ''},
+        'stop': '',
+        'inPause': false
+    };
+
+    $scope.init = true;
+    $scope.timerStatus = 'stop';
+    $scope.timerIndex = null;
+    $scope.timerAutoStart = false;
+    $scope.timerPauseTime = new Date().getTime();
+    _this.timers = {
+        'lastIndex' : null,
+        'records' : {}
+    };
+    $scope.timers = angular.copy(_this.timers);
+    $scope.timer = {};
 
     $scope.name = "timer";
 
@@ -313,60 +335,149 @@ dwlPopup.controller("dwlTimerCtrl", ['$scope',function ($scope) {
     $scope.timerRunning = false;
 
     $scope.startTimer = function (){
-        $scope.$broadcast('timer-start');
+        $scope.timerStatus = 'start';
         $scope.timerRunning = true;
+        $scope.$broadcast('timer-start');
     };
 
     $scope.resumeTimer = function (){
-        $scope.$broadcast('timer-resume');
+        $scope.timerStatus = 'resume';
         $scope.timerRunning = true;
+        $scope.$broadcast('timer-resume');
     };
 
     $scope.pauseTimer = function (){
-        $scope.$broadcast('timer-pause');
+        $scope.timerStatus = 'pause';
         $scope.timerRunning = false;
+        $scope.$broadcast('timer-stop');
     };
 
     $scope.stopTimer = function (){
-        $scope.$broadcast('timer-stop');
+        $scope.timerStatus = 'stop';
         $scope.timerRunning = false;
+        $scope.$broadcast('timer-stop');
     };
 
-    $scope.timer = {
-        'start': 0,
-        'pause': [],
-        'stop': 0,
-        'inPause': false
-    }
+    $scope.bookmarker.restore_options('timers').then(function(timers){
 
-    $scope.$on('timer-start', function (event, args) {
-        $scope.timer.start = new Date();
-        $scope.timer.inPause = false;
-        console.log('timer-start = ', $scope.timer);
+        if(timers !== null && typeof(timers.records) != 'undefined' && typeof(timers.lastIndex) != 'undefined') {
+            $scope.timers.records = timers.records;
+            $scope.timers.lastIndex = timers.lastIndex;
+        }
+
+        var timerIndexes = Object.keys($scope.timers.records).length - 1;
+        if(timerIndexes > -1) {
+            $scope.timer = $scope.timers.records[$scope.timers.lastIndex];
+        } else {
+            $scope.timer = _this.timer;
+        }
+
+        if($scope.timer.stop === '' && $scope.timer.start !== '') {
+            var startTime = new Date().getTime();
+            $scope.timerIndex = angular.copy($scope.timers.lastIndex);
+
+            if($scope.timer.pause.start !== '') {
+                if($scope.timer.pause.stop !== '') {
+                    $scope.resumeTimer();
+                } else {
+                    $scope.pauseTimer();
+                }
+            } else {
+                $scope.resumeTimer();
+            }
+        }
+        $scope.init = false;
+
     });
 
-    $scope.$on('timer-pause', function (event, args) {
-        if(!$scope.timer.inPause) {
-            $scope.timer.pause.push({'start':new Date(), 'stop' : 0 });
+    var broadcastTimerStart = function() {
+        var startTime = new Date().getTime();
+
+        $scope.timerPauseTime = angular.copy(startTime);
+        $scope.timers = angular.copy(_this.timers);
+        $scope.timers.lastIndex = angular.copy(startTime);
+        $scope.timerIndex = angular.copy(startTime);
+
+        $scope.timers.records[$scope.timerIndex] = angular.copy(_this.timer);
+        $scope.timer = $scope.timers.records[$scope.timerIndex];
+        $scope.timer.start = angular.copy(startTime);
+        $scope.timer.inPause = false;
+
+        $scope.bookmarker.save_options('timers', $scope.timers).then(function(){
+            console.log('timer-'+$scope.timerStatus+' = saved');
+        });
+    };
+
+    var broadcastTimerResume = function() {
+
+        if(!$scope.init) {
+            var startTime = new Date().getTime();
+
+            $scope.timer.pause.stop = angular.copy(startTime);
+            var passedTime = angular.copy($scope.timer.pause.start) - angular.copy($scope.timer.start);
+            $scope.timerPauseTime = angular.copy(startTime) - angular.copy(passedTime);
+            $scope.timer.pause.start = angular.copy($scope.timerPauseTime);
+            $scope.timer.start = angular.copy($scope.timer.pause.start);
+            $scope.timer.inPause = false;
+
+            $scope.bookmarker.save_options('timers', $scope.timers).then(function(){
+                console.log('timer-'+$scope.timerStatus+' = saved');
+            });
+        } else {
+            $scope.timerPauseTime = angular.copy($scope.timer.start);
+            $scope.timer.inPause = false;
+            $scope.$apply();
+        }
+    };
+
+    var broadcastTimerPause = function(init) {
+
+        if(!$scope.init) {
+            var stopTime = new Date().getTime();
+            $scope.timer.pause.stop = '';
+            $scope.timer.pause.start = angular.copy(stopTime);
+            $scope.timer.inPause = true;
+
+            $scope.bookmarker.save_options('timers', $scope.timers).then(function(){
+                console.log('timer-'+$scope.timerStatus+' = saved');
+            });
+        } else {
+            $scope.$apply();
+        }
+    };
+
+    var broadcastTimerStop = function() {
+        var stopTime = new Date().getTime();
+
+        $scope.timer.stop = angular.copy(stopTime);
+        if($scope.timer.inPause) {
+            $scope.timer.pause.stop = angular.copy(stopTime);
         }
         $scope.timer.inPause = true;
-        console.log('timer-pause = ', $scope.timer);
+
+        $scope.bookmarker.save_options('timers', $scope.timers).then(function(){
+            console.log('timer-'+$scope.timerStatus+' = saved');
+        });
+    };
+
+    $scope.$on('timer-start', function (event, args) {
+        broadcastTimerStart();
     });
+
     $scope.$on('timer-resume', function (event, args) {
-        if($scope.timer.inPause) {
-            $scope.timer.pause[$scope.timer.pause.length-1].stop = new Date();
+        if($scope.timerStatus == 'resume') {
+            broadcastTimerResume();
         }
-        $scope.timer.inPause = false;
-        console.log('timer-resume = ', $scope.timer);
     });
+
     $scope.$on('timer-stopped', function (event, args) {
-        $scope.timer.stop = new Date();
-        if($scope.timer.inPause) {
-            $scope.timer.pause[$scope.timer.pause.length-1].stop = $scope.timer.stop;
+        if($scope.timerStatus == 'pause') {
+            broadcastTimerPause();
+        } else {
+            broadcastTimerStop();
         }
-        $scope.timer.inPause = false;
-        console.log('timer-stop = ', $scope.timer, 'timer-stopped args = ', args);
     });
+
     $scope.$on('timer-tick', function (event, args) {
         $scope.timerConsole += $scope.timerType  + ' - event.name = '+ event.name + ', timeoutId = ' + args.timeoutId + ', millis = ' + args.millis +'\n';
     });

@@ -15,8 +15,6 @@ chrome.runtime.onMessage.addListener(function(bgJsMsg, sender, sendResponse) {
         dwlPopup.dwlBk = bgJsMsg.dwlBk;
     }
 
-    console.log(dwlPopup.dwlBk);
-
     if(dwlPopup.dwlBk.bookmarks.length > 0) {
         var b = dwlPopup.dwlBk.bookmarks[0];
     } else {

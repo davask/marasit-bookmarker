@@ -39,8 +39,9 @@ var dwlBookmarker = {
     'requirements' : [
         'chromeLog',
         'chromeExtension',
+        'chromeStorage',
         'chromeBookmarker',
-        'dwlTagsManager'
+        'dwlTagsManager',
     ],
     'instantiated' : [],
     'modules' : {},
