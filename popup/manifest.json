@@ -3,10 +3,10 @@
     "manifest_version": 2,
     "minimum_chrome_version": "42",
 
-    "version": "1.8.6",
-    "version_name": "1.8.6",
+    "version": "1.8.7",
+    "version_name": "1.8.7",
 
-    "name": "multitask manager",
+    "name": "Multitasker : bookmarks, time tracker & todos",
     "short_name": "multitask manager",
 
     "author": "david asquiedge - davaskweblimited.com",
@@ -14,7 +14,7 @@
     "default_locale": "en",
     "current_locale": "en",
 
-    "description": "My missing multitask manager",
+    "description": "multitask manager : bookmarks, time tracker, todos OR My missing multitask manager - by davask web limited",
 
     "icons": {
         "16": "img/icon16.png",
