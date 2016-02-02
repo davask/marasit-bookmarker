@@ -26,10 +26,10 @@
         </span>
         <ul id="filters">
             <li>
-                <a ng-class="{selected: status == ''} " href="/todos/">All</a>
+                <a ng-class="{selected: status == 'active'}" href="/todos/active">Active</a>
             </li>
             <li>
-                <a ng-class="{selected: status == 'active'}" href="/todos/active">Active</a>
+                <a ng-class="{selected: status == ''} " href="/todos/">All</a>
             </li>
             <li>
                 <a ng-class="{selected: status == 'completed'}" href="/todos/completed">Completed</a>
