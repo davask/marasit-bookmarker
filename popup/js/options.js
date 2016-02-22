@@ -1,3 +1,58 @@
+var bookmarks = [];
+
+var bkIndexes = [
+    'id',
+    'title',
+    'url',
+    'parentId',
+    'children',
+    'dateAdded',
+    'index',
+    'dateGroupModified',
+];
+
+
+var updateBookmarks = function (bookmark) {
+    var d = $.Deferred();
+
+    var bk2update = {};
+
+    for (var i = 0; i < bkIndexes.length; i++) {
+        if (typeof(bookmark[bkIndexes[i]]) === 'undefined') {
+            bk2update[bkIndexes[i]] = '';
+        } else {
+            bk2update[bkIndexes[i]] = bookmark[bkIndexes[i]];
+        }
+    }
+
+    bookmark = bk2update;
+
+    if (typeof(bookmark.children) != 'undefined' && bookmark.children.length > 0) {
+        parseBookmarkTree(bookmark.children).then(function(childrenList){
+            bookmark.children = childrenList;
+            bookmarks.push(bookmark);
+            d.resolve();
+        });
+    } else {
+        bookmarks.push(bookmark);
+        d.resolve();
+    }
+    return d;
+};
+
+var parseBookmarkTree = function (bookmarksTree) {
+    var d = $.Deferred();
+    var childrenList = [];
+    bookmarksTree.forEach(function(bookmark){
+        childrenList.push(bookmark.id);
+        updateBookmarks(bookmark).then(function(){
+            d.resolve(childrenList);
+        });
+    });
+    return d;
+};
+
+
 chrome.runtime.getBackgroundPage(function(chromeBg){
 
     var mess = [{
@@ -10,6 +65,10 @@ chrome.runtime.getBackgroundPage(function(chromeBg){
         'attr':'content'
      },{
         'index':'options_default_page',
+        'position':'text',
+        'attr':''
+     },{
+        'index':'options_export',
         'position':'text',
         'attr':''
      },{
@@ -34,6 +93,10 @@ chrome.runtime.getBackgroundPage(function(chromeBg){
         'attr':''
     },{
         'index':'save',
+        'position':'text',
+        'attr':''
+    },{
+        'index':'export',
         'position':'text',
         'attr':''
     },{
@@ -92,6 +155,96 @@ chrome.runtime.getBackgroundPage(function(chromeBg){
             }, 750);
 
         });
+
+    });
+
+    document.getElementById('export').addEventListener('click', function(){
+
+        var list = jQuery("#jsonExport");
+        list.html('');
+
+        bookmarks = [];
+
+        chrome.bookmarks.getTree(function(bookmarksTree){
+            parseBookmarkTree(bookmarksTree).then(function(childrenList){
+            });
+        });
+
+        var type = jQuery('#exportType').val();
+        if(!type == 'csv') {
+            jQuery('#exportType').val('json');
+            type == 'json';
+        }
+
+        var dataContentHeader = "data:text/"+type+";charset=utf-8,";
+        var dataContent = "";
+        var title = '';
+        var link = jQuery('<a></a>');
+        var eList = jQuery('<li></li>');
+
+        var outputLimit = 10000;
+
+        if(type == 'csv') {
+            var bookmarksCsv = [];
+        }
+
+        bookmarks.forEach(function(bookmark, index){
+            var isNewFile = ((index+1) % outputLimit) === 0;
+
+            if(isNewFile) {
+
+                if(type == 'csv') {
+                    dataContent += JSON2CSV(bookmarksCsv);
+                } else {
+                    dataContent += '['+JSON.stringify(bookmark)+']';
+                }
+
+                title = "chrome_bookmarks_"+jQuery("#jsonExport li").length+"."+type;
+                link.attr({
+                    "href": dataContentHeader+encodeURIComponent(dataContent),
+                    "download": title
+                }).text(title);
+                eList.append(link).appendTo("#jsonExport");
+
+                dataContent = '';
+                title = '';
+                link = jQuery('<a></a>');
+                eList = jQuery('<li></li>');
+
+                if(type == 'csv') {
+                    bookmarksCsv = [];
+                }
+
+            }
+
+            if(type == 'csv') {
+
+                bookmarksCsv.push(bookmark);
+
+            } else {
+
+                if(index > 0 && !isNewFile) {
+                    dataContent += ",\n";
+                }
+
+                dataContent += JSON.stringify(bookmark);
+
+            }
+
+        });
+
+        if(type == 'csv') {
+            dataContent += JSON2CSV(bookmarksCsv);
+        } else {
+            dataContent += '['+JSON.stringify(bookmark)+']';
+        }
+
+        title = "chrome_bookmarks_"+jQuery("#jsonExport li").length+"."+type;
+        link.attr({
+            "href": dataContentHeader+encodeURIComponent(dataContent),
+            "download": title
+        }).text(title);
+        eList.append(link).appendTo("#jsonExport");
 
     });
 

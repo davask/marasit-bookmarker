@@ -52,6 +52,25 @@ var chromeBookmarker = {
         return d;
     },
 
+    'exportAllChromeBookmarks' : function (type) {
+        var _this = this;
+        var d = $.Deferred();
+
+        if(typeof(type) == 'undefined') {
+            type = 'json';
+        }
+
+        var bookmarks = [];
+        chrome.bookmarks.getTree(function(bookmarksTree){
+            bookmarksTree.forEach(function(bookmark){
+                bookmarks.push(bookmark)
+            });
+            console.log(bookmarks.length);
+        });
+
+        return d;
+    },
+
     'searchChromeBookmark' : function (search, type) {
 
         var _this = this;

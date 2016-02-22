@@ -23,6 +23,11 @@
         "description" : ""
     },
 
+    "options_export" : {
+        "message" : "Export all your bookmarks",
+        "description" : ""
+    },
+
     "bookmark_page" : {
         "message" : "Bookmark page",
         "description" : ""
@@ -45,6 +50,11 @@
     },
     "save" : {
         "message" : "Save",
+        "description" : ""
+    },
+
+    "export" : {
+        "message" : "Export",
         "description" : ""
     },
 

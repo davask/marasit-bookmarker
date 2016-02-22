@@ -18,6 +18,8 @@
         <div class="row">
             <div class="col-xs-12">
                 <h1 data-options_title></h1>
+            </div>
+            <div class="col-xs-6">
                 <strong data-options_default_page></strong>:
                 <select id="route">
                     <option value="page" data-bookmark_page></option>
@@ -26,8 +28,21 @@
                     <option value="timer" data-timer></option>
                     <option value="todos" data-todos></option>
                 </select>
-                <div id="status"></div>
                 <button id="save" data-save></button>
+            </div>
+            <div class="col-xs-6">
+                <strong data-options_export></strong>:
+                <select id="exportType">
+                    <option value="json" data-export_json selected="true">JSON</option>
+                    <option value="csv" data-export_csv>CSV</option>
+                    <!-- <option value="html" data-export_html>HTML</option> -->
+                    <!-- <option value="xml" data-export_xml>XML</option> -->
+                </select>
+                <button id="export" data-export></button>
+                <ul id="jsonExport"></ul>
+            </div>
+            <div class="col-xs-12">
+                <div id="status"></div>
             </div>
         </div>
         <hr/>

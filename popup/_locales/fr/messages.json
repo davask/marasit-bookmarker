@@ -22,6 +22,11 @@
         "message" : "Page par defaut",
         "description" : ""
     },
+    "options_export" : {
+        "message" : "Exporter tous vos signets",
+        "description" : ""
+    },
+
 
     "bookmark_page" : {
         "message" : "Page signet",
@@ -45,6 +50,10 @@
     },
     "save" : {
         "message" : "Enregistrer",
+        "description" : ""
+    },
+    "export" : {
+        "message" : "Exporter",
         "description" : ""
     },
 

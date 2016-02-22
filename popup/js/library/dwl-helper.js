@@ -209,29 +209,61 @@ if (typeof isUrl != 'function') {
 };
 
 if (typeof diffFilter != 'function') {
-    (function() {
-        var diffFilter = function (obj1,obj2) {
-            var result = {};
-            if(typeof(obj1) == 'undefined') {
-                obj1 = {};
+    var diffFilter = function (obj1,obj2) {
+        var result = {};
+        if(typeof(obj1) == 'undefined') {
+            obj1 = {};
+        }
+        if(typeof(obj2) == 'undefined') {
+            obj2 = {};
+        }
+        for(key in obj1) {
+            if(typeof(obj2[key]) != 'undefined' && obj2[key] != obj1[key]) {
+                result[key] = obj2[key];
             }
-            if(typeof(obj2) == 'undefined') {
-                obj2 = {};
+            if(typeof obj2[key] == 'array' && typeof obj1[key] == 'array') {
+                result[key] = arguments.callee(obj1[key], obj2[key]);
             }
-            for(key in obj1) {
-                if(typeof(obj2[key]) != 'undefined' && obj2[key] != obj1[key]) {
-                    result[key] = obj2[key];
-                }
-                if(typeof obj2[key] == 'array' && typeof obj1[key] == 'array') {
-                    result[key] = arguments.callee(obj1[key], obj2[key]);
-                }
-                if(typeof obj2[key] == 'object' && typeof obj1[key] == 'object'){
-                    result[key] = arguments.callee(obj1[key], obj2[key]);
-                }
+            if(typeof obj2[key] == 'object' && typeof obj1[key] == 'object'){
+                result[key] = arguments.callee(obj1[key], obj2[key]);
             }
-            return result;
-        };
-    })();
+        }
+        return result;
+    };
+};
+
+if (typeof JSON2CSV != 'function') {
+
+    var JSON2CSV = function (objArray, debug) {
+        var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+        if (debug) console.log(array[0]);
+
+        var str = '';
+        var line = '';
+
+        var head = array[0];
+        for (var index in array[0]) {
+            var value = index + "";
+            line += '"' + value.replace(/"/g, '""') + '",';
+        }
+
+        line = line.slice(0, -1);
+        str += line + '\r\n';
+
+        for (var i = 0; i < array.length; i++) {
+            var line = '';
+
+            for (var index in array[i]) {
+                var value = array[i][index] + "";
+                line += '"' + value.replace(/"/g, '""') + '",';
+            }
+
+            line = line.slice(0, -1);
+            str += line + '\r\n';
+        }
+        return str;
+
+    };
 };
 
 if (typeof permutate != 'object') {
