@@ -1,3 +1,4 @@
+/* move to independant module */
 dwlPopup.factory('todoStorage', function ($http, $injector) {
     'use strict';
 

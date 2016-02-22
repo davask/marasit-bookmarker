@@ -3,18 +3,18 @@
     "manifest_version": 2,
     "minimum_chrome_version": "42",
 
-    "version": "1.8.7",
-    "version_name": "1.8.7",
+    "version": "1.8.22",
+    "version_name": "1.8.22",
 
-    "name": "Multitasker : bookmarks, time tracker & todos",
-    "short_name": "multitask manager",
+    "name": "__MSG_manifest_name__",
+    "short_name": "__MSG_manifest_short_name__",
 
     "author": "david asquiedge - davaskweblimited.com",
 
     "default_locale": "en",
     "current_locale": "en",
 
-    "description": "multitask manager : bookmarks, time tracker, todos OR My missing multitask manager - by davask web limited",
+    "description": "__MSG_manifest_description__",
 
     "icons": {
         "16": "img/icon16.png",
@@ -32,6 +32,7 @@
           "js/library/chrome-extension.js",
           "js/library/chrome-storage.js",
           "js/library/chrome-bookmarker.js",
+          "js/library/chrome-internationalization.js",
           "js/library/dwl-tag-manager.js",
           "js/dwl-bookmarker.js",
           "js/background.js"

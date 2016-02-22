@@ -41,7 +41,8 @@ var dwlBookmarker = {
         'chromeExtension',
         'chromeStorage',
         'chromeBookmarker',
-        'dwlTagsManager',
+        'chromeInternationalization',
+        'dwlTagsManager'
     ],
     'instantiated' : [],
     'modules' : {},

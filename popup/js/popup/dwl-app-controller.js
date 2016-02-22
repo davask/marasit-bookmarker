@@ -613,3 +613,30 @@ dwlPopup.controller("dwlTodosCtrl", ['$scope', '$routeParams', '$filter', 'store
     $scope.checkOptions();
 
 }]);
+
+/*
+dwlPopup.controller("dwlAlarmCtrl", ['$scope', '$timeout', 'dwlAlarmFactory',
+                                                 function ($scope, $timeout, dwlAlarmFactory) {
+
+    $scope.name = 'alarm';
+
+    /* ACTIVATE IT IN background.js * /
+    /* nested route see http://www.funnyant.com/angularjs-ui-router/ * /
+    /* nested route see http://www.bennadel.com/blog/2420-mapping-angularjs-routes-onto-url-parameters-and-client-side-events.htm * /
+    /* nested route see https://angular-ui.github.io/ui-router/site/#/api/ui.router * /
+    // Initialize the current time immediately
+    $scope.time = dwlAlarmFactory.time;
+
+    $scope.refresh.alarm = function() {
+        $scope.dwlLoading = false;
+    };
+
+    // Keep the time in sync
+    dwlAlarmFactory.on("second", function() {
+        $scope.time = dwlAlarmFactory.time;
+    });
+
+    $scope.checkOptions();
+
+}]);
+*/

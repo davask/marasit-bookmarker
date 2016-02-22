@@ -40,7 +40,14 @@ dwlPopup.config(['$routeProvider', '$locationProvider', function config($routePr
         templateUrl: '../templates/views/timer.html',
         controller: 'dwlTimerCtrl',
         bodyClass: 'timer'
-    })
+    });
+
+    // /* Alarm */
+    // $routeProvider.when('/alarm', {
+    //     templateUrl: '../templates/views/alarm.html',
+    //     controller: 'dwlAlarmCtrl',
+    //     bodyClass: 'alarm'
+    // });
 
     /* todos */
     var routeTodosConfig = {

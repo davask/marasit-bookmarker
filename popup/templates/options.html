@@ -2,10 +2,10 @@
 <html>
 <head>
         <meta charset="utf-8">
-        <meta name="description" content="davask web limited bookmarker">
+        <meta name="description" content="" data-manifest_description>
         <meta name="author" content="David Asquiedge">
 
-        <title>davask web limited bookmarker</title>
+        <title data-options_title></title>
 
         <!-- Cascading Style Sheets -->
         <link href="../vendor/bootstrap-3.3.5/css/bootstrap-3.3.5.min.css" rel="stylesheet" media="screen">
@@ -17,100 +17,34 @@
 
         <div class="row">
             <div class="col-xs-12">
-                <h1>options</h1>
-                Default page :
+                <h1 data-options_title></h1>
+                <strong data-options_default_page></strong>:
                 <select id="route">
-                    <option value="page">Bookmark page</option>
-                    <option value="search">Bookmarks search </option>
-                    <option value="tags">Tags search</option>
-                    <option value="timer">Task timer</option>
+                    <option value="page" data-bookmark_page></option>
+                    <option value="search" data-bookmark_search></option>
+                    <option value="tags" data-tags></option>
+                    <option value="timer" data-timer></option>
+                    <option value="todos" data-todos></option>
                 </select>
                 <div id="status"></div>
-                <button id="save">Save</button>
+                <button id="save" data-save></button>
             </div>
         </div>
         <hr/>
         <div class="row">
             <div class="col-sm-6">
-                <h4>Guide - draft - french</h4>
-                ...
-<!--
-                <strong>
-                    L'objectif est de remplacer le systeme de bookmarks de google chrome.
-                </strong>
-                <p>
-                    lorsque l extension est active, un numero apparait sur l icon de l extension, c est le nombre de bookmarks unique enregistres.
-                </p>
-                <p>
-                    Il y a 3 types d icon:
-                </p>
-                <ul>
-                    <li>la blanche : le lien n est pas un bookmark</li>
-                    <li>le logo dwl : le lien est un bookmark unique</li>
-                    <li>le logo dwl avec une zone noircie en sont centre : le lien est un bookmark avec duplicata</li>
-                </ul>
-                <p>
-                    en haut a gauche tu as le type de bookmarks accessible a savoir :
-                </p>
-                <ul>
-                    <li><b>page</b> pour acceder au fonctionnalite du getionnaire pour la page/tab en cours</li>
-                    <li><b>unique</b> pour tout les bookmarks qui sont unique ou dupliques</li>
-                    <li><b>duplicate</b> pour ceux qui sont dupliques.</li>
-                </ul>
-                <p>
-                    tu es sense pouvoir faire les choses suivantes :
-                </p>
-                <ul>
-                    <li>
-                        sauvegarde un nouveau bookmark en selectionnant page en haut a gauche
-                    </li>
-                    <li>
-                        ajouter des tags (il y a une structure de tag qui aujourd hui fonctionne avec des prefix tel que '/', '#',... mais cela va disparaitre une fois que j aurai gerer ce genre de cas differement) tu peux mettre des tags sans prefix
-                    </li>
-                    <li>
-                        <b>sur unique</b> :<br/>
-                        filtrer les bookamrks en ecrivant ou les tags ou des mots dans le titre de ton bookmark en saisissant le texte dans l input search bookmark<br/>
-                        filtrer les tags existants dans les bookmarks uniques afin de retrouver ces bookmarks plus facilement
-                    </li>
-                    <li>
-                        <b>sur duplicate</b> : filtrer les bookamrks
-                    </li>
-                    <li>
-                        Dans chaque liste tu dois pouvoir clicker sur le titre du bookmark, cela ouvre une zone d edition dans lequel tu peux mettre a jour le titre, l url, les tags - la mise a jour se fait onBlur.
-                    </li>
-                </ul>
-                <p>
-                    Si tu cliques droit sur l icon de l extension tu peux acceder aux options (fonctionnalite native des extension) sur la page des options tu peux reinitialiser la gestion de bookamrks.
-                </p>
- -->
+                <h4 data-guide_title></h4>
+                <div data-guide></div>
             </div>
 
             <div class="col-sm-6 well">
                 <div class="col-sm-6">
-                    <h4>TAG SYSTEM</h4>
-                    <ul>
-                        <li>/<word> => folder</li>
-                        <li>#<word> => tag</li>
-                        <li>@<username> => person to share with</li>
-                        <li>$<word> => alias</li>
-                        <li>!<word> => type (article)</li>
-                        <li>(<flag>) => bookmark flag</li>
-                        <li><date> => define rule under a bookmark is considered new</li>
-                        <li>define character (/!@#) for : stared, important, person for sharing</li>
-                        <li><date> => define rule under a bookmark is considered new</li>
-                    </ul>
+                    <h4 data-tag_system_title></h4>
+                    <div data-tag_system></div>
                 </div>
                 <div class="col-sm-6">
-                    <h4>FLAG SYSTEM</h4>
-                    <ul>
-                        <li>I => important</li>
-                        <li>D => duplicated</li>
-                        <li>R => removed</li>
-                        <li>T => trash</li>
-                        <li>E => empty title (except tag)</li>
-                        <li>N => not tagged</li>
-                        <li>S => stared</li>
-                    </ul>
+                    <h4 data-tag_system_title></h4>
+                    <div data-tag_system></div>
                 </div>
             </div>
         </div>
@@ -123,11 +57,23 @@
                     <li>
                         add similar bookmarks feature based on dns search
                     </li>
+                    <li>
+                        set option choose your opening route
+                    </li>
+                    <li>
+                        integrate search by url instead of title (see : http://www.thegeekstuff.com/ for the reason)
+                    </li>
+                    <li>
+                        Inserted tags
+                    </li>
                 </u>
             </div>
             <div class="col-sm-6">
                 <h2>futurs updates</h2>
                 <u>
+                    <li>
+                        change icons to put stars on it for bookmarks
+                    </li>
                     <li>
                         timer : https://davidwalsh.name/firefox-extension-template / https://davidwalsh.name/firefox-extension-template / https://developer.apple.com/library/safari/documentation/UserExperience/Conceptual/SafariExtensionsConversionGuide/Chapters/Chrome.html
                     </li>
@@ -135,19 +81,10 @@
                         add automatic tag add & easy to update tag feature
                     </li>
                     <li>
-                        check http://mbenford.github.io/ngTagsInput/demos
-                    </li>
-                    <li>
                         add popup on each web page to show timer
                     </li>
                     <li>
                         If page is not a bookmark open extension on bookmark/page if timer not running
-                    </li>
-                    <li>
-                        set option choose your opening route
-                    </li>
-                    <li>
-                        set a preroute with subchoice > bookmarks/todo/timer
                     </li>
                     <li>
                         add "select main bookmark folder" : BookmarkBar, Other Bookmarks, Mobile bookmarks
@@ -159,7 +96,7 @@
                         for aliases, make primary the aliases the most used
                     </li>
                     <li>
-                        integrate search by url instead of title (see : http://www.thegeekstuff.com/ for the reason)
+                        Add a calendar manager connected to google calendar
                     </li>
                 </u>
             </div>
