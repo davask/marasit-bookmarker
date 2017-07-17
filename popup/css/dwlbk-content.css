@@ -63,3 +63,37 @@
 #dwl-bk.closed button.close {
     display: none;
 }
+
+#dwl-bk-google {
+    position: absolute;
+    z-index: 1;
+    width: 95%;
+    min-height: 320px;
+    border-left:1px #0b8bbc solid;
+    background: #ffffff;
+    left: 105%;
+    top: -15px;
+    padding: 2.5%;
+
+}
+
+#dwl-bk-google .tagbtn button {
+    background: none;
+    border: none;
+    font-size: 1em;
+}
+
+#dwl-bk-google > ul {
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: 500px;
+}
+
+#dwl-bk-google h2 {
+    margin-top: -39px;
+    font-size: small;
+}
+
+#dwl-bk-google .g {
+    margin-bottom: 10px;
+}

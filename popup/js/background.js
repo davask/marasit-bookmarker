@@ -214,8 +214,13 @@ var dwlBk = {
     },
 
     contentResponse : function(element){
-        if (typeof(element) !== 'undefined') {
-            // console.log(element);
+
+        var _this = this;
+
+        if (typeof(element) !== 'undefined' && element.q !== '') {
+            bookmarker.searchChromeBookmark(element.q).then(function(bookmarks){
+                chrome.tabs.sendMessage(element.tabId, {'dwlBk' : _this.dwlBk, 'gBk' : bookmarks});
+            });
         }
     },
 

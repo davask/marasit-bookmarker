@@ -54,6 +54,8 @@
         ],
         "js": [
             "vendor/jquery-2.0.3/js/jquery-2.0.3.min.js",
+            "vendor/list.js/dist/list.min.js",
+            "js/library/dwl-tag-manager.js",
             "js/library/dwl-helper.js",
             "js/content.js"
         ],
