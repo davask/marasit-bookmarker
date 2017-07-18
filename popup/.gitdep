@@ -1,0 +1,10 @@
+datejs:
+    url:        git@github.com:datejs/Datejs.git
+    branch:     master
+    path:       vendor
+    dirname:    Datejs
+listjs:
+    url:        git@github.com:javve/list.js.git
+    branch:     master
+    path:       vendor
+    dirname:    list.js

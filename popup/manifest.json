@@ -3,8 +3,8 @@
     "manifest_version": 2,
     "minimum_chrome_version": "42",
 
-    "version": "1.8.22",
-    "version_name": "1.8.22",
+    "version": "1.9.1",
+    "version_name": "1.9.1",
 
     "name": "__MSG_manifest_name__",
     "short_name": "__MSG_manifest_short_name__",
@@ -54,12 +54,14 @@
         ],
         "js": [
             "vendor/jquery-2.0.3/js/jquery-2.0.3.min.js",
-            "vendor/list.js/dist/list.min.js",
+            "vendor/DataTables/datatables.min.js",
+            "vendor/Datejs/build/date.js",
             "js/library/dwl-tag-manager.js",
             "js/library/dwl-helper.js",
             "js/content.js"
         ],
         "css": [
+            "vendor/DataTables/datatables.min.css",
             "css/dwlbk-isolation.css",
             "css/dwlbk-content.css"
         ],

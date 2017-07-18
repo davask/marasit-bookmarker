@@ -9,7 +9,7 @@ var dwlTagsManager = {
      /* VAR */
     'initialized' : false,
     'name' : 'tags',
-    'tagGlue' : ' ',
+    'tagGlue' : '',
     'errorGrp' : '_',
     'browserFolderGrp' : '§',
 
@@ -51,17 +51,17 @@ var dwlTagsManager = {
         //     'description' : ''
         // },
         '~' : {
-            'example' : '!<word>',
-            'title' : 'article',
+            'example' : '~<word>',
+            'title' : 'obsolete article',
             'title_canonical' : 'article',
             'description' : ''
         },
-        // '!' : {
-        //     'example' : '!<word>',
-        //     'title' : 'obsolete article',
-        //     'title_canonical' : 'article',
-        //     'description' : ''
-        // },
+        '!' : {
+            'example' : '!<word>',
+            'title' : 'article',
+            'title_canonical' : 'obsolete-article',
+            'description' : ''
+        },
         '()' : {
             'example' : '(<flag>)',
             'title' : 'bookmark flag',
@@ -112,8 +112,8 @@ var dwlTagsManager = {
         }
     },
 
-    'tagRegexSep' : ['\\s','~','\\/','#','@','$','§'],
-    'tagSep' : [' ','~','/','#','@','$','§'],
+    'tagRegexSep' : ['\\s','~','\\/','#','!','@','$','§'],
+    'tagSep' : [' ','~','/','#','!','@','$','§'],
 
     'tagRegexDisplay' : ['\\s',','],
     'tagDisplay' : ['_'],

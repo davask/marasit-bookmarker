@@ -1,5 +1,7 @@
 /* custom made or copied function to speed up dev */
 
+window.Date || document.write('<script src="../vendor/Datejs/build/date.js"><\/script>');
+
 var dwlDefault = {
     'icons' : {
         'dwl' : 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAQABADASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAABAIH/8QAHhAAAgICAwEBAAAAAAAAAAAAAgMBBgQFAAcRITH/xAAVAQEBAAAAAAAAAAAAAAAAAAABA//EABoRAAICAwAAAAAAAAAAAAAAAAABAhEDIUH/2gAMAwEAAhEDEQA/ANS64o1Sz+u6rkZNW0D8l2qxGNazWpIzMkhJERSPszMz7M8N2FSqtrKDa3Jq+gTkK1eWamq1qQNZwk5EhKB9iYn8niOubzU9f17VsfJtWgRkJ1WKtqm7FIGBikIISGS9iYmPscnsq61DZdf2hOPaNA/KbqspaVq2SSNhyk4EYGC9mZmfkcnjbTal0Jbqj//Z',
@@ -78,17 +80,24 @@ if (typeof convertToDate != 'function') {
     var convertToDate = function (unix_timestamp) {
         // Create a new JavaScript Date object based on the timestamp
         // multiplied by 1000 so that the argument is in milliseconds, not seconds.
-        var date = new Date(unix_timestamp*1000);
+        var date = new Date(unix_timestamp);
         // Hours part from the timestamp
-        var hours = date.getHours();
+        var hours = "0" + date.getHours();
         // Minutes part from the timestamp
         var minutes = "0" + date.getMinutes();
         // Seconds part from the timestamp
         var seconds = "0" + date.getSeconds();
+        // Hours part from the timestamp
+        var day = "0" + date.getDate();
+        // Minutes part from the timestamp
+        var month = "0" + (date.getMonth() + 1);
+        // Seconds part from the timestamp
+        var year = date.getFullYear();
 
         // Will display time in 10:30:23 format
-        var formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
-        return date;
+        var formattedTime = hours.substr(-2) + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+        var formattedDate = year + '/' + month.substr(-2) + '/' + day.substr(-2);
+        return formattedDate;
     };
 };
 
@@ -190,6 +199,45 @@ if (typeof merge != 'function') {
         };
         return to;
     };
+};
+
+if (typeof extractHostname != 'function') {
+
+    var extractHostname = function(url) {
+        var hostname;
+        //find & remove protocol (http, ftp, etc.) and get hostname
+
+        if (url.indexOf("://") > -1) {
+            hostname = url.split('/')[2];
+        }
+        else {
+            hostname = url.split('/')[0];
+        }
+
+        //find & remove port number
+        hostname = hostname.split(':')[0];
+        //find & remove "?"
+        hostname = hostname.split('?')[0];
+
+        return hostname;
+    }
+
+};
+
+if (typeof extractRootDomain != 'function') {
+
+    var extractRootDomain = function (url) {
+        var domain = extractHostname(url),
+            splitArr = domain.split('.'),
+            arrLen = splitArr.length;
+
+        //extracting the root domain here
+        if (arrLen > 2) {
+            domain = splitArr[arrLen - 2] + '.' + splitArr[arrLen - 1];
+        }
+        return domain;
+    }
+
 };
 
 if (typeof isUrl != 'function') {
