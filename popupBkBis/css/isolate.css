@@ -1,8 +1,0 @@
-#dwl-bk,
-#dwl-bk::before,
-#dwl-bk::after,
-#dwl-bk *,
-#dwl-bk *::before,
-#dwl-bk *::after {
-  all: unset;
-}
