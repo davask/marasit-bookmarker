@@ -53,13 +53,13 @@ var dwlTagsManager = {
         '~' : {
             'example' : '~<word>',
             'title' : 'obsolete article',
-            'title_canonical' : 'article',
+            'title_canonical' : 'obsolete-article',
             'description' : ''
         },
         '!' : {
             'example' : '!<word>',
             'title' : 'article',
-            'title_canonical' : 'obsolete-article',
+            'title_canonical' : 'article',
             'description' : ''
         },
         '()' : {
@@ -112,7 +112,7 @@ var dwlTagsManager = {
         }
     },
 
-    'tagRegexSep' : ['\\s','~','\\/','#','!','@','$','§'],
+    'tagRegexSep' : ['\\s','\\~','\\/','\\#','\\!','\\@','\\$','\\§'],
     'tagSep' : [' ','~','/','#','!','@','$','§'],
 
     'tagRegexDisplay' : ['\\s',','],
@@ -347,6 +347,12 @@ var dwlTagsManager = {
 
         bookmark.tags = [];
         for (var i = 0; i < bookmark.tagsToDisplay.length; i++) {
+            if ( bookmark.tagsToDisplay[i].tag.indexOf(' ') > -1 ) {
+                bookmark.tagsToDisplay[i].tag = bookmark.tagsToDisplay[i].tag.replace(/\s/g, '_');
+            }
+            if ( _this.tagSep.indexOf(bookmark.tagsToDisplay[i].tag.substring(0,1)) === -1 ) {
+                bookmark.tagsToDisplay[i].tag = '/'+bookmark.tagsToDisplay[i].tag;
+            }
             bookmark.tags.push(bookmark.tagsToDisplay[i].tag);
         };
 
