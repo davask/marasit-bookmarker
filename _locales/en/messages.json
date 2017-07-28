@@ -1,0 +1,95 @@
+{
+
+    "manifest_name" : {
+        "message" : "Multitasker : bookmarks, time tracker & todos",
+        "description" : ""
+    },
+    "manifest_short_name" : {
+        "message" : "multitask manager",
+        "description" : ""
+    },
+    "manifest_description" : {
+        "message" : "multitask manager : bookmarks, time tracker, todos AKA My missing multitask manager - by davask web limited",
+        "description" : ""
+    },
+
+    "options_title" : {
+        "message" : "Multitasker - davask web limited",
+        "description" : ""
+    },
+
+    "options_default_page" : {
+        "message" : "Default page",
+        "description" : ""
+    },
+
+    "options_export" : {
+        "message" : "Export all your bookmarks",
+        "description" : ""
+    },
+
+    "bookmark_page" : {
+        "message" : "Bookmark page",
+        "description" : ""
+    },
+    "bookmark_search" : {
+        "message" : "Bookmark search",
+        "description" : ""
+    },
+    "tags" : {
+        "message" : "Tags",
+        "description" : ""
+    },
+    "timer" : {
+        "message" : "Timer",
+        "description" : ""
+    },
+    "todos" : {
+        "message" : "Todos",
+        "description" : ""
+    },
+    "save" : {
+        "message" : "Save",
+        "description" : ""
+    },
+
+    "export" : {
+        "message" : "Export",
+        "description" : ""
+    },
+
+    "guide_title" : {
+        "message" : "Guide - draft - french",
+        "description" : ""
+    },
+    "guide" : {
+        "message" : "",
+        "description" : ""
+    },
+
+    "tag_system_title" : {
+        "message" : "TAG SYSTEM",
+        "description" : ""
+    },
+
+    "tag_system" : {
+        "message" : "<ul><li>/<word> => folder</li><li>#<word> => tag</li><li>@<username> => person to share with</li><li>$<word> => alias</li><li>!<word> => type (article)</li><li>(<flag>) => bookmark flag</li><!--li><date> => define rule under a bookmark is considered new</li><li>define character (/!@#) for : stared, important, person for sharing</li><li><date> => define rule under a bookmark is considered new</li--></ul>",
+        "description" : ""
+    },
+
+    "flag_system_title" : {
+        "message" : "FLAG SYSTEM",
+        "description" : ""
+    },
+
+    "flag_system" : {
+        "message" : "<ul><li>I => important</li><li>D => duplicated</li><li>R => removed</li><li>T => trash</li><li>E => empty title (except tag)</li><li>N => not tagged</li><li>S => stared</li></ul>",
+        "description" : ""
+    },
+
+    "helper" : {
+        "message" : "Just to finish the object",
+        "description" : ""
+    }
+
+}

@@ -1,12 +1,22 @@
 <nav class="navbar navbar-toggleable-md navbar-light bg-faded">
-  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+  <button
+    class="navbar-toggler navbar-toggler-right"
+    type="button"
+    (click)="isNavbarMenuCollapsed = !isNavbarMenuCollapsed"
+    data-toggle="collapse"
+    aria-controls="navbar-menu"
+    aria-expanded="false"
+    aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
   <a class="navbar-brand" [routerLink]=" ['./'] ">
     <img [src]="angularclassLogo" class="logo img-fluid" [alt]="name">
   </a>
 
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+  <div
+    [ngbCollapse]="isNavbarMenuCollapsed"
+    class="collapse navbar-collapse"
+    id="navbar-menu">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item">
         <a [routerLink]=" ['./detail'] "
@@ -56,13 +66,23 @@
 </div>
 
 <nav class="navbar fixed-bottom navbar-toggleable-md navbar-light bg-faded">
-  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+  <button
+    class="navbar-toggler navbar-toggler-right"
+    type="button"
+    (click)="isNavbarFooterCollapsed = !isNavbarFooterCollapsed"
+    data-toggle="collapse"
+    aria-controls="navbar-footer"
+    aria-expanded="false"
+    aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
   <a class="navbar-brand" [href]="url">
     <img [src]="angularclassAvatar" class="avatar img-fluid" alt="">
   </a>
-  <div class="collapse navbar-collapse" id="navbarText">
+  <div
+    [ngbCollapse]="isNavbarFooterCollapsed"
+    class="collapse navbar-collapse"
+    id="navbar-footer">
     <span class="navbar-text">
       <span>WebPack Angular 2 Starter by <a [href]="url">@AngularClass</a></span>
     </span>

@@ -24,9 +24,15 @@ export class AppComponent implements OnInit {
   public name = 'Angular 2 Webpack Starter';
   public url = 'https://twitter.com/davaskwebltd';
 
+  public isNavbarMenuCollapsed:boolean;
+  public isNavbarFooterCollapsed:boolean;
+
   constructor(
     public appState: AppState
-  ) {}
+  ) {
+    this.isNavbarMenuCollapsed = true;
+    this.isNavbarFooterCollapsed = true;
+  }
 
   public ngOnInit() {
     console.log('Initial App State', this.appState.state);

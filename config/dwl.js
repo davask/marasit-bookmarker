@@ -3,6 +3,7 @@
  */
 exports.from = [
   { from: 'src/app/assets', to: 'assets' },
+  { from: 'src/app/_locales', to: '_locales' },
   { from: 'src/app/config/meta'}
 ];
 exports.theme = {
