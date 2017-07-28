@@ -15,7 +15,11 @@ import { AppState }          from './app.service';
   encapsulation: ViewEncapsulation.None,
   templateUrl: './app.component.html',
   styleUrls: [
-    './app.component.css'
+    '../../node_modules/bootstrap/dist/css/bootstrap.css',
+    '../../node_modules/font-awesome/css/font-awesome.min.css',
+    './assets/css/headings.css',
+    './assets/scss/styles.scss',
+    './app.component.scss'
   ]
 })
 export class AppComponent implements OnInit {
