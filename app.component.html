@@ -1,0 +1,70 @@
+<nav class="navbar navbar-toggleable-md navbar-light bg-faded">
+  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <a class="navbar-brand" [routerLink]=" ['./'] ">
+    <img [src]="angularclassLogo" class="logo img-fluid" [alt]="name">
+  </a>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a [routerLink]=" ['./detail'] "
+          routerLinkActive="active"
+          [routerLinkActiveOptions]= "{exact: true}"
+          class="nav-link">
+          Detail
+        </a>
+      </li>
+      <li class="nav-item">
+        <a [routerLink]=" ['./barrel'] "
+          routerLinkActive="active"
+          [routerLinkActiveOptions]= "{exact: true}"
+          class="nav-link">
+          Barrel
+        </a>
+      </li>
+      <li class="nav-item">
+        <a [routerLink]=" ['./about'] "
+          routerLinkActive="active"
+          [routerLinkActiveOptions]= "{exact: true}"
+          class="nav-link">
+          <i class="fa fa-thumbs-o-up" aria-hidden="true"></i> About
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<div class="container-fluid">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+
+      <main>
+        <router-outlet></router-outlet>
+      </main>
+
+      <pre class="app-state">this.appState.state = {{ appState.state | json }}</pre>
+
+      <footer>
+
+      </footer>
+
+
+    </div>
+  </div>
+</div>
+
+<nav class="navbar fixed-bottom navbar-toggleable-md navbar-light bg-faded">
+  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <a class="navbar-brand" [href]="url">
+    <img [src]="angularclassAvatar" class="avatar img-fluid" alt="">
+  </a>
+  <div class="collapse navbar-collapse" id="navbarText">
+    <span class="navbar-text">
+      <span>WebPack Angular 2 Starter by <a [href]="url">@AngularClass</a></span>
+    </span>
+  </div>
+</nav>
