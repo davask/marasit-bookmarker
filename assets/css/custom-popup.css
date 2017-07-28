@@ -27,25 +27,10 @@
 }
 
 /* structure */
-/* title */
-h1 {
-  font-size: 19px;
-  margin: 0;
-}
 
 hr.row {
     margin-bottom: 5px;
     margin-top: 5px;
-}
-
-/* nav */
-.nav>li>a {
-  color: #F1CF3A;
-  padding: 2px 5px;
-}
-
-.nav>li>a:hover {
-  color: #8bafd3;
 }
 
 /* btn */
