@@ -1,0 +1,9 @@
+<div class="tag-template">
+    <div class="left-panel">
+        <img ng-src="http://mbenford.github.io/ngTagsInput/images/flags/{{data.flag}}" ng-if="data.flag"/>
+    </div>
+    <div class="right-panel">
+        <span>{{$getDisplayText()}}</span>
+        <a class="remove-button" ng-click="$removeTag()">&#10006;</a>
+    </div>
+</div>

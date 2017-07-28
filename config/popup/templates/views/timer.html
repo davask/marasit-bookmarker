@@ -1,0 +1,34 @@
+<div id="auto-start-false-timer">
+    <pre>
+        <timer
+            autostart="{{timerAutoStart}}"
+            interval="1000"
+            language="en"
+            start-time="timerPauseTime"
+        >{{yearUnit}}</timer>
+    </pre>
+    <button
+        class="btn"
+        ng-class="{'true': 'btn-link', 'false': 'btn-primary'}[timerRunning || timerStatus == 'pause']"
+        ng-click="startTimer()"
+        ng-disabled="timerRunning || timerStatus == 'pause'"
+    >Start Timers</button>
+    <button
+        class="btn"
+        ng-class="{'true': 'btn-link', 'false': 'btn-primary'}[!timerRunning || timerStatus == 'stop']"
+        ng-click="pauseTimer()"
+        ng-disabled="!timerRunning"
+    >Pause Timers</button>
+    <button
+        class="btn"
+        ng-class="{'true': 'btn-link', 'false': 'btn-primary'}[timerRunning || timerStatus == 'start']"
+        ng-click="resumeTimer()"
+        ng-disabled="timerRunning || timerStatus == 'start'"
+    >Resume Timers</button>
+    <button
+        class="btn"
+        ng-class="{'true': 'btn-link', 'false': 'btn-primary'}[!timerRunning && timerStatus != 'pause']"
+        ng-click="stopTimer()"
+        ng-disabled="!timerRunning && timerStatus != 'pause'"
+    >Stop Timers</button>
+</div>

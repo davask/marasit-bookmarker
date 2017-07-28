@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+        <meta charset="utf-8">
+        <meta name="description" content="" data-manifest_description>
+        <meta name="author" content="David Asquiedge">
+
+        <title data-options_title></title>
+
+        <!-- Cascading Style Sheets -->
+        <link href="../vendor/bootstrap-3.3.5/css/bootstrap-3.3.5.min.css" rel="stylesheet" media="screen">
+        <link href="../css/custom.css" rel="stylesheet" media="screen">
+</head>
+
+<body class="options">
+    <div id="container">
+
+        <div class="row">
+            <div class="col-xs-12">
+                <h1 data-options_title></h1>
+            </div>
+            <div class="col-xs-6">
+                <strong data-options_default_page></strong>:
+                <select id="route">
+                    <option value="page" data-bookmark_page></option>
+                    <option value="search" data-bookmark_search></option>
+                    <option value="tags" data-tags></option>
+                    <option value="timer" data-timer></option>
+                    <option value="todos" data-todos></option>
+                </select>
+                <button id="save" data-save></button>
+            </div>
+            <div class="col-xs-6">
+                <strong data-options_export></strong>:
+                <select id="exportType">
+                    <option value="json" data-export_json selected="true">JSON</option>
+                    <option value="csv" data-export_csv>CSV</option>
+                    <!-- <option value="html" data-export_html>HTML</option> -->
+                    <!-- <option value="xml" data-export_xml>XML</option> -->
+                </select>
+                <button id="export" data-export></button>
+                <ul id="jsonExport"></ul>
+            </div>
+            <div class="col-xs-12">
+                <div id="status"></div>
+            </div>
+        </div>
+        <hr/>
+        <div class="row">
+            <div class="col-sm-6">
+                <h4 data-guide_title></h4>
+                <div data-guide></div>
+            </div>
+
+            <div class="col-sm-6 well">
+                <div class="col-sm-6">
+                    <h4 data-tag_system_title></h4>
+                    <div data-tag_system></div>
+                </div>
+                <div class="col-sm-6">
+                    <h4 data-tag_system_title></h4>
+                    <div data-tag_system></div>
+                </div>
+            </div>
+        </div>
+        <hr/>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <h2>features</h2>
+                <u>
+                    <li>
+                        add similar bookmarks feature based on dns search
+                    </li>
+                    <li>
+                        set option choose your opening route
+                    </li>
+                    <li>
+                        integrate search by url instead of title (see : http://www.thegeekstuff.com/ for the reason)
+                    </li>
+                    <li>
+                        Inserted tags
+                    </li>
+                </u>
+            </div>
+            <div class="col-sm-6">
+                <h2>futurs updates</h2>
+                <u>
+                    <li>
+                        change icons to put stars on it for bookmarks
+                    </li>
+                    <li>
+                        timer : https://davidwalsh.name/firefox-extension-template / https://davidwalsh.name/firefox-extension-template / https://developer.apple.com/library/safari/documentation/UserExperience/Conceptual/SafariExtensionsConversionGuide/Chapters/Chrome.html
+                    </li>
+                    <li>
+                        add automatic tag add & easy to update tag feature
+                    </li>
+                    <li>
+                        add popup on each web page to show timer
+                    </li>
+                    <li>
+                        If page is not a bookmark open extension on bookmark/page if timer not running
+                    </li>
+                    <li>
+                        add "select main bookmark folder" : BookmarkBar, Other Bookmarks, Mobile bookmarks
+                    </li>
+                    <li>
+                        for tree structure analyse the number of times the tag is used and put the bigger in first
+                    </li>
+                    <li>
+                        for aliases, make primary the aliases the most used
+                    </li>
+                    <li>
+                        Add a calendar manager connected to google calendar
+                    </li>
+                </u>
+            </div>
+        </div>
+        <hr/>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <h2>Bugs</h2>
+                <ul>
+                    <li>Find a fix for live favicon : check favicon url status if 200 leave it</li>
+                    <li>Tags in tags page doesn t update</li>
+                </ul>
+            </div>
+        </div>
+        <hr/>
+    </div>
+
+    <!-- javascripts -->
+    <script type="text/javascript" src="../vendor/jquery-2.0.3/js/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="../vendor/bootstrap-3.3.5/js/bootstrap-3.3.5.min.js"></script>
+
+    <!-- scripts -->
+    <script type="text/javascript" src="../js/library/dwl-helper.js"></script>
+
+    <!-- Scripts -->
+    <script src="../js/options.js"></script>
+
+</body>
+</html>

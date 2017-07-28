@@ -1,90 +1,74 @@
-<nav class="navbar navbar-toggleable-md navbar-light bg-faded">
-  <button
-    class="navbar-toggler navbar-toggler-right"
-    type="button"
-    (click)="isNavbarMenuCollapsed = !isNavbarMenuCollapsed"
-    data-toggle="collapse"
-    aria-controls="navbar-menu"
-    aria-expanded="false"
-    aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <a class="navbar-brand" [routerLink]=" ['./'] ">
-    <img [src]="angularclassLogo" class="logo img-fluid" [alt]="name">
-  </a>
+<section>
+  <div class="header clearfix">
 
-  <div
-    [ngbCollapse]="isNavbarMenuCollapsed"
-    class="collapse navbar-collapse"
-    id="navbar-menu">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item">
-        <a [routerLink]=" ['./detail'] "
-          routerLinkActive="active"
-          [routerLinkActiveOptions]= "{exact: true}"
-          class="nav-link">
-          Detail
-        </a>
-      </li>
-      <li class="nav-item">
-        <a [routerLink]=" ['./barrel'] "
-          routerLinkActive="active"
-          [routerLinkActiveOptions]= "{exact: true}"
-          class="nav-link">
-          Barrel
-        </a>
-      </li>
-      <li class="nav-item">
-        <a [routerLink]=" ['./about'] "
-          routerLinkActive="active"
-          [routerLinkActiveOptions]= "{exact: true}"
-          class="nav-link">
-          <i class="fa fa-thumbs-o-up" aria-hidden="true"></i> About
-        </a>
-      </li>
-    </ul>
+    <a href="http://www.davaskweblimited.com" target="_blank" title="www.davaskweblimited.com" class="col-1">
+        <img src="assets/img/logo.png" alt="davask web limited" class="img-responsive pull-right">
+    </a>
+    <h1 class="col-4">bookmark manager</h1>
+    <div class="header-nav col-7" id="navbar-menu">
+      <ul class="nav nav-tabs">
+        <li role="presentation">
+          <a [routerLink]=" ['./page'] "
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{exact: true}"
+            class="disabled">
+            Page
+          </a>
+        </li>
+        <li role="presentation">
+          <a [routerLink]=" ['./search'] "
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{exact: true}"
+            class="disabled">
+            Search
+          </a>
+        </li>
+        <li role="presentation">
+          <a [routerLink]=" ['./tags'] "
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{exact: true}"
+            class="disabled">
+            Tags
+          </a>
+        </li>
+        <li role="presentation">
+          <a [routerLink]=" ['./timer'] "
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{exact: true}"
+            class="disabled">
+            Timer
+          </a>
+        </li>
+        <li role="presentation">
+          <a [routerLink]=" ['./todos/active'] "
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{exact: true}"
+            class="disabled">
+            Todos
+          </a>
+        </li>
+      </ul>
+    </div>
+    <!-- <img  ng-model="dwlLoading" src="../img/spinner.gif" alt="loading" class="dwlLoading"/> -->
+
   </div>
-</nav>
 
-<div class="container-fluid">
-  <div class="row justify-content-center">
-    <div class="col-md-6">
+  <div class="container-fluid content">
+    <div class="row justify-content-center">
+      <div class="col-md-6 view-animate-container tab-content">
 
-      <main>
-        <router-outlet></router-outlet>
-      </main>
+        <main>
+          <router-outlet></router-outlet>
+        </main>
 
-      <pre class="app-state">this.appState.state = {{ appState.state | json }}</pre>
+        <pre class="app-state">this.appState.state = {{ appState.state | json }}</pre>
 
-      <footer>
+        <footer>
 
-      </footer>
+        </footer>
 
 
+      </div>
     </div>
   </div>
-</div>
-
-<nav class="navbar fixed-bottom navbar-toggleable-md navbar-light bg-faded">
-  <button
-    class="navbar-toggler navbar-toggler-right"
-    type="button"
-    (click)="isNavbarFooterCollapsed = !isNavbarFooterCollapsed"
-    data-toggle="collapse"
-    aria-controls="navbar-footer"
-    aria-expanded="false"
-    aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <a class="navbar-brand" [href]="url">
-    <img [src]="angularclassAvatar" class="avatar img-fluid" alt="">
-  </a>
-  <div
-    [ngbCollapse]="isNavbarFooterCollapsed"
-    class="collapse navbar-collapse"
-    id="navbar-footer">
-    <span class="navbar-text">
-      <span>WebPack Angular 2 Starter by <a [href]="url">@AngularClass</a></span>
-    </span>
-  </div>
-</nav>
+</section>

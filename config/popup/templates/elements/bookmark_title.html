@@ -1,0 +1,14 @@
+<b class="editable">
+    <input
+        ng-model="bookmark.titleNoTag"
+        ng-show="bookmark.edit"
+        ng-readonly="!bookmark.edit"
+    >
+    <span
+        ng-class="{true:'error'}[bookmark.status == 404 && bookmark.type == 'bookmark']"
+        ng-show="!bookmark.edit"
+        ng-click="switchEditing(); bookmark.edit = !bookmark.edit;"
+    >
+        {{bookmark.titleNoTag}}
+    </span>
+</b>

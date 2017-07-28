@@ -1,0 +1,3 @@
+<div class="col-xs-12" ng-repeat="(model, isDebugging) in debug.get()">
+    <div ng-if="model !== 'debug' && isDebugging" ng-include src="'/templates/debug/'+model+'.html'"></div>
+</div>
