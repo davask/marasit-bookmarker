@@ -35,7 +35,7 @@ var chromeExtension = {
         }
 
         chrome.browserAction.setIcon(_this.icon);
-        _this.setBadge(mess);
+        // _this.setBadge(mess);
 
     },
 

@@ -59,7 +59,8 @@
         ],
         "js": [
             "assets/vendor/jquery-2.0.3/js/jquery-2.0.3.min.js",
-            "assets/vendor/DataTables/datatables.min.js",
+            "assets/vendor/DataTables/DataTables-1.10.15/js/jquery.datatables.min.js",
+            /* "assets/vendor/DataTables/DataTables-1.10.15/js/datatables.bootstrap.min.js", */
             "assets/vendor/Datejs/build/date.js",
             "assets/vendor/dwl/js/config.component.js",
             "assets/vendor/dwl/js/manager.tags.component.js",
@@ -68,7 +69,8 @@
             "assets/js/content.js"
         ],
         "css": [
-            "assets/vendor/DataTables/datatables.min.css",
+            "assets/vendor/DataTables/DataTables-1.10.15/css/jquery.datatables.min.css",
+            /* "assets/vendor/DataTables/DataTables-1.10.15/css/datatables.bootstrap.min.css", */
             "assets/vendor/dwl/css/content.bk.component.css",
             "assets/vendor/dwl/css/isolation.bk.component.css"
         ],

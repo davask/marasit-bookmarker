@@ -1,3 +1,4 @@
+var isInPagePopup = false;
 var dwlPopup = dwl_Popup.init();
 
 chrome.runtime.onMessage.addListener(function(bgJsMsg, sender, sendResponse) {
@@ -14,65 +15,73 @@ chrome.runtime.onMessage.addListener(function(bgJsMsg, sender, sendResponse) {
         dwlPopup.gBk = bgJsMsg.gBk;
     }
 
-    if(dwlPopup.dwlBk.bookmarks.length > 0) {
-        var b = dwlPopup.dwlBk.bookmarks[0];
-    } else {
-        var b = dwlPopup.dwlBk.tab;
-    }
+    if (isInPagePopup) {
 
-    dwlPopup.html += '<div class="row">';
-    dwlPopup.html += '<div class="col-xs-12">';
-
-    dwlPopup.html += 'type : ' + b.type + '<br/>';
-    dwlPopup.html += 'title : ' + b.title + '<br/>';
-    dwlPopup.html += 'url : ' + b.url + '<br/>';
-
-    dwlPopup.html += '</div>';
-    dwlPopup.html += '<div class="col-xs-12">';
-
-     dwlPopup.html += ' (';
-    if (typeof(b.dateAdded) != 'undefined') {
-        dwlPopup.html += ' added : ' + convertToDate(b.dateAdded);
-    } else {
-        dwlPopup.html += ' not added';
-    }
-    if (typeof b.id != 'undefined') {
-        dwlPopup.html += ' - id : ' + b.id;
-    } else {
-        dwlPopup.html += ' - no id';
-    }
-    dwlPopup.html += ' )';
-
-    dwlPopup.html += '</div>';
-    dwlPopup.html += '</div>';
-
-    /* build the content popup */
-    dwlPopup.popup = jQuery('#dwl-bk');
-    if (dwlPopup.popup.length > 0) {
-        dwlPopup.popup.remove();
-    }
-
-    dwlPopup.popup = jQuery('<div></div>');
-    dwlPopup.popup.attr('id','dwl-bk');
-    dwlPopup.popup.addClass('container kp-blk');
-    dwlPopup.popup.addClass('closed');
-    dwlPopup.html += '<button class="open"><</button>';
-    dwlPopup.html += '<button class="close">X</button>';
-
-    dwlPopup.popup.html(dwlPopup.html);
-    // dwlPopup.popup.hide();
-
-    dwlPopup.popup.appendTo('body');
-
-    jQuery('#dwl-bk button').click(function(){
-        if(jQuery('#dwl-bk.closed').length > 0) {
-            jQuery('#dwl-bk.closed').removeClass('closed');
+        if(dwlPopup.dwlBk.bookmarks.length > 0) {
+            var b = dwlPopup.dwlBk.bookmarks[0];
         } else {
-            jQuery('#dwl-bk').addClass('closed');
+            var b = dwlPopup.dwlBk.tab;
         }
-    });
 
-    if ( window.location.host == "www.google.com" && (window.location.pathname == "/search" || window.location.pathname == "/webhp") ) {
+        dwlPopup.html += '<div class="row">';
+        dwlPopup.html += '<div class="col-xs-12">';
+
+        dwlPopup.html += 'type : ' + b.type + '<br/>';
+        dwlPopup.html += 'title : ' + b.title + '<br/>';
+        dwlPopup.html += 'url : ' + b.url + '<br/>';
+
+        dwlPopup.html += '</div>';
+        dwlPopup.html += '<div class="col-xs-12">';
+
+        dwlPopup.html += ' (';
+        if (typeof(b.dateAdded) != 'undefined') {
+            dwlPopup.html += ' added : ' + convertToDate(b.dateAdded);
+        } else {
+            dwlPopup.html += ' not added';
+        }
+        if (typeof b.id != 'undefined') {
+            dwlPopup.html += ' - id : ' + b.id;
+        } else {
+            dwlPopup.html += ' - no id';
+        }
+        dwlPopup.html += ' )';
+
+        dwlPopup.html += '</div>';
+        dwlPopup.html += '</div>';
+
+        /* build the content popup */
+        dwlPopup.popup = jQuery('#dwl-bk');
+        if (dwlPopup.popup.length > 0) {
+            dwlPopup.popup.remove();
+        }
+
+        dwlPopup.popup = jQuery('<div></div>');
+        dwlPopup.popup.attr('id','dwl-bk');
+        dwlPopup.popup.addClass('container kp-blk');
+        dwlPopup.popup.addClass('closed');
+        dwlPopup.html += '<button class="open"><</button>';
+        dwlPopup.html += '<button class="close">X</button>';
+
+        dwlPopup.popup.html(dwlPopup.html);
+        // dwlPopup.popup.hide();
+
+        dwlPopup.popup.appendTo('body');
+
+        jQuery('#dwl-bk button').click(function(){
+            if(jQuery('#dwl-bk.closed').length > 0) {
+                jQuery('#dwl-bk.closed').removeClass('closed');
+            } else {
+                jQuery('#dwl-bk').addClass('closed');
+            }
+        });
+
+    }
+
+    var goodHost = window.location.host.match(/google\.[a-z]{2,3}$/);
+    var goodPathname = window.location.pathname.match(/^\/(search|webhp)/);
+
+    if ( goodHost != null && goodPathname != null ) {
+
         /* build the content page */
         dwlPopup.page = jQuery('#dwl-bk-google');
         if (dwlPopup.page.length > 0) {
@@ -141,7 +150,7 @@ chrome.runtime.onMessage.addListener(function(bgJsMsg, sender, sendResponse) {
             gtable += '<tr>';
             gtable += '<th>title</th>';
             gtable += '<th>tag</th>';
-            gtable += '<th>date</th>';
+            gtable += '<th>Added</th>';
             gtable += '<th>dns</th>';
             gtable += '</tr>';
             gtable += '</thead>';
@@ -149,7 +158,7 @@ chrome.runtime.onMessage.addListener(function(bgJsMsg, sender, sendResponse) {
             gtable += '<tr>';
             gtable += '<th>title</th>';
             gtable += '<th>tag</th>';
-            gtable += '<th>date</th>';
+            gtable += '<th>Added</th>';
             gtable += '<th>dns</th>';
             gtable += '</tr>';
             gtable += '</tfoot>';
