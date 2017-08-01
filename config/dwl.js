@@ -1,10 +1,19 @@
 /**
  * @author: @davaskwebltd
  */
+
+exports.path = {
+  head_config: './src/app/config/head-config.common',
+  index: './src/app/root/index.html',
+  styles: [ '/node_modules/', '/src/app/assets/scss' ]
+};
 exports.from = [
-  { from: 'src/app/assets', to: 'assets' },
-  { from: 'src/app/_locales', to: '_locales' },
-  { from: 'src/app/config/meta'}
+  { from: 'src/app/assets/css', to: 'assets/css' },
+  { from: 'src/app/assets/dev', to: 'assets/dev' },
+  { from: 'src/app/assets/icon', to: 'assets/icon' },
+  { from: 'src/app/assets/img', to: 'assets/img' },
+  { from: 'src/app/assets/js', to: 'assets/js' },
+  { from: 'src/app/root'}
 ];
 exports.theme = {
   title: 'AWS | dwl',

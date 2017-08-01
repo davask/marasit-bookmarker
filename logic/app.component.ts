@@ -1,10 +1,18 @@
 /**
  * Angular 2 decorators and services
  */
-import { Component,
-         OnInit,
-         ViewEncapsulation } from '@angular/core';
-import { AppState }          from './app.service';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { AppState }                             from './app.service';
+
+import 'bootstrap/dist/css/bootstrap.css';
+import 'font-awesome/css/font-awesome.min.css';
+
+import '../assets/scss/styles.scss';
+import './app.component.scss';
+
+var styleUrlsData = [
+  '../assets/css/headings.css'
+];
 
 /**
  * App Component
@@ -14,13 +22,7 @@ import { AppState }          from './app.service';
   selector: 'app',
   encapsulation: ViewEncapsulation.None,
   templateUrl: './app.component.html',
-  styleUrls: [
-    '../../node_modules/bootstrap/dist/css/bootstrap.css',
-    '../../node_modules/font-awesome/css/font-awesome.min.css',
-    './assets/css/headings.css',
-    './assets/scss/styles.scss',
-    './app.component.scss'
-  ]
+  styleUrls: styleUrlsData
 })
 export class AppComponent implements OnInit {
   public angularclassLogo = 'assets/img/dwl-logo.png';
@@ -34,8 +36,6 @@ export class AppComponent implements OnInit {
   constructor(
     public appState: AppState
   ) {
-    this.isNavbarMenuCollapsed = true;
-    this.isNavbarFooterCollapsed = true;
   }
 
   public ngOnInit() {

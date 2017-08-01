@@ -1,5 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { AppState } from '../app.service';
+
+import './nav.component.scss';
+
+var styleUrlsData = [
+];
 
 @Component({
   /**
@@ -8,6 +13,8 @@ import { AppState } from '../app.service';
    * where, in this case, selector is the string 'home'.
    */
   selector: 'dwl-nav',  // <home></home>
+
+  encapsulation: ViewEncapsulation.None,
   /**
    * We need to tell Angular's Dependency Injection which providers are in our app.
    */
@@ -15,7 +22,7 @@ import { AppState } from '../app.service';
   /**
    * Our list of styles in our component. We may add more to compose many styles together.
    */
-  styleUrls: [ './nav.component.scss' ],
+  styleUrls: styleUrlsData,
   /**
    * Every Angular template is first compiled by the browser before Angular runs it's compiler.
    */
