@@ -22,12 +22,27 @@
         "128": "assets/img/icon128.png"
     },
 
-   "background": {
-       "persistent": true,
-       "scripts": [
-          "assets/dev/hot-reload.js"
-       ]
-   },
+    "background": {
+      "persistent": true,
+      "scripts": [
+        "assets/dev/hot-reload.js",
+        "assets/vendor/underscore/js/underscore-min.js",
+        "assets/vendor/jquery-2.0.3/js/jquery-2.0.3.min.js",
+        "assets/vendor/Datejs/build/date.js",
+        "assets/vendor/dwl/library/log.chrome.js",
+        "assets/vendor/dwl/library/extension.chrome.js",
+        "assets/vendor/dwl/library/helpers.dwl.js",
+        "assets/vendor/dwl/dependencies/helpers.dwl.js",
+        "assets/vendor/dwl/library/bookmarker.chrome.js",
+        "assets/vendor/dwl/js/config.component.js",
+        "assets/vendor/dwl/js/tags.component.js",
+        "assets/vendor/dwl/js/manager.tags.component.js",
+        "assets/vendor/dwl/js/bk.component.js",
+        "assets/vendor/dwl/js/bookmarker.component.js",
+        "assets/js/background.js",
+        "assets/js/content.js"
+      ]
+    },
 
     "browser_action": {
         "default_icon": {
@@ -37,6 +52,29 @@
         "default_title": "multitask",
         "default_popup": "index.html"
     },
+
+   "content_scripts": [{
+        "matches": [
+            "*://*/*"
+        ],
+        "js": [
+            "assets/vendor/jquery-2.0.3/js/jquery-2.0.3.min.js",
+            "assets/vendor/DataTables/datatables.min.js",
+            "assets/vendor/Datejs/build/date.js",
+            "assets/vendor/dwl/js/config.component.js",
+            "assets/vendor/dwl/js/manager.tags.component.js",
+            "assets/vendor/dwl/library/helpers.dwl.js",
+            "assets/vendor/dwl/dependencies/helpers.dwl.js",
+            "assets/js/content.js"
+        ],
+        "css": [
+            "assets/vendor/DataTables/datatables.min.css",
+            "assets/vendor/dwl/css/content.bk.component.css",
+            "assets/vendor/dwl/css/isolation.bk.component.css"
+        ],
+        "run_at": "document_end"
+    }],
+
 
     "content_security_policy": "default-src 'self' 'unsafe-eval'; script-src 'self' 'unsafe-eval' https://www.google-analytics.com; connect-src *; img-src 'self' data: *; media-src *; style-src 'self' 'unsafe-inline';" ,
 
