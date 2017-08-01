@@ -5,7 +5,7 @@
 exports.path = {
   head_config: './src/app/config/head-config.common',
   index: './src/app/root/index.html',
-  styles: [ '/node_modules/', '/src/app/assets/scss' ]
+  styles: [ '/node_modules/' ]
 };
 exports.from = [
   { from: 'src/app/assets/css', to: 'assets/css' },
