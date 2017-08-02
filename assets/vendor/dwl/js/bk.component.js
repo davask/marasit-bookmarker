@@ -73,7 +73,6 @@ var dwl_Bk = {
                         if (addSimilar) {
                           mess += _this.similar.length;
                         }
-                        console.log('num:'+mess, _this.bookmarks.length, _this.similar.length)
 
                         bookmarker.setIcon(_this.tab.id, mess);
                         d.resolve(true);
@@ -118,13 +117,14 @@ var dwl_Bk = {
 
         if (typeof(element) !== 'undefined' && element.q !== '') {
             bookmarker.searchChromeBookmark(element.q).then(function(bookmarks){
-                chrome.tabs.sendMessage(element.tabId, {'dwlBk' : _this.dwlBk, 'gBk' : bookmarks});
+                chrome.tabs.sendMessage(element.tabId, {'dwlBk' : _this.dwlBk, 'gBk' : bookmarks, 'status': 'result'});
             });
         }
     },
 
     update : function(tabId) {
 
+        chrome.tabs.sendMessage(tabId, {'dwlBk' : dwlBk, 'gBk' : [], 'status': 'update' });
         var _this = this;
         var d = $.Deferred();
 
@@ -152,7 +152,7 @@ var dwl_Bk = {
                 bookmarker.setIcon(-1, 'error');
             } else {
                 _this.isLoaded = true;
-                chrome.tabs.sendMessage(tabId, {'dwlBk' : dwlBk}, dwlBk.contentResponse);
+                chrome.tabs.sendMessage(tabId, {'dwlBk' : dwlBk, 'gBk' : [], 'status': 'updated'}, dwlBk.contentResponse);
             }
 
             d.resolve(show);

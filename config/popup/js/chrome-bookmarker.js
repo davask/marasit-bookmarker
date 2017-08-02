@@ -53,8 +53,8 @@ var chromeMixedBookmarker = {
 
             _this.badge.text = 'load';
 
-            if (typeof(chrome.browserAction) != 'undefined') {
-                chrome.browserAction.setBadgeText({text:""+_this.badge.text});
+            if (typeof(chrome.pageAction) != 'undefined') {
+                chrome.pageAction.setBadgeText({text:""+_this.badge.text});
             }
 
             _this.chromeBookmarksIds = JSON.parse(_this.storage['chromeBookmarksIds']);
@@ -76,8 +76,8 @@ var chromeMixedBookmarker = {
                 _this.chromeBookmarks[id] = _this.tagBk.setSpecificTagData(_this.chromeBookmarks[id]);
                 if(i == _this.chromeBookmarksIds.length-1) {
                     _this.saveAllBookmarksData();
-                    if (typeof(chrome.browserAction) != 'undefined') {
-                        chrome.browserAction.setBadgeText({text:""+Object.keys(_this.chromeBookmarksUrls).length});
+                    if (typeof(chrome.pageAction) != 'undefined') {
+                        chrome.pageAction.setBadgeText({text:""+Object.keys(_this.chromeBookmarksUrls).length});
                     }
                     _this.log(_this.name+'.reLoadAllBookmarksAsArray')
                     d.resolve(_this);
@@ -101,21 +101,21 @@ var chromeMixedBookmarker = {
         var _this = this;
         var d = $.Deferred();
 
-        chrome.browserAction.setIcon({path: 'img/icon-white16.png'})
+        chrome.pageAction.setIcon({path: 'img/icon-white16.png'})
 
         _this.clearStorage();
         _this.clearAllBookmarks();
 
-        if (typeof(chrome.browserAction) != 'undefined') {
-            chrome.browserAction.setBadgeText({text:""+_this.badge.text});
+        if (typeof(chrome.pageAction) != 'undefined') {
+            chrome.pageAction.setBadgeText({text:""+_this.badge.text});
         }
 
         _this.resetAllBookmarksAsArray().then(function() {
-            if (typeof(chrome.browserAction) != 'undefined') {
-                chrome.browserAction.setBadgeText({text:""+Object.keys(_this.chromeBookmarksUrls).length});
+            if (typeof(chrome.pageAction) != 'undefined') {
+                chrome.pageAction.setBadgeText({text:""+Object.keys(_this.chromeBookmarksUrls).length});
             }
 
-            chrome.browserAction.setIcon({path: 'img/icon16.png'});
+            chrome.pageAction.setIcon({path: 'img/icon16.png'});
             _this.log(_this.name+'.reInitAllBookmarksAsArray')
 
             d.resolve(_this);
@@ -133,8 +133,8 @@ var chromeMixedBookmarker = {
         _this.getAllChromeBookmarksAsArray().then(function() {
             _this.getAlternativePathsForAllBookmarks().then(function() {
                 _this.saveAllChromeBookmarksAsArray().then(function() {
-                    if (typeof(chrome.browserAction) != 'undefined') {
-                        chrome.browserAction.setBadgeText({text:""+Object.keys(_this.chromeBookmarks).length});
+                    if (typeof(chrome.pageAction) != 'undefined') {
+                        chrome.pageAction.setBadgeText({text:""+Object.keys(_this.chromeBookmarks).length});
                     }
                     console.log('chromeNativeBookmarker reset');
                     d.resolve();
@@ -204,8 +204,8 @@ var chromeMixedBookmarker = {
         var children = [];
         var thisTags = [];
 
-        if (typeof(chrome.browserAction) != 'undefined') {
-            chrome.browserAction.setBadgeText({text:""+Object.keys(_this.chromeBookmarks).length});
+        if (typeof(chrome.pageAction) != 'undefined') {
+            chrome.pageAction.setBadgeText({text:""+Object.keys(_this.chromeBookmarks).length});
         }
 
         _this.chromeBookmarksIds.push(bookmark.id);
@@ -279,8 +279,8 @@ var chromeMixedBookmarker = {
         var i = 0;
         for(var id in _this.chromeBookmarks) {
             i++;
-            if (typeof(chrome.browserAction) != 'undefined') {
-                chrome.browserAction.setBadgeText({text:""+i});
+            if (typeof(chrome.pageAction) != 'undefined') {
+                chrome.pageAction.setBadgeText({text:""+i});
             }
 
             _this.getAlternativePathsForUniqueBookmark(id);
@@ -599,8 +599,8 @@ var chromeStorageBookmarker = {
         var i = 0;
         for(var id in _this.chromeBookmarks) {
             i++;
-            if (typeof(chrome.browserAction) != 'undefined') {
-                chrome.browserAction.setBadgeText({text:""+i});
+            if (typeof(chrome.pageAction) != 'undefined') {
+                chrome.pageAction.setBadgeText({text:""+i});
             }
 
             _this.chromeBookmarks[id] = _this.tagBk.setSpecificTagData(_this.chromeBookmarks[id]);

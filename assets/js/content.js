@@ -83,7 +83,7 @@ chrome.runtime.onMessage.addListener(function(bgJsMsg, sender, sendResponse) {
     if ( goodHost != null && goodPathname != null ) {
 
         /* build the content page */
-        dwlPopup.page = jQuery('#dwl-bk-google');
+        dwlPopup.page = jQuery("#dwl-bk-google");
         if (dwlPopup.page.length > 0) {
             dwlPopup.page.remove();
         }
@@ -193,3 +193,19 @@ chrome.runtime.onMessage.addListener(function(bgJsMsg, sender, sendResponse) {
 
 
 });
+
+/* build the content page */
+dwlPopup.page = jQuery("#dwl-bk-google");
+if (dwlPopup.page.length > 0) {
+    dwlPopup.page.remove();
+}
+dwlPopup.page = jQuery('<div></div>');
+dwlPopup.page.attr('id','dwl-bk-google');
+dwlPopup.page.addClass('container kp-blk');
+dwlPopup.page.html('<h2><a href="https://www.davaskweblimited.com/" target="_blank"><img width="16" height="16" style="vertical-align:bottom;" title="davask web limited - votre agence web" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NzY5MkU3MkY1MzE2MTFFNUFCMERGNzJFNTQyNUZDMEMiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NzY5MkU3MzA1MzE2MTFFNUFCMERGNzJFNTQyNUZDMEMiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo3NjkyRTcyRDUzMTYxMUU1QUIwREY3MkU1NDI1RkMwQyIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo3NjkyRTcyRTUzMTYxMUU1QUIwREY3MkU1NDI1RkMwQyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pl9qgHcAAAMGSURBVHjaZFNLSFRRGP7Oua8Zxxk137doJrXUjChLKKFQDKZ20aZVUUS1iYgWQS2SiqhoFURQ0MaFFYJtCqIkWhRBD3uXJI6Z46jjNDrN+z7O7dw7IlMd+O/lPP7v/7/vfIdYloXiwbIjzXrs/iEz+WKn6PL7L38+RsfnUuF2f/lQcF3d7TV13vfF58kSgGVAm7l5SosNnIKRqgRhkL2bceHjCQz/jEMggFsSkhzk+r5O/1lJoIadRgvJGnITZ27mp29cActVgio2tr0BG54SAlmk0Bnz3ns9efrSw5F7eYNJSwB6tP+4sfDsCJVVEMELQkt4eECIAolSuMRClEgCqksVvP0R3zPwavKcnSta+dAKI/GyV/LtshVYpGNHDlLNbgTXqhA0DYpEF7viX/77PDF/crSpsp/q80/2m9mPy2wNCJF4CA4CUfxA6RZ0NPqgVrjBmOVQEShxCozFM8rQ19nD1Ey92WlxDUxtrMDIFtUyIVX28LnAE4DtbXVg9rJlgwCRVB55vvAt8ruHMv3XSkJkMD0MZs7zQyaopxWkpHXpqprqvVhd74NhMmR0kwNoXBuC31m9nuMTh7idaOZG+FTg1YP4d3Stq4MiCphI5KBxILKoFqVyTchumdgaGFFIvo2AXPsfQJVPQVugFlMJ5ujBOJ0Kjzwpit6tD1jieY9U2oFUWSdCRhhKtJ9zFVDsUgsG1NoFHO3uwONPyzAyE8f6FeWPCMuNV6Vigx+mRJcaTr+BrkdRLrfAI6m8imM2DiYiY8xgIf8VZe4yuIUuDIc2pbpamjdQogRi0ZLG06PxQc4kCZGbKGvO8oomvwEZnKPjxywHEPheMq8hkryDHeu/nG+o9ow5TgyUB/uW+7ovGma60CzLIq1HnGslPDLGNLdxxunGNDOoKd12S/XuufrXY2LcC9/n+g5MJZ72GiwTsA1V5Wp3AGK5YZh8X6SuGdXXdbm55uA1gbj+eY2LI61NVs+l3+2Npd8GKaQG3gU1rMxElWfDULVn012vsipcfP6PAAMA3tJVy255m2QAAAAASUVORK5CYII="></a> loading...</h2>');
+
+if ( document.getElementById('rhs') == null ) {
+    dwlPopup.page.appendTo('#res');
+} else {
+    dwlPopup.page.prependTo('#rhs');
+}

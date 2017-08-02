@@ -34,7 +34,7 @@ var chromeExtension = {
             _this.log('extension.notab');
         }
 
-        chrome.browserAction.setIcon(_this.icon);
+        chrome.pageAction.setIcon(_this.icon);
         _this.setBadge(mess);
 
     },
@@ -47,7 +47,7 @@ var chromeExtension = {
             _this.iconTitle.text = ''+text;
         }
 
-        chrome.browserAction.setBadgeText(_this.iconTitle);
+        chrome.pageAction.setBadgeText(_this.iconTitle);
     },
 
     'getTab' : function(tabId) {

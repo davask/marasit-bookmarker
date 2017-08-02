@@ -8,9 +8,9 @@ exports.path = {
   styles: [ '/node_modules/' ]
 };
 exports.from = [
-  { from: 'src/app/assets/dev', to: 'assets/dev' },
+  // { from: 'src/app/assets/dev', to: 'assets/dev' },
   { from: 'src/app/assets/css', to: 'assets/css' },
-  { from: 'src/app/assets/icon', to: 'assets/icon' },
+  // { from: 'src/app/assets/icon', to: 'assets/icon' },
   { from: 'src/app/assets/img', to: 'assets/img' },
   { from: 'src/app/assets/vendor', to: 'assets/vendor' },
   { from: 'src/app/assets/js', to: 'assets/js' },
