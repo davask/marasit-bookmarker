@@ -17,6 +17,7 @@ var dwl_Popup = {
     'dwlBk':{},
     'popup':null,
     'page':null,
+    'g':null,
     'html' : '',
     init: function () {
       var _this = this;
