@@ -1,0 +1,1 @@
+webpackJsonp([2],{"0vsK":function(s,a){s.exports=[{res:"data"}]}});

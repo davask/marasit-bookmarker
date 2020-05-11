@@ -1,0 +1,82 @@
+{
+   "bookmark_page": {
+      "description": "",
+      "message": "Bookmark page"
+   },
+   "bookmark_search": {
+      "description": "",
+      "message": "Bookmark search"
+   },
+   "export": {
+      "description": "",
+      "message": "Export"
+   },
+   "flag_system": {
+      "description": "",
+      "message": "\u003Cul>\u003Cli>I => important\u003C/li>\u003Cli>D => duplicated\u003C/li>\u003Cli>R => removed\u003C/li>\u003Cli>T => trash\u003C/li>\u003Cli>E => empty title (except tag)\u003C/li>\u003Cli>N => not tagged\u003C/li>\u003Cli>S => stared\u003C/li>\u003C/ul>"
+   },
+   "flag_system_title": {
+      "description": "",
+      "message": "FLAG SYSTEM"
+   },
+   "guide": {
+      "description": "",
+      "message": ""
+   },
+   "guide_title": {
+      "description": "",
+      "message": "Guide - draft - french"
+   },
+   "helper": {
+      "description": "",
+      "message": "Just to finish the object"
+   },
+   "manifest_description": {
+      "description": "",
+      "message": "multitask manager : bookmarks, time tracker, todos AKA My missing multitask manager - by davask web limited"
+   },
+   "manifest_name": {
+      "description": "",
+      "message": "Multitasker : bookmarks, time tracker & todos"
+   },
+   "manifest_short_name": {
+      "description": "",
+      "message": "multitask manager"
+   },
+   "options_default_page": {
+      "description": "",
+      "message": "Default page"
+   },
+   "options_export": {
+      "description": "",
+      "message": "Export all your bookmarks"
+   },
+   "options_title": {
+      "description": "",
+      "message": "Multitasker - davask web limited"
+   },
+   "save": {
+      "description": "",
+      "message": "Save"
+   },
+   "tag_system": {
+      "description": "",
+      "message": "\u003Cul>\u003Cli>/\u003Cword> => folder\u003C/li>\u003Cli>#\u003Cword> => tag\u003C/li>\u003Cli>@\u003Cusername> => person to share with\u003C/li>\u003Cli>$\u003Cword> => alias\u003C/li>\u003Cli>!\u003Cword> => type (article)\u003C/li>\u003Cli>(\u003Cflag>) => bookmark flag\u003C/li>\u003C!--li>\u003Cdate> => define rule under a bookmark is considered new\u003C/li>\u003Cli>define character (/!@#) for : stared, important, person for sharing\u003C/li>\u003Cli>\u003Cdate> => define rule under a bookmark is considered new\u003C/li-->\u003C/ul>"
+   },
+   "tag_system_title": {
+      "description": "",
+      "message": "TAG SYSTEM"
+   },
+   "tags": {
+      "description": "",
+      "message": "Tags"
+   },
+   "timer": {
+      "description": "",
+      "message": "Timer"
+   },
+   "todos": {
+      "description": "",
+      "message": "Todos"
+   }
+}
