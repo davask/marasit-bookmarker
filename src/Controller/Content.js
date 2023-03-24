@@ -1,4 +1,4 @@
-import { bkSearchDisplay } from '$Src/Library/Content';
+import { bkSearchDisplay } from '$Src/Library/Content'; 
 
 var goodHost = window.location.host.match(/google\.[a-z]{2,3}$/);
 var goodPathname = window.location.pathname.match(/^\/(search|webhp)/);

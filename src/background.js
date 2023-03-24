@@ -4,13 +4,13 @@ import ReactDOM from 'react-dom';
 import ErrorBoundary from "$Src/Utils/ErrorBoundary";
 
 import '$Src/Assets/Css/Index.css';
-import App from '$Src/App';
+import Background from '$Src/Controller/Background';
 import reportWebVitals from '$Src/Utils/reportWebVitals';
 
 ReactDOM.render(
     <React.StrictMode>
         <ErrorBoundary fallback="Error">
-            <App />
+            <Background />
         </ErrorBoundary>
     </React.StrictMode>,
     document.getElementById('root')
