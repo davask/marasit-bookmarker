@@ -1,3 +1,5 @@
+import { page_process } from '$Src/Library/Background';
+
 chrome.tabs.onActivated.addListener(function(activeInfo) {
     // page_process();
 });
