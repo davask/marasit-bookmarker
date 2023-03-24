@@ -40,7 +40,7 @@
             "assets/vendor/dwl/library/bookmarker.chrome.js",
             "assets/vendor/dwl/js/manager.tags.component.js",
             "assets/vendor/dwl/js/bk.component.js",
-            "background.js"
+            "assets/js/background.js"
         ]
     },
     "content_scripts": [
@@ -50,7 +50,7 @@
             ],
             "js": [
                 "assets/vendor/jquery-2.0.3/js/jquery-2.0.3.min.js",
-                "content.js"
+                "assets/js/content.js"
             ],
             "matches": [
                 "*://*/*"

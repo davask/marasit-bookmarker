@@ -1,6 +1,8 @@
 {
   "name": "marasit-multitasker",
   "version": "4.0.0",
+  "description": "",
+  "keywords": [],
   "author": "marasit",
   "private": true,
   "homepage": "/build",
@@ -14,19 +16,16 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "copy-webpack-plugin": "^11.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-hot-loader": "^4.13.1",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "link-module-alias && react-scripts start",
-    "build": "link-module-alias && react-scripts build",
-    "watch": "link-module-alias && npx webpack --watch",
-    "dist": "link-module-alias && npx webpack",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
+    "build-dev": "webpack --mode development",
+    "build-prod": "webpack --mode production",
+    "start": "webpack serve --hot --mode development --static ./dist",
     "postinstall": "link-module-alias"
   },
   "eslintConfig": {
@@ -48,10 +47,18 @@
     ]
   },
   "devDependencies": {
+    "@hot-loader/react-dom": "^17.0.2",
+    "clean-webpack-plugin": "^4.0.0",
+    "copy-webpack-plugin": "^11.0.0",
+    "css-loader": "^6.7.3",
+    "file-loader": "^6.2.0",
     "json-loader": "^0.5.7",
     "link-module-alias": "^1.2.0",
+    "style-loader": "^3.3.2",
+    "url-loader": "^4.1.1",
     "webpack": "^5.76.3",
-    "webpack-cli": "^5.0.1"
+    "webpack-cli": "^5.0.1",
+    "webpack-dev-server": "^4.13.1"
   },
   "_moduleAliases": {
     "$Src": "./src"
