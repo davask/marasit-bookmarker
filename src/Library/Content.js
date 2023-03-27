@@ -164,11 +164,7 @@ const paginate = (array, page_size, page_number) => {
   
     $dwlBkGoogle = generateHtmlElement({'q':params.q});
   
-    if ( document.getElementById('rhs') == null ) {
-        $dwlBkGoogle.appendTo('#res');
-    } else {
-        $dwlBkGoogle.prependTo('#rhs');
-    }
+    $dwlBkGoogle.appendTo('#marasit-multitasker');
   
   };
   

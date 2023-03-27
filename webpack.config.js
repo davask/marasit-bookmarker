@@ -7,13 +7,19 @@ const config = {
     mode: 'development', // or 'production'
     entry: {
         hotreload: 'react-hot-loader/patch',
-        background: './src/background.js',
-        popup: './src/popup.js',
-        content: './src/content.js'
+        background: path.resolve(__dirname + '/src/background.js'),
+        popup: path.resolve(__dirname + '/src/popup.js'),
+        content: path.resolve(__dirname + '/src/content.js')
+    },
+    resolve: {
+        alias: {
+            $Src: path.resolve(__dirname, './src')
+        }
     },
     output: {
         filename: 'assets/js/[name].js',
-        path: path.resolve(__dirname + '/build')
+        path: path.resolve(__dirname + '/build'),
+        publicPath: '/'
     },
     module: {
         rules: [
@@ -43,6 +49,17 @@ const config = {
                         }
                     }
                 ]
+            },
+            {
+                test: /\.(js|jsx)$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['@babel/preset-env', '@babel/preset-react'],
+                        plugins: ["@babel/plugin-syntax-jsx"]
+                    }
+                }
             }
         ]
     },
@@ -51,13 +68,16 @@ const config = {
             writeToDisk: true
         },
         static: {
-            directory: './build'
+            directory: path.resolve(__dirname + '/build')
         }
     },
     plugins: [
         new CleanWebpackPlugin(),
         new CopyPlugin({
-            patterns: [{ from: './public/', to: './' }],
+            patterns: [{ 
+                from: path.resolve(__dirname + '/public/'), 
+                to: path.resolve(__dirname + '/build/') 
+            }],
         })
     ]
 };

@@ -1,0 +1,3 @@
+{
+    "content_security_policy": "default-src 'self' 'wasm-unsafe-eval'; script-src 'self' 'wasm-unsafe-eval' https://www.google-analytics.com; connect-src *; img-src 'self' data: *; media-src *; style-src 'self' 'unsafe-inline';"
+}
